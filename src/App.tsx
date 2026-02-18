@@ -24,6 +24,7 @@ const App: React.FC = () => {
   });
 
   const [isDesktop, setIsDesktop] = useState(() => window.innerWidth >= 768);
+  const [fixedColPx] = useState(() => Math.round(window.innerWidth * 0.4));
 
   useEffect(() => {
     const update = () => setIsDesktop(window.innerWidth >= 768);
@@ -123,58 +124,48 @@ const App: React.FC = () => {
 
       {isDesktop ? (
         /* ── DESKTOP / TABLET SPLIT HERO ── */
-        <div className="flex overflow-hidden relative" style={{ height: '800px', maxHeight: '800px' }}>
+        <div className="relative flex overflow-hidden" style={{ height: '100vh' }}>
 
-          {/* LEFT COLUMN */}
-          <div className="shrink-0 bg-[#45aaf7] flex flex-col items-center justify-center relative px-10 lg:px-16" style={{ width: '65%' }}>
-
-            {/* Mørk-modus toggle — øverst til høyre i venstre kolonne */}
-            <button
-              onClick={toggleTheme}
-              className="absolute top-4 right-4 w-10 h-10 rounded-full border border-white/30 flex items-center justify-center text-white hover:bg-white/10 transition-all"
-            >
-              {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-            </button>
-
-            {/* Logo */}
-            <img src={logoStackedLight} alt="Innsikt" className="object-contain mb-8" style={{ maxWidth: '360px', width: '100%' }} />
-
-            {/* Hero-tekst */}
-            <p className="text-white text-center mb-8" style={{ fontFamily: 'Poppins, sans-serif', fontSize: '1.875rem', fontWeight: 700, lineHeight: 1.25 }}>
-              Det du ønsker å vite om<br />boligmarkedet i Oslo
-            </p>
-
-            {/* Vertikal nav */}
-            <nav className="flex flex-col gap-3 mb-8 w-full items-center">
+          {/* Nav — absolutt, spenner full bredde over begge kolonner */}
+          <div className="absolute top-0 left-0 right-0 z-10 flex items-center justify-center px-10 pt-6 pb-4">
+            <nav className="flex gap-8">
               {['Forsiden', 'Kart', 'Markedsrapporter', 'Innsikt', 'Blogg'].map(name => (
-                <a key={name} href="#" className="hover:underline transition-all" style={{ fontFamily: 'Poppins, sans-serif', fontSize: '1.25rem', color: 'rgba(255, 255, 255, 0.85)', fontWeight: 600 }}>
+                <a key={name} href="#" className="hover:underline transition-all" style={{ fontFamily: 'Poppins, sans-serif', fontSize: '1rem', color: 'rgba(255, 255, 255, 0.85)', fontWeight: 600 }}>
                   {name}
                 </a>
               ))}
             </nav>
-
-            {/* CTA */}
-            <button className="bg-positive hover:opacity-90 text-white px-8 py-3.5 rounded-lg text-[0.75rem] font-semibold uppercase tracking-[0.1em] transition-all active:scale-95 shadow-lg shadow-black/10 whitespace-nowrap">
-              FÅ VERDIVURDERING
+            <button
+              onClick={toggleTheme}
+              className="absolute right-8 w-10 h-10 rounded-full border border-white/30 flex items-center justify-center text-white hover:bg-white/10 transition-all"
+            >
+              {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
           </div>
 
-          {/* RIGHT COLUMN — MAP */}
-          <div className="flex-1 relative overflow-hidden">
-            <div className="absolute inset-0">
-              <MapComponent
-                ref={mapComponentRef}
-                properties={[]}
-                districts={OSLO_DISTRICTS}
-                selectedProperty={null}
-                selectedDistrict={selectedDistrict}
-                onPropertySelect={() => {}}
-                onDistrictSelect={handleDistrictSelect}
-                isDark={isDark}
-              />
+          {/* LEFT COLUMN — blå, logo sentrert */}
+          <div className="w-1/2 bg-[#45aaf7] flex items-center justify-center">
+            <img src={logoStackedLight} alt="Innsikt" className="object-contain" style={{ maxWidth: '360px', width: '70%' }} />
+          </div>
+
+          {/* RIGHT COLUMN — mørk, kart som card */}
+          <div className="w-1/2 flex items-center justify-center" style={{ backgroundColor: '#0c131f' }}>
+            <div className="relative overflow-hidden" style={{ width: '82%', height: '78%', borderRadius: '16px' }}>
+              <div className="absolute inset-0">
+                <MapComponent
+                  ref={mapComponentRef}
+                  properties={[]}
+                  districts={OSLO_DISTRICTS}
+                  selectedProperty={null}
+                  selectedDistrict={selectedDistrict}
+                  onPropertySelect={() => {}}
+                  onDistrictSelect={handleDistrictSelect}
+                  isDark={isDark}
+                />
+              </div>
+              <MapControls size={10} />
+              <StatsOverlay />
             </div>
-            <MapControls size={10} />
-            <StatsOverlay />
           </div>
         </div>
 
@@ -213,8 +204,13 @@ const App: React.FC = () => {
         </>
       )}
 
-      {/* ── DARK BLOG SECTION ── */}
-      <section className="bg-[#0b1120] py-12 md:py-16" style={{ minHeight: 'calc(100vh - 800px)' }} />
+      {/* ── BOTTOM ROW — 40/60 split ── */}
+      <div className="flex" style={{ minHeight: 'calc(100vh - 800px)' }}>
+        {/* LEFT — fast pikselbredde (40%), endrer seg ikke før høyre treffer 30vw */}
+        <div style={{ flexBasis: `${fixedColPx}px`, flexGrow: 0, flexShrink: 0, backgroundColor: '#93d0ff' }} />
+        {/* RIGHT — krymper fra 60% ned til 30vw min */}
+        <div style={{ flex: 1, minWidth: '30vw', backgroundColor: '#265171' }} />
+      </div>
 
     </div>
   );
