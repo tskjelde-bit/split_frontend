@@ -7,7 +7,7 @@ import Calculator from '@/components/Calculator';
 import Header from '@/components/Header';
 import { ChevronDown, ChevronUp, Plus, Minus, Layers, Target, Moon, Sun } from 'lucide-react';
 import logoStackedLight from '@/assets/logo-stacked-light.png';
-import carsVideo from '@/assets/cars.mp4';
+import heroGlobe from '@/assets/hero-globe.webm';
 
 const App: React.FC = () => {
   const [selectedDistrictId, setSelectedDistrictId] = useState<string | null>(null);
@@ -151,7 +151,7 @@ const App: React.FC = () => {
 
           {/* RIGHT COLUMN — mørk, kart som card */}
           <div className="w-1/2 relative flex items-center justify-center overflow-hidden" style={{ height: '100%' }}>
-            <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover" src={carsVideo} />
+            <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover" src={heroGlobe} />
             <div className="relative overflow-hidden" style={{ width: '82%', height: '78%', borderRadius: '16px' }}>
               <div className="absolute inset-0">
                 <MapComponent
