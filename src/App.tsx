@@ -7,6 +7,7 @@ import Calculator from '@/components/Calculator';
 import Header from '@/components/Header';
 import { ChevronDown, ChevronUp, Plus, Minus, Layers, Target, Moon, Sun } from 'lucide-react';
 import logoStackedLight from '@/assets/logo-stacked-light.png';
+import carsVideo from '@/assets/cars.mp4';
 
 const App: React.FC = () => {
   const [selectedDistrictId, setSelectedDistrictId] = useState<string | null>(null);
@@ -149,7 +150,8 @@ const App: React.FC = () => {
           </div>
 
           {/* RIGHT COLUMN — mørk, kart som card */}
-          <div className="w-1/2 flex items-center justify-center" style={{ backgroundColor: '#0c131f' }}>
+          <div className="w-1/2 relative flex items-center justify-center overflow-hidden">
+            <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover" src={carsVideo} />
             <div className="relative overflow-hidden" style={{ width: '82%', height: '78%', borderRadius: '16px' }}>
               <div className="absolute inset-0">
                 <MapComponent
@@ -204,13 +206,6 @@ const App: React.FC = () => {
         </>
       )}
 
-      {/* ── BOTTOM ROW — 40/60 split ── */}
-      <div className="flex" style={{ minHeight: 'calc(100vh - 800px)' }}>
-        {/* LEFT — fast pikselbredde (40%), endrer seg ikke før høyre treffer 30vw */}
-        <div style={{ flexBasis: `${fixedColPx}px`, flexGrow: 0, flexShrink: 0, backgroundColor: '#93d0ff' }} />
-        {/* RIGHT — krymper fra 60% ned til 30vw min */}
-        <div style={{ flex: 1, minWidth: '30vw', backgroundColor: '#265171' }} />
-      </div>
 
     </div>
   );
