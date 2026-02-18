@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react';
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, '.', '');
     return {
-      base: mode === 'production' ? '/ny_frontend_split/' : '/',
+      base: mode === 'production' ? '/split_frontend/' : '/',
       server: {
         port: 3000,
         host: '0.0.0.0',
