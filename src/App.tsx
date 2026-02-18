@@ -150,9 +150,9 @@ const App: React.FC = () => {
           </div>
 
           {/* RIGHT COLUMN — mørk, kart som card */}
-          <div className="w-1/2 relative flex items-center justify-center overflow-hidden" style={{ height: '100%' }}>
+          <div className="w-1/2 relative overflow-hidden" style={{ height: '100vh' }}>
             <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover" src={heroGlobe} />
-            <div className="relative overflow-hidden" style={{ width: '82%', height: '78%', borderRadius: '16px' }}>
+            <div className="absolute overflow-hidden" style={{ top: '11vh', bottom: '11vh', left: '9%', right: '9%', borderRadius: '16px' }}>
               <div className="absolute inset-0">
                 <MapComponent
                   ref={mapComponentRef}
