@@ -123,10 +123,10 @@ const App: React.FC = () => {
 
       {isDesktop ? (
         /* ── DESKTOP / TABLET SPLIT HERO ── */
-        <div className="flex h-screen overflow-hidden relative">
+        <div className="flex overflow-hidden relative" style={{ height: '800px', maxHeight: '800px' }}>
 
           {/* LEFT COLUMN */}
-          <div className="w-2/5 shrink-0 bg-[#45aaf7] flex flex-col items-center justify-center relative px-10 lg:px-16">
+          <div className="shrink-0 bg-[#45aaf7] flex flex-col items-center justify-center relative px-10 lg:px-16" style={{ width: '65%' }}>
 
             {/* Mørk-modus toggle — øverst til høyre i venstre kolonne */}
             <button
@@ -137,17 +137,17 @@ const App: React.FC = () => {
             </button>
 
             {/* Logo */}
-            <img src={logoStackedLight} alt="Innsikt" className="w-[180px] object-contain mb-8" />
+            <img src={logoStackedLight} alt="Innsikt" className="object-contain mb-8" style={{ maxWidth: '360px', width: '100%' }} />
 
             {/* Hero-tekst */}
-            <p className="text-white text-[1.375rem] font-bold text-center leading-snug mb-8">
-              Det du ønsker å vite om boligmarkedet i Oslo
+            <p className="text-white text-center mb-8" style={{ fontFamily: 'Poppins, sans-serif', fontSize: '1.875rem', fontWeight: 700, lineHeight: 1.25 }}>
+              Det du ønsker å vite om<br />boligmarkedet i Oslo
             </p>
 
             {/* Vertikal nav */}
-            <nav className="flex flex-col gap-3 mb-8 w-full max-w-[220px]">
+            <nav className="flex flex-col gap-3 mb-8 w-full items-center">
               {['Forsiden', 'Kart', 'Markedsrapporter', 'Innsikt', 'Blogg'].map(name => (
-                <a key={name} href="#" className="text-white font-bold text-[0.9375rem] hover:underline transition-all">
+                <a key={name} href="#" className="hover:underline transition-all" style={{ fontFamily: 'Poppins, sans-serif', fontSize: '1.25rem', color: 'rgba(255, 255, 255, 0.85)', fontWeight: 600 }}>
                   {name}
                 </a>
               ))}
@@ -214,7 +214,7 @@ const App: React.FC = () => {
       )}
 
       {/* ── DARK BLOG SECTION ── */}
-      <section className="bg-[#0b1120] py-12 md:py-16" />
+      <section className="bg-[#0b1120] py-12 md:py-16" style={{ minHeight: 'calc(100vh - 800px)' }} />
 
     </div>
   );
