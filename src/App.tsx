@@ -5,15 +5,8 @@ import MapComponent, { MapComponentHandle, TileLayerKey, TILE_LAYERS } from '@/c
 import DistrictStats from '@/components/DistrictStats';
 import Calculator from '@/components/Calculator';
 import Header from '@/components/Header';
-import { ChevronDown, ChevronUp, Plus, Minus, Layers, Target, Moon, Sun, ArrowRight } from 'lucide-react';
-import logoStacked from '@/assets/logo_stacked.png';
-import logoStackedDark from '@/assets/logo_stacked_dark.png';
-
-const BLOG_POSTS = [
-  { date: 'JAN 12', category: 'MARKEDSINNSIKT', title: 'Boligpriser Oslo 2026–2028: Analyse av ferske prognoser' },
-  { date: 'JAN 05', category: 'MARKEDSINNSIKT', title: 'Hvordan vil utviklingen i styringsrenta påvirke boligprisene fremover?' },
-  { date: 'DES 20', category: 'ANALYSE', title: 'Hvilke bydeler har størst prisvekst i Oslo akkurat nå?' },
-];
+import { ChevronDown, ChevronUp, Plus, Minus, Layers, Target, Moon, Sun } from 'lucide-react';
+import logoStackedLight from '@/assets/logo-stacked-light.png';
 
 const App: React.FC = () => {
   const [selectedDistrictId, setSelectedDistrictId] = useState<string | null>(null);
@@ -132,21 +125,35 @@ const App: React.FC = () => {
         /* ── DESKTOP / TABLET SPLIT HERO ── */
         <div className="flex h-screen overflow-hidden relative">
 
-          {/* Dark mode toggle — top right */}
-          <button
-            onClick={toggleTheme}
-            className="absolute top-6 right-6 z-[600] w-10 h-10 rounded-full border border-br-subtle bg-base flex items-center justify-center text-tx-muted hover:bg-elevated transition-all"
-          >
-            {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-          </button>
-
           {/* LEFT COLUMN */}
-          <div className="w-[38%] lg:w-[40%] shrink-0 bg-base flex flex-col items-center justify-center border-r border-br-subtle px-10 lg:px-16">
-            <img
-              src={isDark ? logoStackedDark : logoStacked}
-              alt="Innsikt"
-              className="w-auto max-h-24 lg:max-h-32 object-contain mb-10 lg:mb-14"
-            />
+          <div className="w-2/5 shrink-0 bg-[#45aaf7] flex flex-col items-center justify-center relative px-10 lg:px-16">
+
+            {/* Mørk-modus toggle — øverst til høyre i venstre kolonne */}
+            <button
+              onClick={toggleTheme}
+              className="absolute top-4 right-4 w-10 h-10 rounded-full border border-white/30 flex items-center justify-center text-white hover:bg-white/10 transition-all"
+            >
+              {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
+
+            {/* Logo */}
+            <img src={logoStackedLight} alt="Innsikt" className="w-[180px] object-contain mb-8" />
+
+            {/* Hero-tekst */}
+            <p className="text-white text-[1.375rem] font-bold text-center leading-snug mb-8">
+              Det du ønsker å vite om boligmarkedet i Oslo
+            </p>
+
+            {/* Vertikal nav */}
+            <nav className="flex flex-col gap-3 mb-8 w-full max-w-[220px]">
+              {['Forsiden', 'Kart', 'Markedsrapporter', 'Innsikt', 'Blogg'].map(name => (
+                <a key={name} href="#" className="text-white font-bold text-[0.9375rem] hover:underline transition-all">
+                  {name}
+                </a>
+              ))}
+            </nav>
+
+            {/* CTA */}
             <button className="bg-positive hover:opacity-90 text-white px-8 py-3.5 rounded-lg text-[0.75rem] font-semibold uppercase tracking-[0.1em] transition-all active:scale-95 shadow-lg shadow-black/10 whitespace-nowrap">
               FÅ VERDIVURDERING
             </button>
@@ -207,30 +214,7 @@ const App: React.FC = () => {
       )}
 
       {/* ── DARK BLOG SECTION ── */}
-      <section className="bg-[#0f172a] py-12 md:py-16">
-        <div className="max-w-[1700px] mx-auto px-4 md:px-14">
-          <div className="flex justify-between items-center mb-8">
-            <span className="text-[0.6875rem] font-semibold uppercase tracking-[0.15em] text-white/50">SISTE INNLEGG</span>
-            <button className="text-[0.6875rem] font-semibold text-accent hover:opacity-80 transition-colors uppercase tracking-[0.08em] flex items-center gap-1">
-              SE ALLE <ArrowRight className="w-3 h-3" />
-            </button>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
-            {BLOG_POSTS.map((post, i) => (
-              <div key={i} className="group cursor-pointer border-t border-white/10 pt-6 md:border-0 md:pt-0 first:border-0 first:pt-0">
-                <div className="flex items-center gap-2 mb-3 text-[0.625rem] font-semibold tracking-[0.1em] uppercase">
-                  <span className="text-white/30">{post.date}</span>
-                  <span className="text-white/20">•</span>
-                  <span className="text-accent/80">{post.category}</span>
-                </div>
-                <h4 className="text-[0.9375rem] font-bold text-white leading-[1.35] tracking-[-0.01em] group-hover:text-accent transition-colors">
-                  {post.title}
-                </h4>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <section className="bg-[#0b1120] py-12 md:py-16" />
 
     </div>
   );
