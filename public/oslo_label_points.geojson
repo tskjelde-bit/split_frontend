@@ -1,0 +1,172 @@
+{
+    "type": "FeatureCollection",
+    "name": "oslo_label_points",
+    "crs": {
+        "type": "name",
+        "properties": {
+            "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+        }
+    },
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {
+                "BYDELSNAVN": "Alna"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [10.855, 59.929]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "BYDELSNAVN": "Bjerke"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [10.825, 59.942]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "BYDELSNAVN": "Frogner"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [10.700, 59.918]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "BYDELSNAVN": "Gamle Oslo"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [10.77, 59.907]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "BYDELSNAVN": "Grorud"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [10.870, 59.960]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "BYDELSNAVN": "Grünerløkka"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [10.765, 59.922]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "BYDELSNAVN": "Nordre Aker"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [10.749, 59.955]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "BYDELSNAVN": "Nordstrand"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [10.780, 59.876]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "BYDELSNAVN": "Sagene"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [10.763, 59.942]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "BYDELSNAVN": "Sentrum"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [10.739, 59.910]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "BYDELSNAVN": "St. Hanshaugen"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [10.725, 59.928]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "BYDELSNAVN": "Stovner"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [10.915, 59.955]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "BYDELSNAVN": "Søndre Nordstrand"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [10.827, 59.834]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "BYDELSNAVN": "Ullern"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [10.656, 59.927]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "BYDELSNAVN": "Vestre Aker"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [10.678, 59.949]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "BYDELSNAVN": "Østensjø"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [10.831, 59.887]
+            }
+        }
+    ]
+}

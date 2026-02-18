@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-base: #ffffff;
+  --bg-surface: #f8fafc;
+  --bg-elevated: #f1f5f9;
+  --bg-overlay: #e2e8f0;
+  --text-primary: #0f172a;
+  --text-muted: #475569;
+  --text-dim: #94a3b8;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-subtle: rgba(37, 99, 235, 0.08);
+  --color-positive: #16a34a;
+  --color-warning: #ca8a04;
+  --color-negative: #dc2626;
+  --color-neutral: #64748b;
+  --border-subtle: rgba(0, 0, 0, 0.06);
+  --border-default: rgba(0, 0, 0, 0.12);
+}
+
+.dark {
+  --bg-base: #0a0f1d;
+  --bg-surface: #0f172a;
+  --bg-elevated: #1e293b;
+  --bg-overlay: #334155;
+  --text-primary: #f1f5f9;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --accent-subtle: rgba(59, 130, 246, 0.12);
+  --color-positive: #22c55e;
+  --color-warning: #facc15;
+  --color-negative: #ef4444;
+  --color-neutral: #94a3b8;
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-default: rgba(255, 255, 255, 0.12);
+}
+
+@layer base {
+  html {
+    font-size: 16px;
+  }
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    margin: 0;
+    overflow-y: auto;
+  }
+}
+
+/* Stat unit: show "dager" by default, "D" on very narrow screens */
+.stat-unit-short { display: none; }
+.stat-unit-full { display: inline; }
+@media (max-width: 380px) {
+  .stat-unit-full { display: none; }
+  .stat-unit-short { display: inline; }
+}
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-elevated); }
+::-webkit-scrollbar-thumb { background: var(--text-dim); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
