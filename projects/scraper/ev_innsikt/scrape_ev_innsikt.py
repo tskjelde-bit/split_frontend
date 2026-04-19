@@ -299,14 +299,21 @@ def _finn_header_rad(rader):
     """Scanner et iterable av rader og returnerer (header_index, header_cols).
 
     PBI-eksporter har 2-3 metadatarader ("Brukte filtre:...") før den faktiske
-    kolonne-headeren. Vi identifiserer headeren ved at én celle inneholder et
+    kolonne-headeren. Vi identifiserer headeren ved at én celle ER et
     bydel-keyword (Område / Bydel / District / ...).
+
+    Vi krever at cellen er kort (≤40 tegn) og uten linjeskift, slik at vi
+    ikke matcher metadata-blober som "CityDistrictName er OSLO\\n...".
     """
     rader = list(rader)
     for idx, row in enumerate(rader):
         cols = [str(c).strip() if c is not None else '' for c in row]
-        if any(any(k in c.lower() for k in _BYDEL_KEYS) for c in cols):
-            return idx, cols, rader
+        for c in cols:
+            if len(c) > 40 or '\n' in c:
+                continue
+            cl = c.lower()
+            if any(cl == k or cl.startswith(k) for k in _BYDEL_KEYS):
+                return idx, cols, rader
     if rader:
         return 0, [str(c).strip() if c is not None else '' for c in rader[0]], rader
     return 0, [], []
