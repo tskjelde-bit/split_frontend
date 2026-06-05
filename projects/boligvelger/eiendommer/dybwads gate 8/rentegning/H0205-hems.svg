@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 600">
+  <!-- H0205 hems: loft over kjøkken/gang NØ, ca 5,8 m². Mål i cm, samme orientering som hovedplan.
+       SV-kant følger den skrå "Hems"-linjen i hovedplanen. -->
+  <path d="M 345 30 L 505 30 L 505 201 L 345 578 Z" fill="#E5D3BC"/>
+  <path d="M 345 30 L 505 30 L 505 201 L 345 578 Z" fill="none" stroke="#1A1A18" stroke-width="8"/>
+
+  <!-- Luke/åpning mot stige (nord, ved kjøkken) -->
+  <rect x="385" y="36" width="60" height="40" fill="none" stroke="#1A1A18"
+        stroke-width="1" stroke-dasharray="4 3"/>
+
+  <g font-family="Helvetica" fill="#1A1A18">
+    <text x="430" y="180" font-size="13" text-anchor="middle">Hems</text>
+    <text x="430" y="197" font-size="10" text-anchor="middle" opacity="0.65">ca 5,8 m²</text>
+  </g>
+</svg>
