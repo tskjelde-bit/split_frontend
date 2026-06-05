@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 620">
+  <!-- H0105 hems: dashed hems-sone over sørlig Stue/sov + Gang. Sloped tak (Hems). Mål i cm, samme orientering som hovedplan. -->
+  <!-- Origo lik hovedplan: enhetens ytre NV-hjørne. -->
+
+  <!-- Hems-del over Stue/sov (sør) -->
+  <rect x="62" y="345" width="224" height="196" fill="#E5D3BC"/>
+  <rect x="62" y="345" width="224" height="196" fill="none" stroke="#1A1A18" stroke-width="8"/>
+
+  <!-- Hems-del over Gang (med takfall) -->
+  <path d="M 362 504 L 516 504 L 516 787 L 362 787 Z" fill="#E5D3BC"/>
+  <path d="M 362 504 L 516 504 L 516 787 L 362 787 Z" fill="none" stroke="#1A1A18" stroke-width="8"/>
+  <line x1="362" y1="787" x2="516" y2="504" stroke="#1A1A18"
+        stroke-width="1" stroke-dasharray="6 4"/>
+
+  <!-- Luke / stige-åpning (gang-nisje, nord) -->
+  <rect x="455" y="430" width="58" height="55" fill="none" stroke="#1A1A18"
+        stroke-width="1" stroke-dasharray="4 3"/>
+
+  <g font-family="Helvetica" fill="#1A1A18">
+    <text x="174" y="436" font-size="13" text-anchor="middle">Hems</text>
+    <text x="174" y="453" font-size="10" text-anchor="middle" opacity="0.65">ca 6 m²</text>
+  </g>
+</svg>
