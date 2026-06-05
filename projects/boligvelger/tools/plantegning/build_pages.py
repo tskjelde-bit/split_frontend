@@ -31,8 +31,8 @@ def place(path: Path, x: float, y: float, scale: float) -> tuple[str, float, flo
     return svg, w, h
 
 
-def scale_bar(x: float, y: float) -> str:
-    seg = 100 * brand.PX_PER_CM  # 1 m
+def scale_bar(x: float, y: float, k: float = brand.PX_PER_CM) -> str:
+    seg = 100 * k  # 1 m
     parts = [f'<g transform="translate({x} {y})">']
     for i in range(5):
         fill = brand.GREEN if i % 2 == 0 else "none"
@@ -103,7 +103,21 @@ def areal_lines(u: dict) -> list[str]:
 def render_page(unit_id: str, u: dict) -> str:
     plan_path = brand.RENTEGNING / f"{unit_id}-plan.svg"
     hems_path = brand.RENTEGNING / f"{unit_id}-hems.svg"
-    k = brand.PX_PER_CM
+
+    # 1:50 som standard; fit-skalering for brede/høye enheter.
+    # Målestokk-baren tegnes med samme k og forblir dermed sann.
+    GAP = 40
+    avail_w = brand.A4_W - 2 * MARGIN
+    avail_h = 610
+    plan_vb, _ = load_fragment(plan_path)
+    hems_vb = load_fragment(hems_path)[0] if hems_path.exists() else None
+    total_cm_w = plan_vb[2] + (hems_vb[2] if hems_vb else 0)
+    max_cm_h = max(plan_vb[3], hems_vb[3] if hems_vb else 0)
+    k = min(
+        brand.PX_PER_CM,
+        (avail_w - (GAP if hems_vb else 0)) / total_cm_w,
+        avail_h / max_cm_h,
+    )
 
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{brand.A4_W}" height="{brand.A4_H}" '
@@ -125,19 +139,16 @@ def render_page(unit_id: str, u: dict) -> str:
             f'font-size="13" fill="{brand.HEADER_MUTED}" text-anchor="end">{line}</text>'
         )
 
-    # Hovedplan, sentrert i plansonen (y 210-820), 1:50
-    _, pw, ph = place(plan_path, 0, 0, k)
-    hems_dims = None
-    if hems_path.exists():
-        _, hw, hh = place(hems_path, 0, 0, k)
-        hems_dims = (hw, hh)
-    total_w = pw + (hems_dims[0] + 40 if hems_dims else 0)
-    px = (brand.A4_W - total_w) / 2
-    py = 210 + (610 - ph) / 2
+    # Hovedplan, sentrert i plansonen (y 210-820)
+    pw, ph = plan_vb[2] * k, plan_vb[3] * k
+    hems_dims = (hems_vb[2] * k, hems_vb[3] * k) if hems_vb else None
+    total_w = pw + (hems_dims[0] + GAP if hems_dims else 0)
+    px = MARGIN + (avail_w - total_w) / 2
+    py = 210 + (avail_h - ph) / 2
     plan_svg, _, _ = place(plan_path, px, py, k)
     parts.append(plan_svg)
     if hems_dims:
-        hx = px + pw + 40
+        hx = px + pw + GAP
         hy = py + ph - hems_dims[1]  # bunnjustert mot hovedplan
         hems_svg, hw, hh = place(hems_path, hx, hy, k)
         parts.append(hems_svg)
@@ -148,7 +159,7 @@ def render_page(unit_id: str, u: dict) -> str:
         )
 
     # Målestokk + nordpil
-    parts.append(scale_bar(MARGIN, 855))
+    parts.append(scale_bar(MARGIN, 855, k))
     parts.append(north_arrow(brand.A4_W - MARGIN - 16, 862, u["north_deg"]))
     # Posisjonsdiagrammer
     parts.append(position_diagrams(unit_id, u["floor"], brand.A4_W - 290, 905))
