@@ -74,7 +74,8 @@ def _point_in_poly(pt, poly):
 SYM_SIZE = {  # (w, h) i cm for validering
     "wc": (40, 65), "servant": (50, 40), "dusj": (90, 90), "seng140": (140, 200),
     "sofa": (160, 85), "bord2": (120, 115), "komfyr": (60, 60), "kvask": (60, 60),
-    "skap": (60, 60),
+    "skap": (60, 60), "rundbord90": (90, 90), "sofabord60": (60, 60),
+    "lenestol": (70, 70), "stol": (45, 45),
 }
 
 
@@ -256,7 +257,10 @@ def render_hems(spec: dict):
     pad = 11
     W, H = x1 - x0 + 2 * pad, y1 - y0 + 2 * pad
     shifted = [[x - x0 + pad, y - y0 + pad] for x, y in poly]
-    cx, cy = W / 2, H / 2
+    if hems.get("label_xy"):  # for ikke-rektangulære hems der bbox-senteret faller utenfor
+        cx, cy = hems["label_xy"][0] - x0 + pad, hems["label_xy"][1] - y0 + pad
+    else:
+        cx, cy = W / 2, H / 2
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W:.0f} {H:.0f}">',
         f'<polygon points="{_pts(shifted)}" fill="{HEMS}"/>',

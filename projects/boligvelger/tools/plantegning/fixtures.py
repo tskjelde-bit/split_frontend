@@ -58,6 +58,23 @@ DEFS = f"""<defs>
     <rect x="0" y="0" width="60" height="60" fill="none" stroke="{INK}" stroke-width="1"/>
     <line x1="0" y1="0" x2="60" y2="60" stroke="{INK}" stroke-width="0.5"/>
   </g>
+  <!-- Rundt spisebord Ø90 -->
+  <g id="rundbord90">
+    <circle cx="45" cy="45" r="45" fill="none" stroke="{INK}" stroke-width="1.2"/>
+  </g>
+  <!-- Rundt sofabord Ø60 -->
+  <g id="sofabord60">
+    <circle cx="30" cy="30" r="30" fill="none" stroke="{INK}" stroke-width="1"/>
+  </g>
+  <!-- Lenestol 70x70cm -->
+  <g id="lenestol">
+    <rect x="0" y="0" width="70" height="70" rx="14" fill="none" stroke="{INK}" stroke-width="1.1"/>
+    <line x1="10" y1="18" x2="60" y2="18" stroke="{INK}" stroke-width="0.7"/>
+  </g>
+  <!-- Stol 45x45cm -->
+  <g id="stol">
+    <rect x="0" y="0" width="45" height="45" rx="8" fill="none" stroke="{INK}" stroke-width="0.9"/>
+  </g>
 </defs>"""
 
 
