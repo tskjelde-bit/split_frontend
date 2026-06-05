@@ -4,6 +4,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 import brand
+import build_pages
 import fixtures
 
 # 200dpi-render av 1:100-tegning: 1 px = 1.27 cm virkelig -> 1 cm = 0.7874 px
@@ -14,6 +15,9 @@ def main():
     uid = sys.argv[1]
     crop = brand.UNDERLAG / f"{uid}-crop.png"
     plan = brand.RENTEGNING / f"{uid}-plan.svg"
+    vb, inner = build_pages.load_fragment(plan)
+    w = vb[2] * PNG_PX_PER_CM
+    h = vb[3] * PNG_PX_PER_CM
     html = f"""<!DOCTYPE html><html><head><style>
 body {{ margin: 0; background: #888; }}
 .stack {{ position: relative; display: inline-block; }}
@@ -21,11 +25,15 @@ body {{ margin: 0; background: #888; }}
 .stack svg {{ position: absolute; left: 0; top: 0; opacity: 0.55; }}
 </style></head><body><div class="stack">
 <img src="file://{crop}">
-<svg xmlns="http://www.w3.org/2000/svg" style="transform-origin: 0 0;">
+<svg xmlns="http://www.w3.org/2000/svg" width="{w:.0f}" height="{h:.0f}"
+     viewBox="0 0 {vb[2]:.0f} {vb[3]:.0f}" style="left:OFFXpx; top:OFFYpx;">
 {fixtures.DEFS}
-<g transform="scale({PNG_PX_PER_CM:.4f})">{plan.read_text()}</g>
+{inner}
 </svg>
 </div></body></html>"""
+    # OFFX/OFFY justeres manuelt ved behov for å treffe enhetens posisjon i croppen
+    html = html.replace("OFFX", sys.argv[2] if len(sys.argv) > 2 else "0")
+    html = html.replace("OFFY", sys.argv[3] if len(sys.argv) > 3 else "0")
     brand.QA.mkdir(exist_ok=True)
     out = brand.QA / f"{uid}-overlay.html"
     out.write_text(html)

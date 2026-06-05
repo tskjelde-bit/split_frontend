@@ -1,18 +1,166 @@
 {
-  "H0101": {"floor": 1, "bra": 17.8, "type": null, "rooms": [], "hems": null, "north_deg": null, "crop_px": null},
-  "H0102": {"floor": 1, "bra": 20.6, "type": null, "rooms": [], "hems": null, "north_deg": null, "crop_px": null},
-  "H0103": {"floor": 1, "bra": 26.5, "type": null, "rooms": [], "hems": null, "north_deg": null, "crop_px": null},
-  "H0104": {"floor": 1, "bra": 32.9, "type": null, "rooms": [], "hems": null, "north_deg": null, "crop_px": null},
-  "H0105": {"floor": 1, "bra": 30.0, "type": null, "rooms": [], "hems": null, "north_deg": null, "crop_px": null},
-  "H0201": {"floor": 2, "bra": 18.5, "type": null, "rooms": [], "hems": null, "north_deg": null, "crop_px": null},
-  "H0202": {"floor": 2, "bra": 19.3, "type": null, "rooms": [], "hems": null, "north_deg": null, "crop_px": null},
-  "H0203": {"floor": 2, "bra": 26.8, "type": null, "rooms": [], "hems": null, "north_deg": null, "crop_px": null},
-  "H0204": {"floor": 2, "bra": 31.8, "type": null, "rooms": [], "hems": null, "north_deg": null, "crop_px": null},
-  "H0205": {"floor": 2, "bra": 30.2, "type": null, "rooms": [], "hems": null, "north_deg": null, "crop_px": null},
-  "H0301": {"floor": 3, "bra": 16.4, "type": null, "rooms": [], "hems": null, "north_deg": null, "crop_px": null},
-  "H0302": {"floor": 3, "bra": 22.0, "type": null, "rooms": [], "hems": null, "north_deg": null, "crop_px": null},
-  "H0303": {"floor": 3, "bra": 27.5, "type": null, "rooms": [], "hems": null, "north_deg": null, "crop_px": null},
-  "H0304": {"floor": 3, "bra": 24.2, "type": null, "rooms": [], "hems": null, "north_deg": null, "crop_px": null},
-  "H0305": {"floor": 3, "bra": 22.2, "type": null, "rooms": [], "hems": null, "north_deg": null, "crop_px": null},
-  "H0306": {"floor": 3, "bra": 22.2, "type": null, "rooms": [], "hems": null, "north_deg": null, "crop_px": null}
+  "H0101": {
+    "floor": 1,
+    "bra": 17.8,
+    "type": "1-roms",
+    "rooms": [
+      {
+        "name": "Stue/sov",
+        "area": 10.9
+      },
+      {
+        "name": "Bad",
+        "area": 3.4
+      },
+      {
+        "name": "Gang",
+        "area": 2.9
+      }
+    ],
+    "hems": {
+      "area_ca": 3.5
+    },
+    "north_deg": -45,
+    "crop_px": [
+      1600,
+      1290,
+      430,
+      530
+    ]
+  },
+  "H0102": {
+    "floor": 1,
+    "bra": 20.6,
+    "type": null,
+    "rooms": [],
+    "hems": null,
+    "north_deg": -45,
+    "crop_px": null
+  },
+  "H0103": {
+    "floor": 1,
+    "bra": 26.5,
+    "type": null,
+    "rooms": [],
+    "hems": null,
+    "north_deg": -45,
+    "crop_px": null
+  },
+  "H0104": {
+    "floor": 1,
+    "bra": 32.9,
+    "type": null,
+    "rooms": [],
+    "hems": null,
+    "north_deg": -45,
+    "crop_px": null
+  },
+  "H0105": {
+    "floor": 1,
+    "bra": 30.0,
+    "type": null,
+    "rooms": [],
+    "hems": null,
+    "north_deg": -45,
+    "crop_px": null
+  },
+  "H0201": {
+    "floor": 2,
+    "bra": 18.5,
+    "type": null,
+    "rooms": [],
+    "hems": null,
+    "north_deg": -45,
+    "crop_px": null
+  },
+  "H0202": {
+    "floor": 2,
+    "bra": 19.3,
+    "type": null,
+    "rooms": [],
+    "hems": null,
+    "north_deg": -45,
+    "crop_px": null
+  },
+  "H0203": {
+    "floor": 2,
+    "bra": 26.8,
+    "type": null,
+    "rooms": [],
+    "hems": null,
+    "north_deg": -45,
+    "crop_px": null
+  },
+  "H0204": {
+    "floor": 2,
+    "bra": 31.8,
+    "type": null,
+    "rooms": [],
+    "hems": null,
+    "north_deg": -45,
+    "crop_px": null
+  },
+  "H0205": {
+    "floor": 2,
+    "bra": 30.2,
+    "type": null,
+    "rooms": [],
+    "hems": null,
+    "north_deg": -45,
+    "crop_px": null
+  },
+  "H0301": {
+    "floor": 3,
+    "bra": 16.4,
+    "type": null,
+    "rooms": [],
+    "hems": null,
+    "north_deg": -45,
+    "crop_px": null
+  },
+  "H0302": {
+    "floor": 3,
+    "bra": 22.0,
+    "type": null,
+    "rooms": [],
+    "hems": null,
+    "north_deg": -45,
+    "crop_px": null
+  },
+  "H0303": {
+    "floor": 3,
+    "bra": 27.5,
+    "type": null,
+    "rooms": [],
+    "hems": null,
+    "north_deg": -45,
+    "crop_px": null
+  },
+  "H0304": {
+    "floor": 3,
+    "bra": 24.2,
+    "type": null,
+    "rooms": [],
+    "hems": null,
+    "north_deg": -45,
+    "crop_px": null
+  },
+  "H0305": {
+    "floor": 3,
+    "bra": 22.2,
+    "type": null,
+    "rooms": [],
+    "hems": null,
+    "north_deg": -45,
+    "crop_px": null
+  },
+  "H0306": {
+    "floor": 3,
+    "bra": 22.2,
+    "type": null,
+    "rooms": [],
+    "hems": null,
+    "north_deg": -45,
+    "crop_px": null
+  }
 }
