@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 64 94">
+  <path d="M 6 28 L 30 8 L 54 28 L 54 84 L 6 84 Z"
+        fill="none" stroke="#B4AE9F" stroke-width="1.5"/>
+  <rect id="floor-3" x="6" y="28" width="48" height="14" fill="none"/>
+  <rect id="floor-2" x="6" y="42" width="48" height="14" fill="none"/>
+  <rect id="floor-1" x="6" y="56" width="48" height="14" fill="none"/>
+  <rect id="floor-u" x="6" y="70" width="48" height="14" fill="none"/>
+  <line x1="6" y1="42" x2="54" y2="42" stroke="#B4AE9F" stroke-width="0.8"/>
+  <line x1="6" y1="56" x2="54" y2="56" stroke="#B4AE9F" stroke-width="0.8"/>
+  <line x1="6" y1="70" x2="54" y2="70" stroke="#B4AE9F" stroke-width="0.8"/>
+</svg>

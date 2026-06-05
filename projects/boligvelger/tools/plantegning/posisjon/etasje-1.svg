@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-4 -4 108 128">
+  <path d="M 0 0 L 68 0 L 68 53 L 100 53 L 100 120 L 0 120 Z"
+        fill="none" stroke="#B4AE9F" stroke-width="1.5"/>
+  <path id="H0105" d="M 0 2 L 45 2 L 45 40 L 0 40 Z" fill="none"/>
+  <path id="H0104" d="M 0 40 L 45 40 L 45 75 L 0 75 Z" fill="none"/>
+  <path id="H0103" d="M 0 75 L 32 75 L 32 120 L 0 120 Z" fill="none"/>
+  <path id="H0102" d="M 32 75 L 55 75 L 55 120 L 32 120 Z" fill="none"/>
+  <path id="H0101" d="M 55 75 L 88 75 L 88 120 L 55 120 Z" fill="none"/>
+</svg>
