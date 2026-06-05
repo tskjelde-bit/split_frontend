@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 617 555">
+  <!-- H0303: Kjøkken (åpen) + Bad 3,4 + Gang 3,7 + Stue/sov 19,5. Alle mål i cm. Origo = ytre NV-hjørne.
+       L-formet enhet: øvre stripe (bad+gang) går lenger øst enn nedre (stue/sov). -->
+
+  <!-- Romflate (hele enheten, L-form) -->
+  <path d="M 3 0 L 611 0 L 611 206 L 500 206 L 500 542 L 3 542 Z" fill="#F4F1E8"/>
+
+  <!-- Bad-flate -->
+  <rect x="218" y="17" width="195" height="167" fill="#DCE2D6"/>
+
+  <!-- Flisraster bad (20x20) -->
+  <g stroke="#1A1A18" stroke-width="0.35" opacity="0.5">
+    <line x1="238" y1="17" x2="238" y2="184"/><line x1="258" y1="17" x2="258" y2="184"/>
+    <line x1="278" y1="17" x2="278" y2="184"/><line x1="298" y1="17" x2="298" y2="184"/>
+    <line x1="318" y1="17" x2="318" y2="184"/><line x1="338" y1="17" x2="338" y2="184"/>
+    <line x1="358" y1="17" x2="358" y2="184"/><line x1="378" y1="17" x2="378" y2="184"/>
+    <line x1="398" y1="17" x2="398" y2="184"/>
+    <line x1="218" y1="37" x2="413" y2="37"/><line x1="218" y1="57" x2="413" y2="57"/>
+    <line x1="218" y1="77" x2="413" y2="77"/><line x1="218" y1="97" x2="413" y2="97"/>
+    <line x1="218" y1="117" x2="413" y2="117"/><line x1="218" y1="137" x2="413" y2="137"/>
+    <line x1="218" y1="157" x2="413" y2="157"/><line x1="218" y1="177" x2="413" y2="177"/>
+  </g>
+
+  <!-- Hems-avgrensning (stiplet) — over bad + gang/østre del, diagonal grense mot stue -->
+  <path d="M 218 17 L 611 17 L 611 206 L 500 206 L 218 184 Z" fill="none"
+        stroke="#1A1A18" stroke-width="1.2" stroke-dasharray="6 4"/>
+
+  <!-- Innervegger -->
+  <line x1="218" y1="10" x2="218" y2="206" stroke="#1A1A18" stroke-width="12"/>    <!-- bad vestvegg / kjøkkenskille -->
+  <line x1="413" y1="17" x2="413" y2="94" stroke="#1A1A18" stroke-width="12"/>     <!-- bad/gang øvre -->
+  <line x1="413" y1="145" x2="413" y2="184" stroke="#1A1A18" stroke-width="12"/>   <!-- bad/gang nedre (åpning y94-145) -->
+  <line x1="212" y1="184" x2="419" y2="184" stroke="#1A1A18" stroke-width="12"/>   <!-- bad sørvegg / gang-stue skille -->
+
+  <!-- Dør bad->gang (i bad østvegg, åpning y94..145, hengslet topp, slår inn i gang) -->
+  <line x1="413" y1="94" x2="413" y2="145" stroke="#1A1A18" stroke-width="1"/>
+  <path d="M 413 145 A 51 51 0 0 0 464 94" fill="none" stroke="#1A1A18" stroke-width="0.7"/>
+
+  <!-- Entredør (i nordvegg av gang, åpning x512..584, hengslet øst, slår inn) -->
+  <line x1="584" y1="0" x2="512" y2="0" stroke="#1A1A18" stroke-width="1"/>
+  <path d="M 512 0 A 72 72 0 0 0 584 72" fill="none" stroke="#1A1A18" stroke-width="0.7"/>
+
+  <!-- Stige til hems (på bad vestvegg, sør for WC) -->
+  <g stroke="#1A1A18" stroke-width="0.9" fill="none">
+    <rect x="218" y="131" width="12" height="55"/>
+    <line x1="218" y1="146" x2="230" y2="146"/><line x1="218" y1="161" x2="230" y2="161"/>
+    <line x1="218" y1="176" x2="230" y2="176"/>
+  </g>
+
+  <!-- Bad-innredning -->
+  <use href="#wc" x="225" y="22"/>
+  <use href="#servant" x="320" y="19"/>
+  <use href="#dusj" x="305" y="90"/>
+
+  <!-- Kjøkken: kompakt benk i NV-hjørne langs nordvegg (åpent mot stue) -->
+  <use href="#komfyr" x="6" y="13"/>
+  <use href="#kvask" x="68" y="13"/>
+  <rect x="130" y="13" width="60" height="50" fill="none" stroke="#1A1A18" stroke-width="1" stroke-dasharray="4 3"/> <!-- overskap (stiplet) -->
+
+  <!-- Møblering -->
+  <use href="#sofa" x="500" y="216" transform="rotate(90 500 216)"/>  <!-- sofa mot østvegg -->
+  <use href="#bord2" x="30" y="370"/>                                <!-- spisebord ved vestvegg -->
+
+  <!-- Yttervegger / naboskiller -->
+  <line x1="6" y1="0" x2="6" y2="542" stroke="#1A1A18" stroke-width="22"/>       <!-- vest (Dybwads) -->
+  <line x1="0" y1="5" x2="617" y2="5" stroke="#1A1A18" stroke-width="14"/>       <!-- nord (mot H0304) -->
+  <line x1="605" y1="0" x2="605" y2="206" stroke="#1A1A18" stroke-width="14"/>   <!-- øst øvre (gang/H0302) -->
+  <line x1="611" y1="206" x2="494" y2="206" stroke="#1A1A18" stroke-width="14"/> <!-- trinn horisontalt -->
+  <line x1="500" y1="206" x2="500" y2="542" stroke="#1A1A18" stroke-width="14"/> <!-- øst nedre (stue/H0302) -->
+  <line x1="0" y1="542" x2="500" y2="542" stroke="#1A1A18" stroke-width="22"/>   <!-- sør (Ole Fladagers) -->
+
+  <!-- Vinduer vestfasade -->
+  <line x1="6" y1="132" x2="6" y2="174" stroke="#FBFAF6" stroke-width="24"/>
+  <line x1="14" y1="132" x2="14" y2="174" stroke="#1A1A18" stroke-width="2"/>
+  <line x1="-2" y1="132" x2="-2" y2="174" stroke="#1A1A18" stroke-width="2"/>
+  <line x1="6" y1="217" x2="6" y2="310" stroke="#FBFAF6" stroke-width="24"/>
+  <line x1="14" y1="217" x2="14" y2="310" stroke="#1A1A18" stroke-width="2"/>
+  <line x1="-2" y1="217" x2="-2" y2="310" stroke="#1A1A18" stroke-width="2"/>
+  <line x1="6" y1="348" x2="6" y2="399" stroke="#FBFAF6" stroke-width="24"/>
+  <line x1="14" y1="348" x2="14" y2="399" stroke="#1A1A18" stroke-width="2"/>
+  <line x1="-2" y1="348" x2="-2" y2="399" stroke="#1A1A18" stroke-width="2"/>
+
+  <!-- Rom-labels -->
+  <g font-family="Helvetica" fill="#1A1A18">
+    <text x="315" y="95" font-size="13" text-anchor="middle">Bad</text>
+    <text x="315" y="112" font-size="10" text-anchor="middle" opacity="0.65">3,4 m²</text>
+    <text x="500" y="105" font-size="13" text-anchor="middle">Gang</text>
+    <text x="500" y="122" font-size="10" text-anchor="middle" opacity="0.65">3,7 m²</text>
+    <text x="120" y="42" font-size="11" text-anchor="middle">Kjøkken</text>
+    <text x="230" y="370" font-size="13" text-anchor="middle">Stue/sov</text>
+    <text x="230" y="387" font-size="10" text-anchor="middle" opacity="0.65">19,5 m²</text>
+  </g>
+</svg>

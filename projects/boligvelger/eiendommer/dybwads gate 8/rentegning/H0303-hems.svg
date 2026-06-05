@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 215">
+  <!-- H0303 hems: over bad + gang/østre del, ca 5,5 m². Mål i cm, samme orientering som hovedplan.
+       Origo forskjøvet til hems-feltets NV-hjørne (bad vestvegg). -->
+
+  <!-- Hems-flate (L-form, følger dashed hems-avgrensning i hovedplan) -->
+  <path d="M 8 8 L 401 8 L 401 197 L 290 197 L 8 175 Z" fill="#E5D3BC"/>
+  <path d="M 8 8 L 401 8 L 401 197 L 290 197 L 8 175 Z" fill="none"
+        stroke="#1A1A18" stroke-width="8"/>
+
+  <!-- Skråtak-grense / mønelinje (lavt under skråtak markeres) -->
+  <line x1="8" y1="120" x2="401" y2="55" stroke="#1A1A18" stroke-width="1" stroke-dasharray="5 4"/>
+
+  <!-- Luke/åpning mot stige (SV, mot bad vestvegg) -->
+  <rect x="12" y="118" width="55" height="50" fill="none" stroke="#1A1A18"
+        stroke-width="1" stroke-dasharray="4 3"/>
+
+  <g font-family="Helvetica" fill="#1A1A18">
+    <text x="205" y="100" font-size="13" text-anchor="middle">Hems</text>
+    <text x="205" y="117" font-size="10" text-anchor="middle" opacity="0.65">ca 5,5 m²</text>
+  </g>
+</svg>
