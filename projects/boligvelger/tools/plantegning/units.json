@@ -31,136 +31,444 @@
   "H0102": {
     "floor": 1,
     "bra": 20.6,
-    "type": null,
-    "rooms": [],
-    "hems": null,
+    "type": "1-roms",
+    "rooms": [
+      {
+        "name": "Bad",
+        "area": 3.2
+      },
+      {
+        "name": "Gang",
+        "area": 2.8
+      },
+      {
+        "name": "Stue/sov",
+        "area": 13.9
+      }
+    ],
+    "hems": {
+      "area_ca": 5.5
+    },
     "north_deg": -45,
-    "crop_px": null
+    "crop_px": [
+      1252,
+      1300,
+      440,
+      540
+    ]
   },
   "H0103": {
     "floor": 1,
     "bra": 26.5,
-    "type": null,
-    "rooms": [],
-    "hems": null,
+    "type": "1-roms",
+    "rooms": [
+      {
+        "name": "Stue/sov",
+        "area": 18.5
+      },
+      {
+        "name": "Bad",
+        "area": 3.4
+      },
+      {
+        "name": "Gang",
+        "area": 3.5
+      }
+    ],
+    "hems": {
+      "area_ca": 3.8
+    },
     "north_deg": -45,
-    "crop_px": null
+    "crop_px": [
+      777,
+      1259,
+      690,
+      620
+    ]
   },
   "H0104": {
     "floor": 1,
     "bra": 32.9,
-    "type": null,
-    "rooms": [],
-    "hems": null,
+    "type": "1-roms",
+    "rooms": [
+      {
+        "name": "Stue/sov",
+        "area": 20.7
+      },
+      {
+        "name": "Gang",
+        "area": 4.1
+      },
+      {
+        "name": "Bad",
+        "area": 6.9
+      }
+    ],
+    "hems": {
+      "area_ca": 4.9
+    },
     "north_deg": -45,
-    "crop_px": null
+    "crop_px": [
+      810,
+      850,
+      720,
+      550
+    ]
   },
   "H0105": {
     "floor": 1,
     "bra": 30.0,
-    "type": null,
-    "rooms": [],
-    "hems": null,
+    "type": "1-roms",
+    "rooms": [
+      {
+        "name": "Stue/sov",
+        "area": 19.8
+      },
+      {
+        "name": "Gang",
+        "area": 5.1
+      },
+      {
+        "name": "BK",
+        "area": 2.3
+      },
+      {
+        "name": "Bad",
+        "area": 4.0
+      }
+    ],
+    "hems": {
+      "area_ca": 6.0
+    },
     "north_deg": -45,
-    "crop_px": null
+    "crop_px": [
+      783,
+      410,
+      800,
+      800
+    ]
   },
   "H0201": {
     "floor": 2,
     "bra": 18.5,
-    "type": null,
-    "rooms": [],
-    "hems": null,
+    "type": "1-roms",
+    "rooms": [
+      {
+        "name": "Gang",
+        "area": 3.4
+      },
+      {
+        "name": "Bad",
+        "area": 3.7
+      },
+      {
+        "name": "Stue/sov",
+        "area": 10.8
+      }
+    ],
+    "hems": {
+      "area_ca": 3.7
+    },
     "north_deg": -45,
-    "crop_px": null
+    "crop_px": [
+      1530,
+      1200,
+      560,
+      650
+    ]
   },
   "H0202": {
     "floor": 2,
     "bra": 19.3,
-    "type": null,
-    "rooms": [],
-    "hems": null,
+    "type": "1-roms",
+    "rooms": [
+      {
+        "name": "Bad",
+        "area": 3.0
+      },
+      {
+        "name": "Gang",
+        "area": 2.8
+      },
+      {
+        "name": "Stue/sov",
+        "area": 12.9
+      }
+    ],
+    "hems": {
+      "area_ca": 4.4
+    },
     "north_deg": -45,
-    "crop_px": null
+    "crop_px": [
+      1180,
+      1240,
+      480,
+      620
+    ]
   },
   "H0203": {
     "floor": 2,
     "bra": 26.8,
-    "type": null,
-    "rooms": [],
-    "hems": null,
+    "type": "1-roms",
+    "rooms": [
+      {
+        "name": "Stue/sov",
+        "area": 18.9
+      },
+      {
+        "name": "Bad",
+        "area": 3.8
+      },
+      {
+        "name": "Gang",
+        "area": 3.5
+      }
+    ],
+    "hems": {
+      "area_ca": 3.4
+    },
     "north_deg": -45,
-    "crop_px": null
+    "crop_px": [
+      750,
+      1180,
+      700,
+      650
+    ]
   },
   "H0204": {
     "floor": 2,
     "bra": 31.8,
-    "type": null,
-    "rooms": [],
-    "hems": null,
+    "type": "1-roms",
+    "rooms": [
+      {
+        "name": "Stue/sov",
+        "area": 20.1
+      },
+      {
+        "name": "Gang",
+        "area": 3.9
+      },
+      {
+        "name": "Bad",
+        "area": 6.7
+      }
+    ],
+    "hems": {
+      "area_ca": 6.0
+    },
     "north_deg": -45,
-    "crop_px": null
+    "crop_px": [
+      715,
+      808,
+      800,
+      650
+    ]
   },
   "H0205": {
     "floor": 2,
     "bra": 30.2,
-    "type": null,
-    "rooms": [],
-    "hems": null,
+    "type": "1-roms",
+    "rooms": [
+      {
+        "name": "Stue/sov",
+        "area": 19.8
+      },
+      {
+        "name": "Gang",
+        "area": 5.3
+      },
+      {
+        "name": "Bad",
+        "area": 4.2
+      },
+      {
+        "name": "BK",
+        "area": 2.3
+      }
+    ],
+    "hems": {
+      "area_ca": 5.8
+    },
     "north_deg": -45,
-    "crop_px": null
+    "crop_px": [
+      760,
+      360,
+      720,
+      780
+    ]
   },
   "H0301": {
     "floor": 3,
     "bra": 16.4,
-    "type": null,
-    "rooms": [],
-    "hems": null,
+    "type": "1-roms",
+    "rooms": [
+      {
+        "name": "Gang",
+        "area": 3.5
+      },
+      {
+        "name": "Bad",
+        "area": 3.3
+      },
+      {
+        "name": "Stue/sov",
+        "area": 9.1
+      }
+    ],
+    "hems": {
+      "area_ca": 4.0
+    },
     "north_deg": -45,
-    "crop_px": null
+    "crop_px": [
+      1607,
+      1295,
+      460,
+      560
+    ]
   },
   "H0302": {
     "floor": 3,
     "bra": 22.0,
-    "type": null,
-    "rooms": [],
-    "hems": null,
+    "type": "1-roms",
+    "rooms": [
+      {
+        "name": "Bad",
+        "area": 3.0
+      },
+      {
+        "name": "Gang",
+        "area": 2.7
+      },
+      {
+        "name": "Stue/sov",
+        "area": 15.6
+      }
+    ],
+    "hems": {
+      "area_ca": 3.5
+    },
     "north_deg": -45,
-    "crop_px": null
+    "crop_px": [
+      1261,
+      1261,
+      480,
+      600
+    ]
   },
   "H0303": {
     "floor": 3,
     "bra": 27.5,
-    "type": null,
-    "rooms": [],
-    "hems": null,
+    "type": "1-roms",
+    "rooms": [
+      {
+        "name": "Bad",
+        "area": 3.4
+      },
+      {
+        "name": "Gang",
+        "area": 3.7
+      },
+      {
+        "name": "Stue/sov",
+        "area": 19.5
+      }
+    ],
+    "hems": {
+      "area_ca": 5.5
+    },
     "north_deg": -45,
-    "crop_px": null
+    "crop_px": [
+      760,
+      1180,
+      650,
+      720
+    ]
   },
   "H0304": {
     "floor": 3,
     "bra": 24.2,
-    "type": null,
-    "rooms": [],
-    "hems": null,
+    "type": "1-roms",
+    "rooms": [
+      {
+        "name": "Stue/sov",
+        "area": 16.8
+      },
+      {
+        "name": "Gang",
+        "area": 2.9
+      },
+      {
+        "name": "Bad",
+        "area": 4.1
+      }
+    ],
+    "hems": {
+      "area_ca": 5.5
+    },
     "north_deg": -45,
-    "crop_px": null
+    "crop_px": [
+      800,
+      900,
+      650,
+      500
+    ]
   },
   "H0305": {
     "floor": 3,
     "bra": 22.2,
-    "type": null,
-    "rooms": [],
-    "hems": null,
+    "type": "1-roms",
+    "rooms": [
+      {
+        "name": "Stue/sov",
+        "area": 16.3
+      },
+      {
+        "name": "Gang",
+        "area": 1.7
+      },
+      {
+        "name": "Bad",
+        "area": 3.5
+      }
+    ],
+    "hems": {
+      "area_ca": 7.0
+    },
     "north_deg": -45,
-    "crop_px": null
+    "crop_px": [
+      751,
+      695,
+      680,
+      470
+    ]
   },
   "H0306": {
     "floor": 3,
     "bra": 22.2,
-    "type": null,
-    "rooms": [],
-    "hems": null,
+    "type": "1-roms",
+    "rooms": [
+      {
+        "name": "Stue/sov",
+        "area": 16.8
+      },
+      {
+        "name": "Bad",
+        "area": 2.3
+      },
+      {
+        "name": "Gang",
+        "area": 2.3
+      }
+    ],
+    "hems": {
+      "area_ca": 3.0
+    },
     "north_deg": -45,
-    "crop_px": null
+    "crop_px": [
+      750,
+      425,
+      640,
+      410
+    ]
   }
 }
