@@ -18,7 +18,9 @@ const VIEWS: Record<string, View> = {
 
 // Screen-right axis for the 3/4 view; sliding the target along it recentres the
 // silhouette in portrait without changing the viewing angle.
-const SHIFT: [number, number, number] = [2.5, 0, -3];
+// SHIFT[0]/[2] reduced slightly so the right-side roof overhang has ≥15 px clearance
+// at 390×844; the larger portrait-boost coefficient (1.65) also helps.
+const SHIFT: [number, number, number] = [2.0, 0, -2.5];
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 
@@ -28,7 +30,9 @@ function portraitK(aspect: number): number {
 }
 
 function distanceFor(view: View, aspect: number): number {
-  const boost = aspect < 1 ? 1.5 / Math.max(aspect, 0.35) : 1;
+  // Increased portrait boost coefficient from 1.5 to 1.65 to ensure ≥15 px
+  // clearance on all sides at 390×844 (roof-overhang gate fix).
+  const boost = aspect < 1 ? 1.65 / Math.max(aspect, 0.35) : 1;
   return view.dist * boost;
 }
 
@@ -54,6 +58,11 @@ export function CameraRig() {
   const size = useThree((s) => s.size);
   const aspect = size.width / size.height;
 
+  // Keep a ref to the current aspect so the mode-change effect reads the live
+  // value instead of a stale closure capture.
+  const aspectRef = useRef(aspect);
+  aspectRef.current = aspect;
+
   // Slow auto-rotate while on the landing view.
   useFrame((_, dt) => {
     if (useVelger.getState().mode === 'landing' && ref.current) {
@@ -62,9 +71,11 @@ export function CameraRig() {
   });
 
   // Re-frame on mode change (smooth transition).
+  // Read aspectRef.current so we always use the live viewport size, not a
+  // stale closure value from when this effect was registered.
   useEffect(() => {
-    if (ref.current) lookAt(ref.current, VIEWS[mode], aspect, true);
-  }, [mode]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (ref.current) lookAt(ref.current, VIEWS[mode], aspectRef.current, true);
+  }, [mode]);
 
   // Re-frame on aspect/viewport change (snap, no transition) so portrait fits.
   useEffect(() => {
