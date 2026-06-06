@@ -1,0 +1,5 @@
+* { box-sizing: border-box; margin: 0; }
+html, body, #root { height: 100%; }
+body { background: #FBFAF6; color: #1E3D2B; font-family: Georgia, serif; }
+.hero { position: relative; height: 100vh; height: 100dvh; }
+.hero canvas { touch-action: none; }
