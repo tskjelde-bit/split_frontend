@@ -11,8 +11,20 @@ FLOORS = Path(__file__).resolve().parent / "floors"
 QA = Path(__file__).resolve().parent / "qa"
 QA.mkdir(exist_ok=True)
 
-# etasje-u geometry is stored in floor crop-px space (transformed from the
-# basement render), so its overlay is drawn on the floor-1 PNG for reference.
+# Basement ("u") QA underlay mapping — intentional, not a bug:
+#
+# The basement was drawn at a different pixel scale than the floor plans
+# (etasje-u-plan-1.png is 2481x1754, while the floor PNGs are 3308x2339), so
+# the raw basement render does not share the floors' crop-px coordinate
+# system. To put the basement in the same 3D model, etasje-u.json geometry was
+# affine-transformed INTO floor crop-px space (see the "note" field in
+# floors/etasje-u.json). Because of that, the only meaningful visual QA for the
+# basement is to draw its polygons on the FLOOR-1 underlay: the basement units
+# H0101-U and H0103-U are the lower halves of the floor-1 duplexes
+# (H0101 / H0103), so overlaying them on etasje-1-plan-1.png shows whether the
+# duplex basement parts line up under their floor-1 counterparts. Drawing them
+# on the (differently-scaled, untransformed) basement PNG would be the wrong
+# check. Hence "u" maps to the floor-1 PNG below on purpose.
 PNG_FOR = {
     "u": "etasje-1-plan-1.png",
     "1": "etasje-1-plan-1.png",
