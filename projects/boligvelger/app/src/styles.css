@@ -48,3 +48,13 @@ body { background: #FBFAF6; color: #1E3D2B; font-family: Georgia, serif; }
     border-top: 1px solid #d8d4c8; border-radius: 16px 16px 0 0; }
   .chips { bottom: 2vh; flex-wrap: wrap; justify-content: center; padding: 0 1rem; }
 }
+
+.info { padding: 14vh 8vw; max-width: 720px; margin: 0 auto; text-align: center; }
+.info h2 { font-family: 'Sfizia', serif; font-weight: 400; font-size: 1.8rem; letter-spacing: .1em; margin-bottom: 1.2rem; }
+.info p { line-height: 1.7; opacity: .85; }
+.info.alt { background: #f3f1ea; max-width: none; }
+.info.alt p { max-width: 720px; margin: 0 auto; }
+.fallback { padding: 8vh 6vw; max-width: 880px; margin: 0 auto; }
+.fallback h2 { margin: 2.5rem 0 1rem; font-family: 'Sfizia', serif; font-weight: 400; }
+.f-unit { display: grid; grid-template-columns: 180px 1fr; gap: 1.2rem; padding: 1rem 0; border-bottom: 1px solid #e5e2d6; align-items: center; }
+.f-unit img { width: 100%; }
