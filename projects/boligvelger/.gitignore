@@ -2,3 +2,6 @@
 .superpowers/
 eiendommer/*/underlag/
 eiendommer/*/qa/
+
+# Generated QA overlay artifacts (reproducible via qa_overlay.py)
+tools/velger-data/qa/
