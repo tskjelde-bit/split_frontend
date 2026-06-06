@@ -2,7 +2,7 @@
 """Fjern ett objekt fra et bilde med Nano Banana Pro (gemini-3-pro-image).
 
 Bruk:
-    nb_remove.py <input.png> <output.png> "<objektbeskrivelse, engelsk>"
+    nb_remove.py <input.png> <output.png> "<objektbeskrivelse, engelsk>" [--boxfill] [--accept-region=maske.png]
 
 - Laster opp input via Files API (4K PNG er for stor for inline)
 - Prompt med låst disclaimer (ikke rør noe annet)
@@ -108,7 +108,8 @@ def generate(file_uri: str, prompt: str, key: str) -> bytes:
     raise SystemExit(f"ingen bildedel i svaret: {json.dumps(resp)[:400]}")
 
 
-def contain(inp: Path, outp: Path, boxfill: bool = False) -> None:
+def contain(inp: Path, outp: Path, boxfill: bool = False,
+            region_path: str | None = None) -> None:
     """Behold output kun i ekte endringsklynger; input-piksler ellers.
 
     Dreper subpiksel-drift (lysekronekrystall, hyllekanter) slik at drift
@@ -145,6 +146,12 @@ def contain(inp: Path, outp: Path, boxfill: bool = False) -> None:
                 keep[sl] |= comp
     keep = ndimage.binary_fill_holes(keep)  # ingen ghost-hull inne i objektet
     mask = ndimage.binary_dilation(keep, iterations=30)  # ta med myke kanter/skygge
+    if region_path:
+        region = np.asarray(
+            Image.open(region_path).convert("L").resize(
+                (a.shape[1], a.shape[0]), Image.NEAREST)
+        ) > 127
+        mask &= region
     out = np.where(mask[..., None], b, a).astype(np.uint8)
     Image.fromarray(out).save(outp)
     print(f"contain: beholdt {mask.mean() * 100:.1f}% fra modellen, resten fra input")
@@ -181,7 +188,11 @@ def qa(inp: Path, outp: Path) -> None:
 
 
 def main() -> None:
-    args = [a for a in sys.argv[1:] if a != "--boxfill"]
+    region = None
+    for arg in sys.argv[1:]:
+        if arg.startswith("--accept-region="):
+            region = arg.split("=", 1)[1]
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
     boxfill = "--boxfill" in sys.argv
     inp, outp, obj = Path(args[0]), Path(args[1]), args[2]
     key = api_key()
@@ -198,7 +209,7 @@ def main() -> None:
         print("DIMENSJONSAVVIK — stopper før contain")
         sys.exit(1)
     Path(str(outp) + ".raw.png").write_bytes(png)  # før contain, for feilsøk
-    contain(inp, outp, boxfill=boxfill)
+    contain(inp, outp, boxfill=boxfill, region_path=region)
     qa(inp, outp)
 
 
