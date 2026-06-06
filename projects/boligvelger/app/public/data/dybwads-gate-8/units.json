@@ -1,0 +1,458 @@
+{
+ "H0101": {
+  "id": "H0101",
+  "navn": "Leilighet 1",
+  "type": "1-roms",
+  "etasje": 1,
+  "duplex": true,
+  "braI": 15,
+  "braU": 30,
+  "braArkitekt": 17.8,
+  "hemsCa": 3.5,
+  "rom": [
+   {
+    "name": "Stue/sov",
+    "area": 10.9
+   },
+   {
+    "name": "Bad",
+    "area": 3.4
+   },
+   {
+    "name": "Gang",
+    "area": 2.9
+   }
+  ],
+  "pris": 5850000,
+  "kvmPris": 230000,
+  "kvmPrisU": 80000
+ },
+ "H0102": {
+  "id": "H0102",
+  "navn": "Leilighet 2",
+  "type": "1-roms",
+  "etasje": 1,
+  "duplex": false,
+  "braI": 20,
+  "braU": null,
+  "braArkitekt": 20.6,
+  "hemsCa": 5.5,
+  "rom": [
+   {
+    "name": "Bad",
+    "area": 3.2
+   },
+   {
+    "name": "Gang",
+    "area": 2.8
+   },
+   {
+    "name": "Stue/sov",
+    "area": 13.9
+   }
+  ],
+  "pris": 4800000,
+  "kvmPris": 240000,
+  "kvmPrisU": null
+ },
+ "H0103": {
+  "id": "H0103",
+  "navn": "Leilighet 3",
+  "type": "1-roms",
+  "etasje": 1,
+  "duplex": true,
+  "braI": 23,
+  "braU": 33,
+  "braArkitekt": 26.5,
+  "hemsCa": 3.8,
+  "rom": [
+   {
+    "name": "Stue/sov",
+    "area": 18.5
+   },
+   {
+    "name": "Bad",
+    "area": 3.4
+   },
+   {
+    "name": "Gang",
+    "area": 3.5
+   }
+  ],
+  "pris": 6780000,
+  "kvmPris": 180000,
+  "kvmPrisU": 80000
+ },
+ "H0104": {
+  "id": "H0104",
+  "navn": "Leilighet 4",
+  "type": "1-roms",
+  "etasje": 1,
+  "duplex": false,
+  "braI": 33,
+  "braU": null,
+  "braArkitekt": 32.9,
+  "hemsCa": 4.9,
+  "rom": [
+   {
+    "name": "Stue/sov",
+    "area": 20.7
+   },
+   {
+    "name": "Gang",
+    "area": 4.1
+   },
+   {
+    "name": "Bad",
+    "area": 6.9
+   }
+  ],
+  "pris": 5940000,
+  "kvmPris": 180000,
+  "kvmPrisU": null
+ },
+ "H0105": {
+  "id": "H0105",
+  "navn": "Leilighet 5",
+  "type": "1-roms",
+  "etasje": 1,
+  "duplex": false,
+  "braI": 30,
+  "braU": null,
+  "braArkitekt": 30.0,
+  "hemsCa": 6.0,
+  "rom": [
+   {
+    "name": "Stue/sov",
+    "area": 19.8
+   },
+   {
+    "name": "Gang",
+    "area": 5.1
+   },
+   {
+    "name": "BK",
+    "area": 2.3
+   },
+   {
+    "name": "Bad",
+    "area": 4.0
+   }
+  ],
+  "pris": 5700000,
+  "kvmPris": 190000,
+  "kvmPrisU": null
+ },
+ "H0201": {
+  "id": "H0201",
+  "navn": "Leilighet 6",
+  "type": "1-roms",
+  "etasje": 2,
+  "duplex": false,
+  "braI": 19,
+  "braU": null,
+  "braArkitekt": 18.5,
+  "hemsCa": 3.7,
+  "rom": [
+   {
+    "name": "Gang",
+    "area": 3.4
+   },
+   {
+    "name": "Bad",
+    "area": 3.7
+   },
+   {
+    "name": "Stue/sov",
+    "area": 10.8
+   }
+  ],
+  "pris": 4940000,
+  "kvmPris": 260000,
+  "kvmPrisU": null
+ },
+ "H0202": {
+  "id": "H0202",
+  "navn": "Leilighet 7",
+  "type": "1-roms",
+  "etasje": 2,
+  "duplex": false,
+  "braI": 19,
+  "braU": null,
+  "braArkitekt": 19.3,
+  "hemsCa": 4.4,
+  "rom": [
+   {
+    "name": "Bad",
+    "area": 3.0
+   },
+   {
+    "name": "Gang",
+    "area": 2.8
+   },
+   {
+    "name": "Stue/sov",
+    "area": 12.9
+   }
+  ],
+  "pris": 4940000,
+  "kvmPris": 260000,
+  "kvmPrisU": null
+ },
+ "H0203": {
+  "id": "H0203",
+  "navn": "Leilighet 8",
+  "type": "1-roms",
+  "etasje": 2,
+  "duplex": false,
+  "braI": 27,
+  "braU": null,
+  "braArkitekt": 26.8,
+  "hemsCa": 3.4,
+  "rom": [
+   {
+    "name": "Stue/sov",
+    "area": 18.9
+   },
+   {
+    "name": "Bad",
+    "area": 3.8
+   },
+   {
+    "name": "Gang",
+    "area": 3.5
+   }
+  ],
+  "pris": 5400000,
+  "kvmPris": 200000,
+  "kvmPrisU": null
+ },
+ "H0204": {
+  "id": "H0204",
+  "navn": "Leilighet 9",
+  "type": "1-roms",
+  "etasje": 2,
+  "duplex": false,
+  "braI": 32,
+  "braU": null,
+  "braArkitekt": 31.8,
+  "hemsCa": 6.0,
+  "rom": [
+   {
+    "name": "Stue/sov",
+    "area": 20.1
+   },
+   {
+    "name": "Gang",
+    "area": 3.9
+   },
+   {
+    "name": "Bad",
+    "area": 6.7
+   }
+  ],
+  "pris": 6400000,
+  "kvmPris": 200000,
+  "kvmPrisU": null
+ },
+ "H0205": {
+  "id": "H0205",
+  "navn": "Leilighet 10",
+  "type": "1-roms",
+  "etasje": 2,
+  "duplex": false,
+  "braI": 30,
+  "braU": null,
+  "braArkitekt": 30.2,
+  "hemsCa": 5.8,
+  "rom": [
+   {
+    "name": "Stue/sov",
+    "area": 19.8
+   },
+   {
+    "name": "Gang",
+    "area": 5.3
+   },
+   {
+    "name": "Bad",
+    "area": 4.2
+   },
+   {
+    "name": "BK",
+    "area": 2.3
+   }
+  ],
+  "pris": 6900000,
+  "kvmPris": 230000,
+  "kvmPrisU": null
+ },
+ "H0301": {
+  "id": "H0301",
+  "navn": "Leilighet 11",
+  "type": "1-roms",
+  "etasje": 3,
+  "duplex": false,
+  "braI": 16,
+  "braU": null,
+  "braArkitekt": 16.4,
+  "hemsCa": 4.0,
+  "rom": [
+   {
+    "name": "Gang",
+    "area": 3.5
+   },
+   {
+    "name": "Bad",
+    "area": 3.3
+   },
+   {
+    "name": "Stue/sov",
+    "area": 9.1
+   }
+  ],
+  "pris": 4240000,
+  "kvmPris": 265000,
+  "kvmPrisU": null
+ },
+ "H0302": {
+  "id": "H0302",
+  "navn": "Leilighet 12",
+  "type": "1-roms",
+  "etasje": 3,
+  "duplex": false,
+  "braI": 22,
+  "braU": null,
+  "braArkitekt": 22.0,
+  "hemsCa": 3.5,
+  "rom": [
+   {
+    "name": "Bad",
+    "area": 3.0
+   },
+   {
+    "name": "Gang",
+    "area": 2.7
+   },
+   {
+    "name": "Stue/sov",
+    "area": 15.6
+   }
+  ],
+  "pris": 5500000,
+  "kvmPris": 250000,
+  "kvmPrisU": null
+ },
+ "H0303": {
+  "id": "H0303",
+  "navn": "Leilighet 13",
+  "type": "1-roms",
+  "etasje": 3,
+  "duplex": false,
+  "braI": 28,
+  "braU": null,
+  "braArkitekt": 27.5,
+  "hemsCa": 5.5,
+  "rom": [
+   {
+    "name": "Bad",
+    "area": 3.4
+   },
+   {
+    "name": "Gang",
+    "area": 3.7
+   },
+   {
+    "name": "Stue/sov",
+    "area": 19.5
+   }
+  ],
+  "pris": 6440000,
+  "kvmPris": 230000,
+  "kvmPrisU": null
+ },
+ "H0304": {
+  "id": "H0304",
+  "navn": "Leilighet 14",
+  "type": "1-roms",
+  "etasje": 3,
+  "duplex": false,
+  "braI": 24,
+  "braU": null,
+  "braArkitekt": 24.2,
+  "hemsCa": 5.5,
+  "rom": [
+   {
+    "name": "Stue/sov",
+    "area": 16.8
+   },
+   {
+    "name": "Gang",
+    "area": 2.9
+   },
+   {
+    "name": "Bad",
+    "area": 4.1
+   }
+  ],
+  "pris": 6000000,
+  "kvmPris": 250000,
+  "kvmPrisU": null
+ },
+ "H0305": {
+  "id": "H0305",
+  "navn": "Leilighet 15",
+  "type": "1-roms",
+  "etasje": 3,
+  "duplex": false,
+  "braI": 22,
+  "braU": null,
+  "braArkitekt": 22.2,
+  "hemsCa": 7.0,
+  "rom": [
+   {
+    "name": "Stue/sov",
+    "area": 16.3
+   },
+   {
+    "name": "Gang",
+    "area": 1.7
+   },
+   {
+    "name": "Bad",
+    "area": 3.5
+   }
+  ],
+  "pris": 5500000,
+  "kvmPris": 250000,
+  "kvmPrisU": null
+ },
+ "H0306": {
+  "id": "H0306",
+  "navn": "Leilighet 16",
+  "type": "1-roms",
+  "etasje": 3,
+  "duplex": false,
+  "braI": 22,
+  "braU": null,
+  "braArkitekt": 22.2,
+  "hemsCa": 3.0,
+  "rom": [
+   {
+    "name": "Stue/sov",
+    "area": 16.8
+   },
+   {
+    "name": "Bad",
+    "area": 2.3
+   },
+   {
+    "name": "Gang",
+    "area": 2.3
+   }
+  ],
+  "pris": 5940000,
+  "kvmPris": 270000,
+  "kvmPrisU": null
+ }
+}
