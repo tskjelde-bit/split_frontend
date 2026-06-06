@@ -11,10 +11,25 @@ import type { BuildingGeo } from '../lib/types';
 // building's world-space AABB inside a padded sub-rectangle of the viewport —
 // no aspect-factor or lateral-shift heuristics. Target is the AABB centre,
 // which also keeps the building horizontally centred at every azimuth.
+//
+// Camera sits at the STREET/GABLE corner: world -x (SW street facade edge)
+// and world -z (SE gable end / Ole Fladagers gate). Direction vector points
+// from camera TO scene, so negative x and z components mean the camera is
+// positioned in the +x/+z quadrant — i.e. the +x/-z convention is flipped
+// here: direction (-1, *, -0.7) means camera is at +x, +z looking toward
+// -x, -z, which puts the street facade (world -x) and gable (world -z) both
+// facing the lens.
+//
+// World convention: x = px*scale (748..2030→street at low x), z = -(py*scale)
+// (375..1700→NW gable at high z, SE gable at low z). So to look at the SW
+// corner (low px=748, high py=1700 → world low x, low z) from the outside we
+// place the camera at world high-x, high-z and look toward low-x, low-z,
+// i.e. direction (-1, 0.5, -0.7) normalised. The azimuth split (~35° toward
+// gable) keeps the street facade dominant while giving depth.
 const DIR: Record<Mode, THREE.Vector3> = {
-  landing: new THREE.Vector3(1, 0.5, 1).normalize(),
-  orbit: new THREE.Vector3(1, 0.5, 1).normalize(),
-  exploded: new THREE.Vector3(1, 0.7, 1).normalize(),
+  landing:  new THREE.Vector3(-1,  0.5, -0.7).normalize(),
+  orbit:    new THREE.Vector3(-1,  0.5, -0.7).normalize(),
+  exploded: new THREE.Vector3(-1,  0.7, -0.7).normalize(),
 };
 
 // HUD safe areas, as fractions of the viewport. Reserve space for the title
@@ -55,10 +70,78 @@ function assembledBox(geo: BuildingGeo): THREE.Box3 {
     for (const c of f.common) addPoly(c, f.elevation, top);
     for (const u of f.units) addPoly(u.poly, f.elevation, top);
   }
-  // TODO(step-C/7): tighten this against the parametric saltak (ridge height,
-  // chimney tops, ark rise, eave overhang). For now approximate the roof AABB
-  // from the roof rect footprint extruded to ridge height (elevation + rise).
-  addPoly(geo.roof.rect, geo.roof.elevation, geo.roof.elevation + geo.roof.rise);
+  // Tightened saltak AABB: include chimney tops, ark/dormer rises, and the
+  // horizontal eave overhang so the camera framing never clips the roof.
+  const roofElev = geo.roof.elevation;
+  const riseTop = roofElev + geo.roof.rise;
+  const oh = geo.roof.eaveOverhang ?? 0;
+
+  // Expand the roof rect by the eave overhang in all horizontal directions.
+  const roofRect = geo.roof.rect;
+  const rxs = roofRect.map((p) => p[0]);
+  const rys = roofRect.map((p) => p[1]);
+  const rxMin = Math.min(...rxs);
+  const rxMax = Math.max(...rxs);
+  const ryMin = Math.min(...rys);
+  const ryMax = Math.max(...rys);
+  // Convert px rect (with overhang) to world AABB corners.
+  // cx / cz are already computed above (pcx/pcy * scale).
+  const s = geo.scale;
+  // world x: px*scale - cx; world z: cz - py*scale.
+  const wxL = rxMin * s - cx - oh;  // west eave (overhang expands outward)
+  const wxR = rxMax * s - cx + oh;  // east eave
+  const wzN = cz - ryMin * s + oh;  // north (NW) gable end
+  const wzS = cz - ryMax * s - oh;  // south (SE) gable end
+  for (const [wx, wz] of [[wxL, wzN], [wxL, wzS], [wxR, wzN], [wxR, wzS]] as [number, number][]) {
+    box.expandByPoint(v.set(wx, roofElev, wz));
+    box.expandByPoint(v.set(wx, riseTop,  wz));
+  }
+
+  // Recess catslide overhang (NE wing extends past the main rect).
+  if (geo.roof.recess) {
+    const rp = geo.roof.recess.poly;
+    const rpxs = rp.map((p) => p[0]);
+    const rpys = rp.map((p) => p[1]);
+    const recessTop = roofElev + geo.roof.recess.rise;
+    const rwxR = Math.max(...rpxs) * s - cx + oh;
+    const rwzS = cz - Math.max(...rpys) * s - oh;
+    const rwzN = cz - Math.min(...rpys) * s + oh;
+    box.expandByPoint(v.set(rwxR, roofElev, rwzS));
+    box.expandByPoint(v.set(rwxR, roofElev, rwzN));
+    box.expandByPoint(v.set(rwxR, recessTop, rwzS));
+    box.expandByPoint(v.set(rwxR, recessTop, rwzN));
+  }
+
+  // Chimneys: boxes above the ridge.
+  for (const chim of geo.roof.chimneys ?? []) {
+    const chimX = chim.x * s - cx;
+    const chimZ = cz - chim.y * s;
+    const chimTop = riseTop + chim.above;
+    box.expandByPoint(v.set(chimX - chim.w / 2, chimTop, chimZ - chim.d / 2));
+    box.expandByPoint(v.set(chimX + chim.w / 2, chimTop, chimZ + chim.d / 2));
+  }
+
+  // Ark + dormers: extend bounding box outward (projection) and upward (rise).
+  const streetA: [number, number] = [748, 1700];
+  const streetB: [number, number] = [748, 375];
+  const [axW, azW] = [streetA[0] * s - cx, cz - streetA[1] * s];
+  const [bxW, bzW] = [streetB[0] * s - cx, cz - streetB[1] * s];
+  const addDormer = (spec: { t: number; projection: number; rise: number }) => {
+    const dxW = axW + (bxW - axW) * spec.t;
+    const dzW = azW + (bzW - azW) * spec.t;
+    // outward normal on the street edge (world -x side).
+    // dx/dz along edge = (bxW-axW, bzW-azW); outward normal is (-dz, dx) normalised.
+    const edx = bxW - axW; const edz = bzW - azW; const elen = Math.hypot(edx, edz) || 1;
+    const nx = -edz / elen; const nz = edx / elen;
+    const frontX = dxW + nx * spec.projection;
+    const frontZ = dzW + nz * spec.projection;
+    const dorTop = roofElev + spec.rise + oh;
+    box.expandByPoint(v.set(frontX - spec.projection, roofElev, frontZ));
+    box.expandByPoint(v.set(frontX, dorTop, frontZ));
+  };
+  if (geo.roof.ark) addDormer(geo.roof.ark);
+  for (const d of geo.roof.dormers ?? []) addDormer(d);
+
   return box;
 }
 
@@ -183,6 +266,31 @@ export function CameraRig({ geo }: Props) {
     },
     [boxForMode, size.width, size.height, camera],
   );
+
+  // Expose a minimal QA camera API on window.__velgerCamera so headless facade
+  // comparison scripts can re-frame from a given direction without UI interaction.
+  // Harmless in production; guarded so it only attaches when the controls exist.
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).__velgerCamera = {
+      setView: (dirX: number, dirY: number, dirZ: number) => {
+        if (!ref.current) return;
+        const dir = new THREE.Vector3(dirX, dirY, dirZ).normalize();
+        const box = boxForMode('orbit');
+        const aspect = size.width / size.height;
+        const fit = solveFit(box, dir, camera.fov, aspect, false);
+        ref.current.setLookAt(
+          fit.camPos.x, fit.camPos.y, fit.camPos.z,
+          fit.target.x, fit.target.y, fit.target.z,
+          false,
+        );
+      },
+    };
+    return () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      delete (window as any).__velgerCamera;
+    };
+  }, [boxForMode, size.width, size.height, camera]);
 
   // Initial fit on the first frame (camera/controls ready), then auto-rotate.
   useFrame((_, dt) => {
