@@ -36,8 +36,16 @@ export function UnitMesh({ unit, scale, height, dimmed }: Props) {
       geometry={geometry}
       castShadow
       receiveShadow
-      onPointerOver={(e) => { if (mode !== 'exploded') return; e.stopPropagation(); if (status !== 'solgt') setHovered(unit.unit); }}
-      onPointerOut={() => { if (mode !== 'exploded') return; setHovered(null); }}
+      onPointerOver={(e) => {
+        if (mode !== 'exploded') return;
+        e.stopPropagation();
+        if (status !== 'solgt') { setHovered(unit.unit); document.body.style.cursor = 'pointer'; }
+      }}
+      onPointerOut={() => {
+        if (mode !== 'exploded') return;
+        setHovered(null);
+        document.body.style.cursor = 'auto';
+      }}
       onClick={(e) => { if (mode !== 'exploded') return; e.stopPropagation(); if (status !== 'solgt') select(unit.unit); }}
     >
       <meshStandardMaterial

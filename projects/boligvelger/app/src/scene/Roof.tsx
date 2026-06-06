@@ -30,6 +30,7 @@ const SLAB_T = 0.14;       // roof plane thickness
 export function Roof({ roof, scale, index }: { roof: RoofGeo; scale: number; index: number }) {
   const ref = useRef<THREE.Group>(null!);
   const mode = useVelger((s) => s.mode);
+  const explode = useVelger((s) => s.explode);
 
   const parts = useMemo(() => buildRoof(roof, scale), [roof, scale]);
 
@@ -38,8 +39,22 @@ export function Roof({ roof, scale, index }: { roof: RoofGeo; scale: number; ind
     ref.current.position.y = THREE.MathUtils.damp(ref.current.position.y, target, 3.5, dt);
   });
 
+  // Clicking the roof in assembled view opens the building (events bubble up
+  // from the part meshes to this group).
+  const assembled = mode !== 'exploded';
   return (
-    <group ref={ref} position-y={roof.elevation}>
+    <group
+      ref={ref}
+      position-y={roof.elevation}
+      onClick={(e) => {
+        if (!assembled) return;
+        e.stopPropagation();
+        document.body.style.cursor = 'auto';
+        explode('all');
+      }}
+      onPointerOver={() => { if (assembled) document.body.style.cursor = 'pointer'; }}
+      onPointerOut={() => { if (assembled) document.body.style.cursor = 'auto'; }}
+    >
       {parts.slopes.map((g, i) => (
         <mesh key={`s${i}`} geometry={g} castShadow receiveShadow>
           <meshStandardMaterial color={SLOPE} roughness={0.9} />

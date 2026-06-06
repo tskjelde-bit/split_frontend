@@ -1,7 +1,7 @@
 import { useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
-import { useVelger, type FloorFocus, type Mode } from '../state/store';
+import { useVelger, focusForFloor, type FloorFocus, type Mode } from '../state/store';
 import { polyToShape, polyToRingShape, insetPolygon } from '../lib/shapes';
 import { UnitMesh } from './UnitMesh';
 import type { FloorGeo, EnvelopeGeo } from '../lib/types';
@@ -26,7 +26,23 @@ export function FloorPlate({ floor, index, scale, slab, envelope }: Props) {
   const ref = useRef<THREE.Group>(null!);
   const mode = useVelger(s => s.mode);
   const focus = useVelger(s => s.focus);
+  const explode = useVelger(s => s.explode);
   const dimmed = mode === 'exploded' && !floorIsFocused(focus, floor.id);
+
+  // In assembled view the shell is the only visible surface — clicking a floor's
+  // walls/slab explodes the building with that floor focused. In exploded view
+  // the shell stays inert so clicks reach the units (r3f raycast propagation).
+  const assembled = mode !== 'exploded';
+  const shellHandlers = {
+    onClick: (e: { stopPropagation: () => void }) => {
+      if (!assembled) return;
+      e.stopPropagation();
+      document.body.style.cursor = 'auto';
+      explode(focusForFloor(floor.id));
+    },
+    onPointerOver: () => { if (assembled) document.body.style.cursor = 'pointer'; },
+    onPointerOut: () => { if (assembled) document.body.style.cursor = 'auto'; },
+  };
 
   const slabGeo = useMemo(() => {
     const g = new THREE.ExtrudeGeometry(polyToShape(floor.outline, scale), {
@@ -64,11 +80,11 @@ export function FloorPlate({ floor, index, scale, slab, envelope }: Props) {
 
   return (
     <group ref={ref} position-y={floor.elevation}>
-      <mesh geometry={slabGeo} castShadow receiveShadow>
+      <mesh geometry={slabGeo} castShadow receiveShadow {...shellHandlers}>
         <meshStandardMaterial color={GIPS_DARK} roughness={0.9} transparent={dimmed} opacity={dimmed ? 0.25 : 1} />
       </mesh>
       <group position-y={slab}>
-        <mesh geometry={wallGeo} castShadow receiveShadow>
+        <mesh geometry={wallGeo} castShadow receiveShadow {...shellHandlers}>
           {/* polygonOffset pulls the wall slightly toward the camera in depth so
               its interior face wins the z-test against common/unit blocks that
               the data authors flush to the inner wall plane (no z-fighting). */}

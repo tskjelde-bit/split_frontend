@@ -4,6 +4,14 @@ import type { UnitStatus } from '../lib/types';
 export type Mode = 'landing' | 'orbit' | 'exploded';
 export type FloorFocus = 'all' | 'U1' | '2' | '3';
 
+/** Which focus a click on a floor plate's shell should explode into.
+ *  Basement follows floor 1 (duplex units span both). */
+export function focusForFloor(floorId: string): FloorFocus {
+  if (floorId === 'U' || floorId === '1') return 'U1';
+  if (floorId === '2' || floorId === '3') return floorId;
+  return 'all';
+}
+
 interface VelgerState {
   mode: Mode;
   focus: FloorFocus;
