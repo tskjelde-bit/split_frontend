@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { polyCentroid } from '../lib/shapes';
 import { FloorPlate } from './FloorPlate';
 import { Roof } from './Roof';
+import { Windows } from './Windows';
 import type { BuildingGeo } from '../lib/types';
 
 export function Building({ geo }: { geo: BuildingGeo }) {
@@ -16,6 +17,7 @@ export function Building({ geo }: { geo: BuildingGeo }) {
         <FloorPlate key={f.id} floor={f} index={i} scale={geo.scale} slab={geo.slabThickness} />
       ))}
       <Roof roof={geo.roof} scale={geo.scale} index={geo.floors.length} />
+      <Windows geo={geo} />
     </group>
   );
 }
