@@ -35,7 +35,7 @@ type Fit = { camPos: THREE.Vector3; target: THREE.Vector3; dist: number };
  *  This is race-free (no dependency on the damped explode animation) and covers
  *  the roof overhang because roof volume polys are included. */
 function assembledBox(geo: BuildingGeo): THREE.Box3 {
-  const [pcx, pcy] = polyCentroid(geo.floors[0].outline);
+  const [pcx, pcy] = polyCentroid(geo.envelope.poly);
   const cx = pcx * geo.scale;
   const cz = pcy * geo.scale;
   const box = new THREE.Box3();
@@ -55,9 +55,10 @@ function assembledBox(geo: BuildingGeo): THREE.Box3 {
     for (const c of f.common) addPoly(c, f.elevation, top);
     for (const u of f.units) addPoly(u.poly, f.elevation, top);
   }
-  for (const vol of geo.roof.volumes) {
-    addPoly(vol.poly, geo.roof.elevation, geo.roof.elevation + vol.height);
-  }
+  // TODO(step-C/7): tighten this against the parametric saltak (ridge height,
+  // chimney tops, ark rise, eave overhang). For now approximate the roof AABB
+  // from the roof rect footprint extruded to ridge height (elevation + rise).
+  addPoly(geo.roof.rect, geo.roof.elevation, geo.roof.elevation + geo.roof.rise);
   return box;
 }
 

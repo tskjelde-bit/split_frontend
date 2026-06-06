@@ -6,10 +6,25 @@ export interface FloorGeo {
   id: FloorId; label: string; elevation: number; height: number;
   outline: [number, number][]; units: UnitGeo[]; common: [number, number][][];
 }
-export interface RoofGeo { elevation: number; volumes: { poly: [number, number][]; height: number }[]; }
+export interface EnvelopeGeo { poly: [number, number][]; wallThickness: number; envelopeDoc?: string; }
+
+export interface RoofWindow { width: number; sill: number; height: number; }
+export interface GableSpec { edge: number; t: number; width: number; projection: number; rise: number; window?: RoofWindow; }
+export interface ChimneySpec { x: number; y: number; w: number; d: number; above: number; }
+export interface RoofGeo {
+  elevation: number; type: 'saltak';
+  rect: [number, number][]; ridgeAxis: 'x' | 'y'; ridgeOffset: number; rise: number;
+  eaveOverhang: number;
+  recess?: { poly: [number, number][]; rise: number; recessDoc?: string };
+  ark?: GableSpec; dormers?: GableSpec[]; chimneys?: ChimneySpec[];
+  heis?: unknown;
+  // documentation-only fields carried through from the data file
+  ridgeOffsetDoc?: string;
+  [key: string]: unknown;
+}
 export interface WindowGeo { floor: FloorId; edge: number; t: number; width: number; sill: number; height: number; }
 export interface BuildingGeo {
-  scale: number; slabThickness: number; floors: FloorGeo[]; roof: RoofGeo; windows: WindowGeo[];
+  scale: number; slabThickness: number; envelope: EnvelopeGeo; floors: FloorGeo[]; roof: RoofGeo; windows: WindowGeo[];
 }
 
 export interface Rom { name: string; area: number; }

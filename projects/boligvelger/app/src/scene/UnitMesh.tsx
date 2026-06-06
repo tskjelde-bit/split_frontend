@@ -17,6 +17,7 @@ export function UnitMesh({ unit, scale, height, dimmed }: Props) {
   const status = useVelger(s => s.status[unit.unit] ?? 'ledig');
   const setHovered = useVelger(s => s.setHovered);
   const select = useVelger(s => s.select);
+  const mode = useVelger(s => s.mode);
 
   const geometry = useMemo(() => {
     const g = new THREE.ExtrudeGeometry(polyToShape(unit.poly, scale), {
@@ -35,9 +36,9 @@ export function UnitMesh({ unit, scale, height, dimmed }: Props) {
       geometry={geometry}
       castShadow
       receiveShadow
-      onPointerOver={(e) => { e.stopPropagation(); if (status !== 'solgt') setHovered(unit.unit); }}
-      onPointerOut={() => setHovered(null)}
-      onClick={(e) => { e.stopPropagation(); if (status !== 'solgt') select(unit.unit); }}
+      onPointerOver={(e) => { if (mode !== 'exploded') return; e.stopPropagation(); if (status !== 'solgt') setHovered(unit.unit); }}
+      onPointerOut={() => { if (mode !== 'exploded') return; setHovered(null); }}
+      onClick={(e) => { if (mode !== 'exploded') return; e.stopPropagation(); if (status !== 'solgt') select(unit.unit); }}
     >
       <meshStandardMaterial
         color={color}

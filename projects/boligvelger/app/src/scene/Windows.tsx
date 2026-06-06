@@ -3,9 +3,14 @@ import type { BuildingGeo, WindowGeo } from '../lib/types';
 import { useVelger } from '../state/store';
 
 const NICHE = '#cfcbbd';
-const DEPTH = 0.12;
-// Pull the niche slightly into the wall so it reads as an inset opening and
-// never z-fights with the facade plane.
+// Reveal depth: the wall is now wallThickness (0.30) thick. Make the niche deep
+// enough to read as a sunk opening, but keep its back face short of the inner
+// wall plane (0.30) so it never z-fights the wall ring's interior face:
+//   front face at INSET (0.05), back face at INSET+DEPTH (0.23) < 0.30.
+const DEPTH = 0.18;
+// Sit the niche front face INSET behind the outer wall plane so it reads as an
+// inset opening from outside without z-fighting the facade. The box extends
+// inward by DEPTH/2 from its center, so center it at (INSET + DEPTH/2).
 const INSET = 0.05;
 
 /** Window niches: thin boxes along outline edges, inset into the facade so
@@ -35,9 +40,12 @@ export function Windows({ geo }: { geo: BuildingGeo }) {
         const len = Math.hypot(dx, dz) || 1;
         const nx = -dz / len;
         const nz = dx / len;
+        // Center the box so its outward face sits INSET behind the outer wall
+        // plane; the box then reveals DEPTH into the thick wall.
+        const offset = INSET + DEPTH / 2;
         return {
-          x: x - nx * INSET,
-          z: z - nz * INSET,
+          x: x - nx * offset,
+          z: z - nz * offset,
           angle,
           y: floor.elevation + w.sill + w.height / 2,
           w: w.width,
