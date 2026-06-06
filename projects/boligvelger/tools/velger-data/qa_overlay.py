@@ -7,9 +7,14 @@ from struct import unpack
 
 ROOT = Path(__file__).resolve().parents[2]
 UNDERLAG = ROOT / "eiendommer/dybwads gate 8/underlag"
-FLOORS = Path(__file__).resolve().parent / "floors"
-QA = Path(__file__).resolve().parent / "qa"
+TOOL = Path(__file__).resolve().parent
+FLOORS = TOOL / "floors"
+QA = TOOL / "qa"
 QA.mkdir(exist_ok=True)
+
+
+def _building():
+    return json.loads((TOOL / "building.json").read_text())
 
 # Basement ("u") QA underlay mapping:
 #
@@ -49,7 +54,20 @@ def svg_poly(poly, color, label="", scale=1.0):
     )
 
 
+def roof_footprints(roof):
+    """Return [(poly, label), ...] for roof rect/recess/ark/dormers."""
+    out = [(roof["rect"], "tak")]
+    if roof.get("recess"):
+        out.append((roof["recess"]["poly"], "recess"))
+    # ark/dormer footprints are small boxes centered on their edge axis; we draw
+    # a marker box at the edge midpoint so the QA shows roughly where they sit.
+    return out
+
+
 def main():
+    b = _building()
+    envelope = b["envelope"]["poly"]
+    roof = b["roof"]
     for fid, png_name in PNG_FOR.items():
         fpath = FLOORS / f"etasje-{fid}.json"
         if not fpath.exists():
@@ -60,11 +78,19 @@ def main():
         data = png.read_bytes()
         w, h = unpack(">II", data[16:24])
         b64 = base64.b64encode(data).decode()
-        shapes = [svg_poly(doc["outline"], "#cc4400", scale=scale)]
+        # envelope (thick orange)
+        shapes = [
+            f'<polygon points="{" ".join(f"{x*scale},{y*scale}" for x, y in envelope)}" '
+            f'fill="none" stroke="#ff7a00" stroke-width="10"/>'
+        ]
         shapes += [
             svg_poly(u["poly"], "#1E7A4B", u["unit"], scale) for u in doc["units"]
         ]
         shapes += [svg_poly(c, "#3355bb", scale=scale) for c in doc.get("common", [])]
+        # roof footprints (purple) only on the top floor for clarity
+        if fid == "3":
+            for poly, label in roof_footprints(roof):
+                shapes.append(svg_poly(poly, "#8800cc", label, scale))
         shapes_str = "".join(shapes)
         html = (
             '<!doctype html><meta charset="utf-8">\n'

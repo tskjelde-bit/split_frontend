@@ -1,133 +1,55 @@
 {
  "id": "U",
  "pngScale": 1.0,
- "transform": "basement traced in etasje-u-plan-1.png pixel space (2481x1754, A3 @150dpi -> 0.016929 m/px at 1:100); coordinates multiplied by 3308/2481 = 1.33333 into floor-px space (3308x2339, A3 @200dpi -> 0.012696 m/px) so real-world size is preserved at building.scale 0.012696",
+ "transform": "Interior polys re-authored directly in floor-px envelope space (building.scale 0.012696). Outline set to the canonical envelope from building.json. H0101-U placed under floor-1 H0101 (SE corner), H0103-U under floor-1 H0103 (SW/south), common fills the remaining basement (BOD/VASKEROM/TEKN/FELLESROM) inside the envelope. Previous basement trace (bbox 865-2053 x 391-1507, from etasje-u-plan-1.png at 0.016929 m/px scaled 1.33333 into floor-px) was mis-justified vs the envelope (748-2030 x 375-1700) and is superseded.",
  "outline": [
-  [
-   865,
-   391
-  ],
-  [
-   1703,
-   391
-  ],
-  [
-   1703,
-   1087
-  ],
-  [
-   2053,
-   1087
-  ],
-  [
-   2053,
-   1507
-  ],
-  [
-   865,
-   1507
-  ]
+  [748, 375],
+  [1660, 375],
+  [1660, 640],
+  [2030, 640],
+  [2030, 1700],
+  [748, 1700]
  ],
  "units": [
   {
    "id": "H0101-U",
    "unit": "H0101",
    "poly": [
-    [
-     1600,
-     1090
-    ],
-    [
-     2050,
-     1090
-    ],
-    [
-     2050,
-     1500
-    ],
-    [
-     1600,
-     1500
-    ]
+    [1690, 1400],
+    [2000, 1400],
+    [2000, 1690],
+    [1690, 1690]
    ]
   },
   {
    "id": "H0103-U",
    "unit": "H0103",
    "poly": [
-    [
-     930,
-     950
-    ],
-    [
-     1390,
-     950
-    ],
-    [
-     1390,
-     1450
-    ],
-    [
-     930,
-     1450
-    ]
+    [865, 1332],
+    [1262, 1332],
+    [1262, 1690],
+    [865, 1690]
    ]
   }
  ],
  "common": [
   [
-   [
-    870,
-    400
-   ],
-   [
-    1690,
-    400
-   ],
-   [
-    1690,
-    1080
-   ],
-   [
-    870,
-    1080
-   ]
+   [800, 410],
+   [1640, 410],
+   [1640, 1320],
+   [800, 1320]
   ],
   [
-   [
-    1400,
-    950
-   ],
-   [
-    1690,
-    950
-   ],
-   [
-    1690,
-    1500
-   ],
-   [
-    1400,
-    1500
-   ]
+   [1280, 1332],
+   [1660, 1332],
+   [1660, 1690],
+   [1280, 1690]
   ],
   [
-   [
-    870,
-    1085
-   ],
-   [
-    1595,
-    1085
-   ],
-   [
-    1595,
-    1500
-   ],
-   [
-    870,
-    1500
-   ]
+   [1690, 660],
+   [2000, 660],
+   [2000, 1390],
+   [1690, 1390]
   ]
  ]
 }

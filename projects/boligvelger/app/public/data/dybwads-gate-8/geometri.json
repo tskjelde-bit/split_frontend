@@ -1,146 +1,42 @@
 {
  "scale": 0.012696,
- "slabThickness": 0.3,
+ "slabThickness": 0.2,
+ "envelope": {
+  "poly": [
+   [
+    748,
+    375
+   ],
+   [
+    1660,
+    375
+   ],
+   [
+    1660,
+    640
+   ],
+   [
+    2030,
+    640
+   ],
+   [
+    2030,
+    1700
+   ],
+   [
+    748,
+    1700
+   ]
+  ],
+  "wallThickness": 0.3,
+  "envelopeDoc": "Cleaned 6-pt exterior outline shared by all floors incl. U. Dropped colinear [1660,455]; collapsed 20px trace jog at x=2010->2030. Edge i = poly[i]->poly[(i+1)%6]. edge0 [748,375]->[1660,375] NW top (partial). edge1 [1660,375]->[1660,640] notch vertical. edge2 [1660,640]->[2030,640] notch horizontal. edge3 [2030,640]->[2030,1700] NE long edge (Dybwads gate 6 side). edge4 [2030,1700]->[748,1700] SE gable end (Ole Fladagers gate). edge5 [748,1700]->[748,375] SW street facade (Dybwads gate, carries the ark + dormers). Notch [1660,375]-[2030,640] is the NE corner cut (real, per plans). World convention x=px*scale, z=-(py*scale)."
+ },
  "floors": [
   {
    "id": "U",
    "label": "Underetasje",
    "elevation": 0.0,
-   "height": 2.4,
-   "outline": [
-    [
-     865,
-     391
-    ],
-    [
-     1703,
-     391
-    ],
-    [
-     1703,
-     1087
-    ],
-    [
-     2053,
-     1087
-    ],
-    [
-     2053,
-     1507
-    ],
-    [
-     865,
-     1507
-    ]
-   ],
-   "units": [
-    {
-     "id": "H0101-U",
-     "unit": "H0101",
-     "poly": [
-      [
-       1600,
-       1090
-      ],
-      [
-       2050,
-       1090
-      ],
-      [
-       2050,
-       1500
-      ],
-      [
-       1600,
-       1500
-      ]
-     ]
-    },
-    {
-     "id": "H0103-U",
-     "unit": "H0103",
-     "poly": [
-      [
-       930,
-       950
-      ],
-      [
-       1390,
-       950
-      ],
-      [
-       1390,
-       1450
-      ],
-      [
-       930,
-       1450
-      ]
-     ]
-    }
-   ],
-   "common": [
-    [
-     [
-      870,
-      400
-     ],
-     [
-      1690,
-      400
-     ],
-     [
-      1690,
-      1080
-     ],
-     [
-      870,
-      1080
-     ]
-    ],
-    [
-     [
-      1400,
-      950
-     ],
-     [
-      1690,
-      950
-     ],
-     [
-      1690,
-      1500
-     ],
-     [
-      1400,
-      1500
-     ]
-    ],
-    [
-     [
-      870,
-      1085
-     ],
-     [
-      1595,
-      1085
-     ],
-     [
-      1595,
-      1500
-     ],
-     [
-      870,
-      1500
-     ]
-    ]
-   ]
-  },
-  {
-   "id": "1",
-   "label": "1. etasje",
-   "elevation": 2.4,
-   "height": 3.4,
+   "height": 3.0,
    "outline": [
     [
      748,
@@ -152,7 +48,137 @@
     ],
     [
      1660,
-     455
+     640
+    ],
+    [
+     2030,
+     640
+    ],
+    [
+     2030,
+     1700
+    ],
+    [
+     748,
+     1700
+    ]
+   ],
+   "units": [
+    {
+     "id": "H0101-U",
+     "unit": "H0101",
+     "poly": [
+      [
+       1690,
+       1400
+      ],
+      [
+       2000,
+       1400
+      ],
+      [
+       2000,
+       1690
+      ],
+      [
+       1690,
+       1690
+      ]
+     ]
+    },
+    {
+     "id": "H0103-U",
+     "unit": "H0103",
+     "poly": [
+      [
+       865,
+       1332
+      ],
+      [
+       1262,
+       1332
+      ],
+      [
+       1262,
+       1690
+      ],
+      [
+       865,
+       1690
+      ]
+     ]
+    }
+   ],
+   "common": [
+    [
+     [
+      800,
+      410
+     ],
+     [
+      1640,
+      410
+     ],
+     [
+      1640,
+      1320
+     ],
+     [
+      800,
+      1320
+     ]
+    ],
+    [
+     [
+      1280,
+      1332
+     ],
+     [
+      1660,
+      1332
+     ],
+     [
+      1660,
+      1690
+     ],
+     [
+      1280,
+      1690
+     ]
+    ],
+    [
+     [
+      1690,
+      660
+     ],
+     [
+      2000,
+      660
+     ],
+     [
+      2000,
+      1390
+     ],
+     [
+      1690,
+      1390
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "1",
+   "label": "1. etasje",
+   "elevation": 3.0,
+   "height": 3.6,
+   "outline": [
+    [
+     748,
+     375
+    ],
+    [
+     1660,
+     375
     ],
     [
      1660,
@@ -164,14 +190,6 @@
     ],
     [
      2030,
-     1000
-    ],
-    [
-     2010,
-     1000
-    ],
-    [
-     2010,
      1700
     ],
     [
@@ -373,8 +391,8 @@
   {
    "id": "2",
    "label": "2. etasje",
-   "elevation": 5.8,
-   "height": 3.2,
+   "elevation": 6.6,
+   "height": 3.6,
    "outline": [
     [
      748,
@@ -386,10 +404,6 @@
     ],
     [
      1660,
-     455
-    ],
-    [
-     1660,
      640
     ],
     [
@@ -398,14 +412,6 @@
     ],
     [
      2030,
-     1000
-    ],
-    [
-     2010,
-     1000
-    ],
-    [
-     2010,
      1700
     ],
     [
@@ -619,7 +625,7 @@
   {
    "id": "3",
    "label": "3. etasje",
-   "elevation": 9.0,
+   "elevation": 10.2,
    "height": 2.7,
    "outline": [
     [
@@ -632,10 +638,6 @@
     ],
     [
      1660,
-     455
-    ],
-    [
-     1660,
      640
     ],
     [
@@ -644,14 +646,6 @@
     ],
     [
      2030,
-     1000
-    ],
-    [
-     2010,
-     1000
-    ],
-    [
-     2010,
      1700
     ],
     [
@@ -882,80 +876,161 @@
   }
  ],
  "roof": {
-  "elevation": 11.7,
-  "volumes": [
-   {
-    "poly": [
-     [
-      835,
-      360
-     ],
-     [
-      1190,
-      360
-     ],
-     [
-      1190,
-      455
-     ],
-     [
-      1640,
-      455
-     ],
-     [
-      1640,
-      640
-     ],
-     [
-      2000,
-      640
-     ],
-     [
-      2000,
-      1340
-     ],
-     [
-      2034,
-      1500
-     ],
-     [
-      2034,
-      1841
-     ],
-     [
-      1820,
-      1900
-     ],
-     [
-      835,
-      1900
-     ]
+  "elevation": 12.9,
+  "type": "saltak",
+  "rect": [
+   [
+    748,
+    375
+   ],
+   [
+    1660,
+    375
+   ],
+   [
+    1660,
+    1700
+   ],
+   [
+    748,
+    1700
+   ]
+  ],
+  "ridgeAxis": "y",
+  "ridgeOffset": 0.4,
+  "ridgeOffsetDoc": "Fraction across the main rect from the SW/west street edge (x=748) toward the east edge (x=1660). 0.4 places the ridge nearer the street, matching the asymmetric ridge in Snitt_C and Fasade Sorost (short steep slope toward Dybwads gate, longer slope toward NE).",
+  "rise": 1.9,
+  "eaveOverhang": 0.3,
+  "recess": {
+   "poly": [
+    [
+     1660,
+     640
     ],
-    "height": 0.6,
-    "inset": 0
+    [
+     2030,
+     640
+    ],
+    [
+     2030,
+     1700
+    ],
+    [
+     1660,
+     1700
+    ]
+   ],
+   "rise": 0.6,
+   "recessDoc": "Lower catslide roof over the NE wing (x>=1660, south of the notch). Steps down from the main mass per Fasade Sorost. The notch [1660,375]-[2030,640] itself has no roof (corner is cut)."
+  },
+  "ark": {
+   "edge": 5,
+   "t": 0.5,
+   "width": 3.2,
+   "projection": 0.8,
+   "rise": 1.4,
+   "window": {
+    "width": 1.1,
+    "sill": 0.4,
+    "height": 1.6
    }
-  ]
+  },
+  "dormers": [
+   {
+    "edge": 5,
+    "t": 0.25,
+    "width": 1.4,
+    "projection": 0.6,
+    "rise": 0.9,
+    "window": {
+     "width": 0.9,
+     "sill": 0.3,
+     "height": 1.0
+    }
+   },
+   {
+    "edge": 5,
+    "t": 0.75,
+    "width": 1.4,
+    "projection": 0.6,
+    "rise": 0.9,
+    "window": {
+     "width": 0.9,
+     "sill": 0.3,
+     "height": 1.0
+    }
+   }
+  ],
+  "chimneys": [
+   {
+    "x": 1113,
+    "y": 430,
+    "w": 0.6,
+    "d": 0.6,
+    "above": 1.2
+   },
+   {
+    "x": 1113,
+    "y": 1645,
+    "w": 0.6,
+    "d": 0.6,
+    "above": 1.2
+   }
+  ],
+  "heis": null
  },
  "windows": [
   {
    "floor": "1",
-   "edge": 0,
-   "t": 0.18,
+   "edge": 5,
+   "t": 0.12,
    "width": 1.1,
    "sill": 1.0,
    "height": 1.9
   },
   {
    "floor": "1",
-   "edge": 0,
-   "t": 0.4,
+   "edge": 5,
+   "t": 0.31,
    "width": 1.1,
    "sill": 1.0,
    "height": 1.9
   },
   {
    "floor": "1",
-   "edge": 0,
+   "edge": 5,
+   "t": 0.5,
+   "width": 1.1,
+   "sill": 1.0,
+   "height": 1.9
+  },
+  {
+   "floor": "1",
+   "edge": 5,
+   "t": 0.69,
+   "width": 1.1,
+   "sill": 1.0,
+   "height": 1.9
+  },
+  {
+   "floor": "1",
+   "edge": 5,
+   "t": 0.88,
+   "width": 1.1,
+   "sill": 1.0,
+   "height": 1.9
+  },
+  {
+   "floor": "1",
+   "edge": 4,
+   "t": 0.3,
+   "width": 1.1,
+   "sill": 1.0,
+   "height": 1.9
+  },
+  {
+   "floor": "1",
+   "edge": 4,
    "t": 0.62,
    "width": 1.1,
    "sill": 1.0,
@@ -963,8 +1038,8 @@
   },
   {
    "floor": "1",
-   "edge": 0,
-   "t": 0.84,
+   "edge": 4,
+   "t": 0.85,
    "width": 1.1,
    "sill": 1.0,
    "height": 1.9
@@ -972,46 +1047,6 @@
   {
    "floor": "1",
    "edge": 3,
-   "t": 0.5,
-   "width": 1.1,
-   "sill": 1.0,
-   "height": 1.9
-  },
-  {
-   "floor": "1",
-   "edge": 6,
-   "t": 0.22,
-   "width": 1.1,
-   "sill": 1.0,
-   "height": 1.9
-  },
-  {
-   "floor": "1",
-   "edge": 6,
-   "t": 0.5,
-   "width": 1.1,
-   "sill": 1.0,
-   "height": 1.9
-  },
-  {
-   "floor": "1",
-   "edge": 6,
-   "t": 0.78,
-   "width": 1.1,
-   "sill": 1.0,
-   "height": 1.9
-  },
-  {
-   "floor": "1",
-   "edge": 7,
-   "t": 0.12,
-   "width": 1.1,
-   "sill": 1.0,
-   "height": 1.9
-  },
-  {
-   "floor": "1",
-   "edge": 7,
    "t": 0.3,
    "width": 1.1,
    "sill": 1.0,
@@ -1019,87 +1054,87 @@
   },
   {
    "floor": "1",
-   "edge": 7,
-   "t": 0.5,
+   "edge": 3,
+   "t": 0.55,
    "width": 1.1,
    "sill": 1.0,
    "height": 1.9
   },
   {
    "floor": "1",
-   "edge": 7,
-   "t": 0.7,
+   "edge": 3,
+   "t": 0.8,
    "width": 1.1,
    "sill": 1.0,
    "height": 1.9
   },
   {
    "floor": "1",
-   "edge": 7,
-   "t": 0.88,
-   "width": 1.1,
-   "sill": 1.0,
-   "height": 1.9
-  },
-  {
-   "floor": "1",
-   "edge": 8,
-   "t": 0.12,
-   "width": 1.1,
-   "sill": 1.0,
-   "height": 1.9
-  },
-  {
-   "floor": "1",
-   "edge": 8,
-   "t": 0.3,
-   "width": 1.1,
-   "sill": 1.0,
-   "height": 1.9
-  },
-  {
-   "floor": "1",
-   "edge": 8,
-   "t": 0.5,
-   "width": 1.1,
-   "sill": 1.0,
-   "height": 1.9
-  },
-  {
-   "floor": "1",
-   "edge": 8,
-   "t": 0.7,
-   "width": 1.1,
-   "sill": 1.0,
-   "height": 1.9
-  },
-  {
-   "floor": "1",
-   "edge": 8,
-   "t": 0.88,
-   "width": 1.1,
-   "sill": 1.0,
-   "height": 1.9
-  },
-  {
-   "floor": "2",
-   "edge": 0,
-   "t": 0.18,
-   "width": 1.1,
-   "sill": 0.9,
-   "height": 1.7
-  },
-  {
-   "floor": "2",
    "edge": 0,
    "t": 0.4,
    "width": 1.1,
+   "sill": 1.0,
+   "height": 1.9
+  },
+  {
+   "floor": "1",
+   "edge": 0,
+   "t": 0.7,
+   "width": 1.1,
+   "sill": 1.0,
+   "height": 1.9
+  },
+  {
+   "floor": "2",
+   "edge": 5,
+   "t": 0.12,
+   "width": 1.1,
    "sill": 0.9,
    "height": 1.7
   },
   {
    "floor": "2",
-   "edge": 0,
+   "edge": 5,
+   "t": 0.31,
+   "width": 1.1,
+   "sill": 0.9,
+   "height": 1.7
+  },
+  {
+   "floor": "2",
+   "edge": 5,
+   "t": 0.5,
+   "width": 1.1,
+   "sill": 0.9,
+   "height": 1.7
+  },
+  {
+   "floor": "2",
+   "edge": 5,
+   "t": 0.69,
+   "width": 1.1,
+   "sill": 0.9,
+   "height": 1.7
+  },
+  {
+   "floor": "2",
+   "edge": 5,
+   "t": 0.88,
+   "width": 1.1,
+   "sill": 0.9,
+   "height": 1.7
+  },
+  {
+   "floor": "2",
+   "edge": 4,
+   "t": 0.3,
+   "width": 1.1,
+   "sill": 0.9,
+   "height": 1.7
+  },
+  {
+   "floor": "2",
+   "edge": 4,
    "t": 0.62,
    "width": 1.1,
    "sill": 0.9,
@@ -1107,8 +1142,8 @@
   },
   {
    "floor": "2",
-   "edge": 0,
-   "t": 0.84,
+   "edge": 4,
+   "t": 0.85,
    "width": 1.1,
    "sill": 0.9,
    "height": 1.7
@@ -1116,46 +1151,6 @@
   {
    "floor": "2",
    "edge": 3,
-   "t": 0.5,
-   "width": 1.1,
-   "sill": 0.9,
-   "height": 1.7
-  },
-  {
-   "floor": "2",
-   "edge": 6,
-   "t": 0.22,
-   "width": 1.1,
-   "sill": 0.9,
-   "height": 1.7
-  },
-  {
-   "floor": "2",
-   "edge": 6,
-   "t": 0.5,
-   "width": 1.1,
-   "sill": 0.9,
-   "height": 1.7
-  },
-  {
-   "floor": "2",
-   "edge": 6,
-   "t": 0.78,
-   "width": 1.1,
-   "sill": 0.9,
-   "height": 1.7
-  },
-  {
-   "floor": "2",
-   "edge": 7,
-   "t": 0.12,
-   "width": 1.1,
-   "sill": 0.9,
-   "height": 1.7
-  },
-  {
-   "floor": "2",
-   "edge": 7,
    "t": 0.3,
    "width": 1.1,
    "sill": 0.9,
@@ -1163,171 +1158,139 @@
   },
   {
    "floor": "2",
-   "edge": 7,
-   "t": 0.5,
+   "edge": 3,
+   "t": 0.55,
    "width": 1.1,
    "sill": 0.9,
    "height": 1.7
   },
   {
    "floor": "2",
-   "edge": 7,
+   "edge": 3,
+   "t": 0.8,
+   "width": 1.1,
+   "sill": 0.9,
+   "height": 1.7
+  },
+  {
+   "floor": "2",
+   "edge": 0,
+   "t": 0.4,
+   "width": 1.1,
+   "sill": 0.9,
+   "height": 1.7
+  },
+  {
+   "floor": "2",
+   "edge": 0,
    "t": 0.7,
    "width": 1.1,
    "sill": 0.9,
    "height": 1.7
   },
   {
-   "floor": "2",
-   "edge": 7,
-   "t": 0.88,
-   "width": 1.1,
-   "sill": 0.9,
-   "height": 1.7
+   "floor": "3",
+   "edge": 5,
+   "t": 0.18,
+   "width": 1.0,
+   "sill": 0.8,
+   "height": 1.3
   },
   {
-   "floor": "2",
-   "edge": 8,
-   "t": 0.12,
-   "width": 1.1,
-   "sill": 0.9,
-   "height": 1.7
-  },
-  {
-   "floor": "2",
-   "edge": 8,
-   "t": 0.3,
-   "width": 1.1,
-   "sill": 0.9,
-   "height": 1.7
-  },
-  {
-   "floor": "2",
-   "edge": 8,
+   "floor": "3",
+   "edge": 5,
    "t": 0.5,
-   "width": 1.1,
-   "sill": 0.9,
-   "height": 1.7
+   "width": 1.0,
+   "sill": 0.8,
+   "height": 1.3
   },
   {
-   "floor": "2",
-   "edge": 8,
+   "floor": "3",
+   "edge": 5,
+   "t": 0.82,
+   "width": 1.0,
+   "sill": 0.8,
+   "height": 1.3
+  },
+  {
+   "floor": "3",
+   "edge": 4,
+   "t": 0.4,
+   "width": 1.0,
+   "sill": 0.8,
+   "height": 1.3
+  },
+  {
+   "floor": "3",
+   "edge": 4,
    "t": 0.7,
-   "width": 1.1,
-   "sill": 0.9,
-   "height": 1.7
-  },
-  {
-   "floor": "2",
-   "edge": 8,
-   "t": 0.88,
-   "width": 1.1,
-   "sill": 0.9,
-   "height": 1.7
-  },
-  {
-   "floor": "3",
-   "edge": 0,
-   "t": 0.28,
-   "width": 1.1,
+   "width": 1.0,
    "sill": 0.8,
    "height": 1.3
   },
   {
    "floor": "3",
-   "edge": 0,
-   "t": 0.52,
-   "width": 1.1,
-   "sill": 0.8,
-   "height": 1.3
-  },
-  {
-   "floor": "3",
-   "edge": 0,
-   "t": 0.76,
-   "width": 1.1,
-   "sill": 0.8,
-   "height": 1.3
-  },
-  {
-   "floor": "3",
-   "edge": 6,
-   "t": 0.35,
-   "width": 1.1,
-   "sill": 0.8,
-   "height": 1.3
-  },
-  {
-   "floor": "3",
-   "edge": 6,
-   "t": 0.65,
-   "width": 1.1,
-   "sill": 0.8,
-   "height": 1.3
-  },
-  {
-   "floor": "3",
-   "edge": 7,
-   "t": 0.18,
-   "width": 1.1,
-   "sill": 0.8,
-   "height": 1.3
-  },
-  {
-   "floor": "3",
-   "edge": 7,
+   "edge": 3,
    "t": 0.4,
-   "width": 1.1,
+   "width": 1.0,
    "sill": 0.8,
    "height": 1.3
   },
   {
    "floor": "3",
-   "edge": 7,
-   "t": 0.6,
-   "width": 1.1,
+   "edge": 3,
+   "t": 0.7,
+   "width": 1.0,
    "sill": 0.8,
    "height": 1.3
   },
   {
-   "floor": "3",
-   "edge": 7,
-   "t": 0.82,
-   "width": 1.1,
-   "sill": 0.8,
-   "height": 1.3
-  },
-  {
-   "floor": "3",
-   "edge": 8,
+   "floor": "U",
+   "edge": 5,
    "t": 0.18,
-   "width": 1.1,
-   "sill": 0.8,
-   "height": 1.3
+   "width": 0.9,
+   "sill": 1.6,
+   "height": 0.7
   },
   {
-   "floor": "3",
-   "edge": 8,
-   "t": 0.4,
-   "width": 1.1,
-   "sill": 0.8,
-   "height": 1.3
+   "floor": "U",
+   "edge": 5,
+   "t": 0.38,
+   "width": 0.9,
+   "sill": 1.6,
+   "height": 0.7
   },
   {
-   "floor": "3",
-   "edge": 8,
-   "t": 0.6,
-   "width": 1.1,
-   "sill": 0.8,
-   "height": 1.3
+   "floor": "U",
+   "edge": 5,
+   "t": 0.62,
+   "width": 0.9,
+   "sill": 1.6,
+   "height": 0.7
   },
   {
-   "floor": "3",
-   "edge": 8,
+   "floor": "U",
+   "edge": 5,
    "t": 0.82,
-   "width": 1.1,
-   "sill": 0.8,
-   "height": 1.3
+   "width": 0.9,
+   "sill": 1.6,
+   "height": 0.7
+  },
+  {
+   "floor": "U",
+   "edge": 4,
+   "t": 0.4,
+   "width": 0.9,
+   "sill": 1.6,
+   "height": 0.7
+  },
+  {
+   "floor": "U",
+   "edge": 4,
+   "t": 0.7,
+   "width": 0.9,
+   "sill": 1.6,
+   "height": 0.7
   }
  ]
 }

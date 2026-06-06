@@ -18,7 +18,14 @@ from pathlib import Path
 
 SCALE = 0.012696  # m per crop-px (building.json)
 MAX_OVERLAP_M2 = 0.5
-FLOORS = Path(__file__).resolve().parent / "floors"
+TOOL = Path(__file__).resolve().parent
+FLOORS = TOOL / "floors"
+
+
+def envelope_outline():
+    """Canonical envelope polygon shared by all floors (from building.json)."""
+    b = json.loads((TOOL / "building.json").read_text())
+    return b["envelope"]["poly"]
 
 try:
     from shapely.geometry import Polygon  # type: ignore
@@ -105,13 +112,13 @@ def area_outside_m2(poly, outline):
 
 def main():
     fail = False
+    outline = envelope_outline()
     for fid in ["u", "1", "2", "3"]:
         fpath = FLOORS / f"etasje-{fid}.json"
         if not fpath.exists():
             continue
         doc = json.loads(fpath.read_text())
         units = doc["units"]
-        outline = doc["outline"]
 
         worst_pair = (None, 0.0)
         pairs = []

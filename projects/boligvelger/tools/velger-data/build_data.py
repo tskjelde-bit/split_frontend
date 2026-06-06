@@ -6,6 +6,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+import check_overlaps
+
 ROOT = Path(__file__).resolve().parents[2]
 TOOL = Path(__file__).resolve().parent
 EIENDOM = ROOT / "eiendommer" / "dybwads gate 8"
@@ -63,6 +65,22 @@ def validate_coverage():
     return errors
 
 
+def validate_envelope_containment():
+    """Every unit + common polygon of every floor must lie inside the envelope."""
+    errors = []
+    envelope = _load("building.json")["envelope"]["poly"]
+    for fid, f in _load_floors().items():
+        polys = [(u["id"], u["poly"]) for u in f["units"]]
+        polys += [(f"common[{i}]", c) for i, c in enumerate(f.get("common", []))]
+        for pid, poly in polys:
+            out = check_overlaps.area_outside_m2(poly, envelope)
+            if out > check_overlaps.MAX_OVERLAP_M2:
+                errors.append(
+                    f"floor {fid}: {pid} pokes {out:.2f} m² outside envelope"
+                )
+    return errors
+
+
 def build_units():
     prisliste = _load("prisliste.json")
     arch = _load_arch()
@@ -89,6 +107,7 @@ def build_units():
 
 def build_geometry():
     b = _load("building.json")
+    envelope = b["envelope"]
     floors_raw = _load_floors()
     floors = []
     elevation = 0.0
@@ -100,7 +119,7 @@ def build_geometry():
             "label": spec["label"],
             "elevation": round(elevation, 3),
             "height": spec["height"],
-            "outline": f["outline"],
+            "outline": envelope["poly"],   # canonical envelope shared by all floors
             "units": f["units"],
             "common": f.get("common", []),
         })
@@ -108,6 +127,7 @@ def build_geometry():
     return {
         "scale": b["scale"],
         "slabThickness": b["slabThickness"],
+        "envelope": envelope,
         "floors": floors,
         "roof": {"elevation": round(elevation, 3), **b["roof"]},
         "windows": b.get("windows", []),
@@ -118,6 +138,7 @@ def main():
     prisliste = _load("prisliste.json")
     errors, warnings = validate_prisliste(prisliste)
     errors += validate_coverage()
+    errors += validate_envelope_containment()
 
     r = subprocess.run([sys.executable, str(TOOL / "check_overlaps.py")], capture_output=True, text=True)
     if r.returncode != 0:
