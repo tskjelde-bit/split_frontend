@@ -12,24 +12,29 @@ import type { BuildingGeo } from '../lib/types';
 // no aspect-factor or lateral-shift heuristics. Target is the AABB centre,
 // which also keeps the building horizontally centred at every azimuth.
 //
-// Camera sits at the STREET/GABLE corner: world -x (SW street facade edge)
-// and world -z (SE gable end / Ole Fladagers gate). Direction vector points
-// from camera TO scene, so negative x and z components mean the camera is
-// positioned in the +x/+z quadrant — i.e. the +x/-z convention is flipped
-// here: direction (-1, *, -0.7) means camera is at +x, +z looking toward
-// -x, -z, which puts the street facade (world -x) and gable (world -z) both
-// facing the lens.
+// CAMERA-POSITION FORMULA (see solveFit): forward = -dir, and
+//   camPos = target + forward * (-dist) = target + dir * dist.
+// So the camera sits on the SAME-SIGN side as `dir`: a -x component puts the
+// lens on the world -x side, a -z component puts it on the world -z side.
 //
-// World convention: x = px*scale (748..2030→street at low x), z = -(py*scale)
-// (375..1700→NW gable at high z, SE gable at low z). So to look at the SW
-// corner (low px=748, high py=1700 → world low x, low z) from the outside we
-// place the camera at world high-x, high-z and look toward low-x, low-z,
-// i.e. direction (-1, 0.5, -0.7) normalised. The azimuth split (~35° toward
-// gable) keeps the street facade dominant while giving depth.
+// World convention: x = px*scale - cx (px 748 = street/SW eave → world -x),
+// z = cz - py*scale (py 1700 = SE gable / Ole Fladagers gate → world -z;
+// py 375 = NW gable → world +z). The ark + 2 dormers + 5 window axes live on
+// the WEST/street slope (world -x), the SE gable on world -z. To face BOTH we
+// place the camera in the (-x, -z) quadrant looking back at the centre, i.e.
+// dir has NEGATIVE x and NEGATIVE z.
+//
+// The z magnitude is deliberately SMALL relative to x (~0.28x): the street
+// slope is the short, steep one (ridgeOffset 0.4) so a large -z swings the
+// lens nearly face-on to the SE gable and you end up looking OVER the ridge
+// onto the long back slope (the previous (-1,*,-0.7) "back of building" bug).
+// (-1, 0.28, -0.45) keeps the street facade + dormers frontal and dominant
+// while the SE gable supplies the 3/4 depth. Verified empirically from
+// headless renders, not from sign reasoning alone.
 const DIR: Record<Mode, THREE.Vector3> = {
-  landing:  new THREE.Vector3(-1,  0.5, -0.7).normalize(),
-  orbit:    new THREE.Vector3(-1,  0.5, -0.7).normalize(),
-  exploded: new THREE.Vector3(-1,  0.7, -0.7).normalize(),
+  landing:  new THREE.Vector3(-1,  0.28, -0.45).normalize(),
+  orbit:    new THREE.Vector3(-1,  0.28, -0.45).normalize(),
+  exploded: new THREE.Vector3(-1,  0.45, -0.45).normalize(),
 };
 
 // HUD safe areas, as fractions of the viewport. Reserve space for the title

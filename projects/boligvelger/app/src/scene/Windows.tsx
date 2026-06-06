@@ -2,16 +2,18 @@ import { useMemo } from 'react';
 import type { BuildingGeo, WindowGeo } from '../lib/types';
 import { useVelger } from '../state/store';
 
-const NICHE = '#cfcbbd';
-// Reveal depth: the wall is now wallThickness (0.30) thick. Make the niche deep
-// enough to read as a sunk opening, but keep its back face short of the inner
-// wall plane (0.30) so it never z-fights the wall ring's interior face:
-//   front face at INSET (0.05), back face at INSET+DEPTH (0.23) < 0.30.
-const DEPTH = 0.18;
-// Sit the niche front face INSET behind the outer wall plane so it reads as an
-// inset opening from outside without z-fighting the facade. The box extends
-// inward by DEPTH/2 from its center, so center it at (INSET + DEPTH/2).
-const INSET = 0.05;
+const NICHE = '#bdb9ab'; // darker than the gips wall so the recess reads as a window
+// The exterior wall is now a solid ring of wallThickness (0.30 m). A niche whose
+// front face sits BEHIND the outer wall plane is fully occluded by the opaque
+// wall and never shows (the prior "invisible niches" bug). So the front face
+// must sit a hair PROUD of the outer plane and recede into the wall:
+//   front face at INSET = -0.04 m (4 cm proud of the outer plane),
+//   back face  at INSET + DEPTH = 0.12 m inward — short of the 0.30 inner
+//   plane, so it never z-fights the wall ring's interior face.
+// The box centre sits at offset = INSET + DEPTH/2 inward (see below) and its
+// half-depth is DEPTH/2, so the front face's inward distance equals INSET.
+const DEPTH = 0.16;
+const INSET = -0.04;
 
 /** Window niches: thin boxes along outline edges, inset into the facade so
  *  they read as openings on the gips model. Hidden in exploded mode.
