@@ -23,3 +23,28 @@ body { background: #FBFAF6; color: #1E3D2B; font-family: Georgia, serif; }
 .tooltip { background: #1E3D2B; color: #FBFAF6; padding: .5rem .8rem; border-radius: 6px;
   display: flex; flex-direction: column; font-size: .8rem; white-space: nowrap; }
 .tooltip span { color: #e8c87a; }
+
+.panel { position: absolute; top: 0; right: 0; height: 100%; width: min(420px, 92vw);
+  background: #fff; border-left: 1px solid #d8d4c8; display: flex; flex-direction: column;
+  box-shadow: -12px 0 40px rgba(30, 61, 43, .08); }
+.panel-head { background: #1E3D2B; color: #FBFAF6; padding: 1.1rem 1.3rem; display: flex; justify-content: space-between; }
+.panel-head h2 { font-family: 'Sfizia', serif; font-weight: 400; letter-spacing: .08em; }
+.panel-head p { font-family: 'Engravers', serif; font-size: .65rem; letter-spacing: .2em; text-transform: uppercase; margin-top: .3rem; }
+.badge.ledig { color: #9fd4b6; } .badge.reservert { color: #e8c87a; } .badge.solgt { color: #c4c0b2; }
+.close { background: none; border: 0; color: #FBFAF6; font-size: 1.4rem; cursor: pointer; }
+.panel-body { flex: 1; overflow-y: auto; padding: 1.2rem; }
+.plan { width: 100%; background: #FBFAF6; border: 1px solid #eee9dd; border-radius: 4px; }
+.plan.hems { width: 55%; margin-top: .6rem; }
+.panel-body dl { display: grid; grid-template-columns: auto 1fr; gap: .35rem 1rem; margin-top: 1rem; }
+.panel-body dt { opacity: .6; } .panel-body dd { text-align: right; }
+.duplex-note { margin-top: .8rem; font-style: italic; font-size: .85rem; opacity: .75; }
+.panel-foot { padding: 1.1rem 1.3rem; border-top: 1px solid #eee9dd; display: grid; gap: .5rem; }
+.cta { display: block; text-align: center; padding: .8rem; background: #1E3D2B; color: #FBFAF6;
+  text-decoration: none; font-family: 'Engravers', serif; letter-spacing: .18em; font-size: .7rem; text-transform: uppercase; }
+.cta.ghost { background: transparent; color: #1E3D2B; border: 1px solid #1E3D2B; }
+.kontakt { text-align: center; font-size: .8rem; opacity: .65; }
+@media (max-width: 768px) {
+  .panel { top: auto; bottom: 0; height: 72vh; width: 100%; border-left: 0;
+    border-top: 1px solid #d8d4c8; border-radius: 16px 16px 0 0; }
+  .chips { bottom: 2vh; flex-wrap: wrap; justify-content: center; padding: 0 1rem; }
+}
