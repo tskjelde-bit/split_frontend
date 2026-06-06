@@ -20,6 +20,14 @@ export default function App() {
   useEffect(() => {
     if (data) applyQaParam(new URLSearchParams(location.search).get('qa'));
   }, [data]);
+  useEffect(() => {
+    if (!data) return;
+    (window as never as Record<string, unknown>).__velger = {
+      select: (id: string) => useVelger.getState().select(id),
+      explode: (f: string) => useVelger.getState().explode(f as never),
+      state: () => useVelger.getState(),
+    };
+  }, [data]);
   if (!data) return null;
   if (!webgl) return <FallbackList data={data} />;
   return (

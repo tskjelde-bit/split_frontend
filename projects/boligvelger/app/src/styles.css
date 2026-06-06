@@ -46,7 +46,10 @@ body { background: #FBFAF6; color: #1E3D2B; font-family: Georgia, serif; }
 @media (max-width: 768px) {
   .panel { top: auto; bottom: 0; height: 72vh; width: 100%; border-left: 0;
     border-top: 1px solid #d8d4c8; border-radius: 16px 16px 0 0; }
-  .chips { bottom: 2vh; flex-wrap: wrap; justify-content: center; padding: 0 1rem; }
+  .chips { bottom: 2vh; flex-wrap: wrap; justify-content: center; padding: 0 .5rem; width: 100%; left: 0; gap: .4rem; }
+  .chip { font-size: .65rem; padding: .45rem .8rem; }
+  .hud-title h1 { font-size: clamp(1.2rem, 6.5vw, 2rem); letter-spacing: .06em; }
+  .hud-title p { font-size: .65rem; letter-spacing: .18em; }
 }
 
 .info { padding: 14vh 8vw; max-width: 720px; margin: 0 auto; text-align: center; }
