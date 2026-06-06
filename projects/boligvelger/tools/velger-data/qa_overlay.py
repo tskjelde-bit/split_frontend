@@ -11,25 +11,25 @@ FLOORS = Path(__file__).resolve().parent / "floors"
 QA = Path(__file__).resolve().parent / "qa"
 QA.mkdir(exist_ok=True)
 
-# Basement ("u") QA underlay mapping — intentional, not a bug:
+# Basement ("u") QA underlay mapping:
 #
-# The basement was drawn at a different pixel scale than the floor plans
-# (etasje-u-plan-1.png is 2481x1754, while the floor PNGs are 3308x2339), so
-# the raw basement render does not share the floors' crop-px coordinate
-# system. To put the basement in the same 3D model, etasje-u.json geometry was
-# affine-transformed INTO floor crop-px space (see the "note" field in
-# floors/etasje-u.json). Because of that, the only meaningful visual QA for the
-# basement is to draw its polygons on the FLOOR-1 underlay: the basement units
-# H0101-U and H0103-U are the lower halves of the floor-1 duplexes
-# (H0101 / H0103), so overlaying them on etasje-1-plan-1.png shows whether the
-# duplex basement parts line up under their floor-1 counterparts. Drawing them
-# on the (differently-scaled, untransformed) basement PNG would be the wrong
-# check. Hence "u" maps to the floor-1 PNG below on purpose.
+# etasje-u.json geometry is stored in floor-px space (3308x2339, 200 dpi). The
+# basement PNG itself is 2481x1754 (150 dpi). To draw the floor-px geometry on
+# the basement PNG we scale it by 2481/3308 = 0.75 (the inverse of the
+# 1.33333 transform documented in etasje-u.json "transform"). This is applied
+# per-floor below via PNG_SCALE so the basement is QA'd on its OWN underlay and
+# the outline can be checked against the real basement exterior walls.
 PNG_FOR = {
-    "u": "etasje-1-plan-1.png",
+    "u": "etasje-u-plan-1.png",
     "1": "etasje-1-plan-1.png",
     "2": "etasje-2-plan-1.png",
     "3": "etasje-3-plan-1.png",
+}
+PNG_SCALE = {
+    "u": 2481.0 / 3308.0,
+    "1": 1.0,
+    "2": 1.0,
+    "3": 1.0,
 }
 
 
@@ -55,7 +55,7 @@ def main():
         if not fpath.exists():
             continue
         doc = json.loads(fpath.read_text())
-        scale = doc.get("pngScale", 1.0)
+        scale = PNG_SCALE.get(fid, doc.get("pngScale", 1.0))
         png = UNDERLAG / png_name
         data = png.read_bytes()
         w, h = unpack(">II", data[16:24])

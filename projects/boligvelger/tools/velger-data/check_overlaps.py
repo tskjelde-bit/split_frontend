@@ -16,7 +16,7 @@ import json
 import sys
 from pathlib import Path
 
-SCALE = 0.00878  # m per crop-px (building.json)
+SCALE = 0.012696  # m per crop-px (building.json)
 MAX_OVERLAP_M2 = 0.5
 FLOORS = Path(__file__).resolve().parent / "floors"
 
