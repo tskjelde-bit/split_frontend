@@ -18,7 +18,7 @@ export function VelgerCanvas({ data }: { data: AppData }) {
       <directionalLight position={[12, 20, 8]} intensity={1.1} castShadow
         shadow-mapSize={[1024, 1024]} />
       <Environment preset="city" environmentIntensity={0.25} />
-      <Building geo={data.geo} />
+      <Building data={data} />
       <ContactShadows position={[0, -0.01, 0]} opacity={0.35} scale={45} blur={2.2} far={12} resolution={512} />
       <CameraRig />
     </Canvas>

@@ -3,9 +3,11 @@ import { polyCentroid } from '../lib/shapes';
 import { FloorPlate } from './FloorPlate';
 import { Roof } from './Roof';
 import { Windows } from './Windows';
-import type { BuildingGeo } from '../lib/types';
+import { UnitTooltip } from '../ui/UnitTooltip';
+import type { AppData } from '../lib/types';
 
-export function Building({ geo }: { geo: BuildingGeo }) {
+export function Building({ data }: { data: AppData }) {
+  const geo = data.geo;
   // center the model on origin using ground floor outline centroid
   const [cx, cz] = useMemo(() => {
     const [px, py] = polyCentroid(geo.floors[0].outline);
@@ -18,6 +20,7 @@ export function Building({ geo }: { geo: BuildingGeo }) {
       ))}
       <Roof roof={geo.roof} scale={geo.scale} index={geo.floors.length} />
       <Windows geo={geo} />
+      <UnitTooltip data={data} />
     </group>
   );
 }

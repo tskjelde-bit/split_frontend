@@ -1,5 +1,25 @@
+@font-face { font-family: 'Sfizia'; src: url('/fonts/Sfizia-Regular.otf'); font-weight: 400; }
+@font-face { font-family: 'Sfizia'; src: url('/fonts/Sfizia-Bold.otf'); font-weight: 700; }
+@font-face { font-family: 'Engravers'; src: url('/fonts/EngraversGothic.otf'); }
+
 * { box-sizing: border-box; margin: 0; }
 html, body, #root { height: 100%; }
 body { background: #FBFAF6; color: #1E3D2B; font-family: Georgia, serif; }
 .hero { position: relative; height: 100vh; height: 100dvh; }
 .hero canvas { touch-action: none; }
+
+.hud { position: absolute; inset: 0; pointer-events: none; display: flex; flex-direction: column; align-items: center; }
+.hud-title { margin-top: 7vh; text-align: center; transition: all .5s; }
+.hud-title h1 { font-family: 'Sfizia', Georgia, serif; font-weight: 400; font-size: clamp(2rem, 5vw, 3.5rem); letter-spacing: .12em; }
+.hud-title p { font-family: 'Engravers', Georgia, serif; letter-spacing: .25em; font-size: .8rem; margin-top: .5rem; text-transform: uppercase; }
+.hud-title.compact { margin-top: 2.5vh; transform: scale(.62); }
+.hint { position: absolute; bottom: 14vh; font-style: italic; opacity: .6; animation: pulse 2.5s infinite; }
+@keyframes pulse { 50% { opacity: .25; } }
+.chips { position: absolute; bottom: 4vh; display: flex; gap: .6rem; pointer-events: auto; }
+.chip { font-family: 'Engravers', Georgia, serif; letter-spacing: .12em; font-size: .75rem;
+  padding: .55rem 1.1rem; border-radius: 999px; border: 1px solid #1E3D2B; background: transparent;
+  color: #1E3D2B; cursor: pointer; }
+.chip.active, .chip:hover { background: #1E3D2B; color: #FBFAF6; }
+.tooltip { background: #1E3D2B; color: #FBFAF6; padding: .5rem .8rem; border-radius: 6px;
+  display: flex; flex-direction: column; font-size: .8rem; white-space: nowrap; }
+.tooltip span { color: #e8c87a; }

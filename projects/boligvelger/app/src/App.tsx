@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { VelgerCanvas } from './scene/VelgerCanvas';
+import { Hud } from './ui/Hud';
 import { loadAppData } from './lib/data';
 import { applyQaParam } from './lib/qa';
 import type { AppData } from './lib/types';
@@ -14,6 +15,7 @@ export default function App() {
   return (
     <section className="hero">
       <VelgerCanvas data={data} />
+      <Hud data={data} />
     </section>
   );
 }
