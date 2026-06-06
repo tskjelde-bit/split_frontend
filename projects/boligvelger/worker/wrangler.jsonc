@@ -1,0 +1,7 @@
+{
+  "name": "boligvelger-dybwadsgate8",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-05-01",
+  "assets": { "directory": "../app/dist", "binding": "ASSETS", "not_found_handling": "single-page-application" },
+  "kv_namespaces": [{ "binding": "STATUS", "id": "031423b04c764806ad473d9456d7566d" }]
+}
