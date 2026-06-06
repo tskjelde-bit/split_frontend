@@ -93,3 +93,24 @@ def group_mask(arrs_by_step: dict, diff_steps: list, noise: np.ndarray) -> np.nd
         core = add_shadow_halo(core, arrs_by_step[s - 1], arrs_by_step[s], noise)
         m = core if m is None else (m | core)
     return ndimage.binary_dilation(m, iterations=MASK_DILATE)
+
+
+def feather(mask: np.ndarray, dilate: int = FEATHER_DILATE,
+            sigma: float = FEATHER_SIGMA) -> np.ndarray:
+    """Binær maske → myk alfa. Gaussisk støtte er endelig (truncate=4σ),
+    så piksler lenger unna enn dilate + 4σ er eksakt 0 — det er forutsetningen
+    for QA_PAD-marginene i qa_furnish."""
+    a = ndimage.binary_dilation(mask, iterations=dilate).astype(np.float32)
+    return np.clip(ndimage.gaussian_filter(a, sigma), 0.0, 1.0)
+
+
+def anchor_base(empty: np.ndarray, full: np.ndarray,
+                furniture: np.ndarray) -> np.ndarray:
+    """Base = empty-rekonstruksjon kun i møbleringsregionen, fulls piksler ellers.
+
+    Kunst/vinduer/gardiner blir dermed identiske med full i samtlige frames.
+    Innflytelsesradius = 15 + 4*8 = 47 px; gate 3 bruker 48 px margin.
+    """
+    a = feather(furniture, dilate=15, sigma=8.0)[..., None]
+    out = empty.astype(np.float32) * a + full.astype(np.float32) * (1 - a)
+    return np.clip(out + 0.5, 0, 255).astype(np.uint8)

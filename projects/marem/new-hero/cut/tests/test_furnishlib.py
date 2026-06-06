@@ -67,3 +67,23 @@ def test_group_mask_unions_steps_and_dilates():
     m = fl.group_mask(arrs, [1, 2], noise)
     assert m[150, 140] and m[35, 230]  # begge objekter i unionen
     assert m[118, 98]                   # dilatert utover objektkanten
+
+
+def test_feather_is_soft_and_clipped():
+    m = np.zeros((100, 100), bool)
+    m[40:60, 40:60] = True
+    a = fl.feather(m)
+    assert a.max() <= 1.0 and a.min() >= 0.0
+    assert a[50, 50] > 0.99          # kjernen er solid
+    assert 0.0 < a[50, 67] < 1.0     # myk kant utenfor masken
+    assert a[5, 5] == 0.0            # langt unna: eksakt null
+
+
+def test_anchor_base_keeps_full_outside_furniture():
+    full = np.full((200, 200, 3), 120, np.uint8)
+    empty = np.full((200, 200, 3), 60, np.uint8)
+    furn = np.zeros((200, 200), bool)
+    furn[80:120, 80:120] = True
+    base = fl.anchor_base(empty, full, furn)
+    assert (base[0:10] == 120).all()           # utenfor sonen: fulls piksler eksakt
+    assert (base[95:105, 95:105] == 60).all()  # inni: empty-rekonstruksjonen
