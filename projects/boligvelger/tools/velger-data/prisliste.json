@@ -1,0 +1,18 @@
+{
+  "H0101": {"navn": "Leilighet 1",  "braI": 15, "braU": 30, "kvmPris": 230000, "kvmPrisU": 80000, "pris": 5850000},
+  "H0102": {"navn": "Leilighet 2",  "braI": 20, "kvmPris": 240000, "pris": 4800000},
+  "H0103": {"navn": "Leilighet 3",  "braI": 23, "braU": 33, "kvmPris": 180000, "kvmPrisU": 80000, "pris": 6780000},
+  "H0104": {"navn": "Leilighet 4",  "braI": 33, "kvmPris": 180000, "pris": 5940000},
+  "H0105": {"navn": "Leilighet 5",  "braI": 30, "kvmPris": 190000, "pris": 5700000},
+  "H0201": {"navn": "Leilighet 6",  "braI": 19, "kvmPris": 260000, "pris": 4940000},
+  "H0202": {"navn": "Leilighet 7",  "braI": 19, "kvmPris": 260000, "pris": 4940000},
+  "H0203": {"navn": "Leilighet 8",  "braI": 27, "kvmPris": 200000, "pris": 5400000},
+  "H0204": {"navn": "Leilighet 9",  "braI": 32, "kvmPris": 200000, "pris": 6400000},
+  "H0205": {"navn": "Leilighet 10", "braI": 30, "kvmPris": 230000, "pris": 6900000},
+  "H0301": {"navn": "Leilighet 11", "braI": 16, "kvmPris": 265000, "pris": 4240000},
+  "H0302": {"navn": "Leilighet 12", "braI": 22, "kvmPris": 250000, "pris": 5500000},
+  "H0303": {"navn": "Leilighet 13", "braI": 28, "kvmPris": 230000, "pris": 6440000},
+  "H0304": {"navn": "Leilighet 14", "braI": 24, "kvmPris": 250000, "pris": 6000000},
+  "H0305": {"navn": "Leilighet 15", "braI": 22, "kvmPris": 250000, "pris": 5500000},
+  "H0306": {"navn": "Leilighet 16", "braI": 22, "kvmPris": 270000, "pris": 5940000}
+}
