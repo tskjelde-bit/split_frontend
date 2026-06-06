@@ -114,3 +114,28 @@ def anchor_base(empty: np.ndarray, full: np.ndarray,
     a = feather(furniture, dilate=15, sigma=8.0)[..., None]
     out = empty.astype(np.float32) * a + full.astype(np.float32) * (1 - a)
     return np.clip(out + 0.5, 0, 255).astype(np.uint8)
+
+
+def composite(base: np.ndarray, full: np.ndarray, groups: list) -> list:
+    """Iterativ paste i byggerekkefølge. groups = [(maske, debut_arr), ...].
+
+    Kilderegel: full der gruppen er øverst i stabelen; debut-bildet der
+    senere grupper okkluderer i full (f.eks. teppe-under-sofa). Returnerer
+    frames [base, etter gruppe 1, ..., etter gruppe n] som uint8.
+    """
+    n = len(groups)
+    later = [None] * n
+    acc = np.zeros(base.shape[:2], dtype=bool)
+    for i in range(n - 1, -1, -1):
+        later[i] = acc.copy()
+        acc |= groups[i][0]
+    frames = [base.copy()]
+    comp = base.astype(np.float32)
+    full_f = full.astype(np.float32)
+    for i, (mask, debut) in enumerate(groups):
+        occ = feather(mask & later[i], dilate=2, sigma=3.0)[..., None]
+        src = full_f * (1 - occ) + debut.astype(np.float32) * occ
+        a = feather(mask)[..., None]
+        comp = src * a + comp * (1 - a)
+        frames.append(np.clip(comp + 0.5, 0, 255).astype(np.uint8))
+    return frames

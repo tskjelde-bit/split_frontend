@@ -87,3 +87,44 @@ def test_anchor_base_keeps_full_outside_furniture():
     base = fl.anchor_base(empty, full, furn)
     assert (base[0:10] == 120).all()           # utenfor sonen: fulls piksler eksakt
     assert (base[95:105, 95:105] == 60).all()  # inni: empty-rekonstruksjonen
+
+
+def test_composite_occluded_parts_come_from_debut():
+    """Teppe under sofa: frame 1 skal vise DEBUT-rekonstruksjonen (190),
+    aldri fulls piksler (sofa, 30). Frame 2 skal vise sofaen."""
+    H, W = 200, 200
+    base = np.full((H, W, 3), 50, np.uint8)
+    full = base.copy()
+    full[100:160, 40:160] = (200, 200, 200)   # teppe i full
+    full[100:160, 80:120] = (30, 30, 30)      # sofa OPPÅ teppet i full
+    debut_rug = base.copy()
+    debut_rug[100:160, 40:160] = (190, 190, 190)  # teppe alene, rekonstruert tone
+    rug_mask = np.zeros((H, W), bool)
+    rug_mask[100:160, 40:160] = True
+    sofa_mask = np.zeros((H, W), bool)
+    sofa_mask[100:160, 80:120] = True
+    frames = fl.composite(base, full, [(rug_mask, debut_rug), (sofa_mask, full)])
+    assert len(frames) == 3
+    assert (frames[0] == base).all()
+    f1 = frames[1].astype(int)
+    assert (np.abs(f1[130, 100] - 190) <= 2).all()  # under-sofa: fra DEBUT
+    assert (np.abs(f1[130, 60] - 200) <= 2).all()   # uokkludert: fra FULL
+    f2 = frames[2].astype(int)
+    assert (np.abs(f2[130, 100] - 30) <= 2).all()   # sofa på plass
+    assert (np.abs(f2[130, 60] - 200) <= 2).all()   # teppet uendret
+
+
+def test_composite_untouched_pixels_are_bit_identical():
+    """Piksler utenfor en gruppes feather-sone skal være BIT-identiske
+    mellom nabo-frames — grunnlaget for gate 1/2/3."""
+    H, W = 200, 200
+    base = np.full((H, W, 3), 50, np.uint8)
+    full = base.copy()
+    full[100:140, 100:140] = (200, 60, 30)
+    m = np.zeros((H, W), bool)
+    m[100:140, 100:140] = True
+    frames = fl.composite(base, full, [(m, full)])
+    d = np.abs(frames[1].astype(np.int16) - frames[0].astype(np.int16)).max(2)
+    far = np.ones((H, W), bool)
+    far[100 - fl.QA_PAD:140 + fl.QA_PAD, 100 - fl.QA_PAD:140 + fl.QA_PAD] = False
+    assert d[far].max() == 0
