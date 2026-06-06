@@ -20,7 +20,7 @@ export function VelgerCanvas({ data }: { data: AppData }) {
       <Environment preset="city" environmentIntensity={0.25} />
       <Building data={data} />
       <ContactShadows position={[0, -0.01, 0]} opacity={0.35} scale={45} blur={2.2} far={12} resolution={512} />
-      <CameraRig />
+      <CameraRig geo={data.geo} />
     </Canvas>
   );
 }

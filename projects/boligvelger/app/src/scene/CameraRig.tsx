@@ -1,86 +1,207 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
+import * as THREE from 'three';
 import { CameraControls } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
-import { useVelger } from '../state/store';
+import { polyCentroid } from '../lib/shapes';
+import { useVelger, type Mode } from '../state/store';
+import type { BuildingGeo } from '../lib/types';
 
-// Fixed 3/4 view direction. Both the framing distance and the lateral target
-// offset are derived from the viewport aspect: portrait shrinks the horizontal
-// FOV (so we pull back) and shifts the building's silhouette centre (so we slide
-// the look-target along the screen-right axis to keep it centred, never
-// clipping on mobile). Tuned against 1440x900 (landscape) and 390x844 (portrait).
-type View = { dir: [number, number, number]; target: [number, number, number]; dist: number };
-
-const VIEWS: Record<string, View> = {
-  landing: { dir: [1, 0.5, 1], target: [2, 5, 1.5], dist: 42 },
-  orbit: { dir: [1, 0.5, 1], target: [2, 5, 1.5], dist: 42 },
-  exploded: { dir: [1, 0.7, 1], target: [2, 9.5, 1.5], dist: 52 },
+// Fixed 3/4 view DIRECTION per mode (the oblique look is intentional). The
+// camera DISTANCE and TARGET are solved deterministically by fitting the
+// building's world-space AABB inside a padded sub-rectangle of the viewport —
+// no aspect-factor or lateral-shift heuristics. Target is the AABB centre,
+// which also keeps the building horizontally centred at every azimuth.
+const DIR: Record<Mode, THREE.Vector3> = {
+  landing: new THREE.Vector3(1, 0.5, 1).normalize(),
+  orbit: new THREE.Vector3(1, 0.5, 1).normalize(),
+  exploded: new THREE.Vector3(1, 0.7, 1).normalize(),
 };
 
-// Screen-right axis for the 3/4 view; sliding the target along it recentres the
-// silhouette in portrait without changing the viewing angle.
-// SHIFT[0]/[2] reduced slightly so the right-side roof overhang has ≥15 px clearance
-// at 390×844; the larger portrait-boost coefficient (1.65) also helps.
-const SHIFT: [number, number, number] = [2.0, 0, -2.5];
+// HUD safe areas, as fractions of the viewport. Reserve space for the title
+// block (top), the hint/chips (bottom) and a little air on the sides. The
+// building must project entirely inside the remaining rectangle.
+const PAD = { top: 0.22, bottom: 0.16, left: 0.06, right: 0.06 };
 
-const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
+// Extra height added to the AABB in exploded mode: plates rise by
+// index*EXPLODE_GAP (gap 2.2m); the roof sits at the highest index (= number of
+// floors), so the top extends by floors*gap. The base (y≈0) is unchanged.
+const EXPLODE_GAP = 2.2;
 
-// 0 in landscape -> 1 at the reference portrait aspect (~0.46).
-function portraitK(aspect: number): number {
-  return aspect >= 1 ? 0 : clamp01((1 - aspect) / (1 - 0.46));
+type Fit = { camPos: THREE.Vector3; target: THREE.Vector3; dist: number };
+
+/** Assembled world-space AABB computed analytically from the geometry data.
+ *  World mapping (see shapes.polyToShape + Building centering + rotateX(-PI/2)):
+ *    worldX = x*scale - cx ,  worldZ = cz - y*scale ,  worldY = elevation .. top
+ *  This is race-free (no dependency on the damped explode animation) and covers
+ *  the roof overhang because roof volume polys are included. */
+function assembledBox(geo: BuildingGeo): THREE.Box3 {
+  const [pcx, pcy] = polyCentroid(geo.floors[0].outline);
+  const cx = pcx * geo.scale;
+  const cz = pcy * geo.scale;
+  const box = new THREE.Box3();
+  box.makeEmpty();
+  const v = new THREE.Vector3();
+  const addPoly = (poly: [number, number][], yLo: number, yHi: number) => {
+    for (const [x, y] of poly) {
+      const wx = x * geo.scale - cx;
+      const wz = cz - y * geo.scale;
+      box.expandByPoint(v.set(wx, yLo, wz));
+      box.expandByPoint(v.set(wx, yHi, wz));
+    }
+  };
+  for (const f of geo.floors) {
+    const top = f.elevation + f.height;
+    addPoly(f.outline, f.elevation, top);
+    for (const c of f.common) addPoly(c, f.elevation, top);
+    for (const u of f.units) addPoly(u.poly, f.elevation, top);
+  }
+  for (const vol of geo.roof.volumes) {
+    addPoly(vol.poly, geo.roof.elevation, geo.roof.elevation + vol.height);
+  }
+  return box;
 }
 
-function distanceFor(view: View, aspect: number): number {
-  // Increased portrait boost coefficient from 1.5 to 1.65 to ensure ≥15 px
-  // clearance on all sides at 390×844 (roof-overhang gate fix).
-  const boost = aspect < 1 ? 1.65 / Math.max(aspect, 0.35) : 1;
-  return view.dist * boost;
+/** Solve camera distance + target so every AABB corner projects inside the
+ *  padded sub-rectangle. For auto-rotated landing/orbit the building spins, so
+ *  the horizontal constraint uses the bounding-sphere radius (worst azimuth)
+ *  while the vertical constraint uses the true corner extents. */
+function solveFit(
+  box: THREE.Box3,
+  dir: THREE.Vector3,
+  fov: number,
+  aspect: number,
+  rotates: boolean,
+): Fit {
+  const center = box.getCenter(new THREE.Vector3());
+  const size = box.getSize(new THREE.Vector3());
+  const radius = size.length() / 2; // bounding-sphere radius
+
+  // Angular limits after reserving the HUD safe areas. The target is anchored
+  // at the AABB centre (screen centre), so the usable band is ASYMMETRIC: a
+  // point may extend up to (0.5 - PAD.top) of the frustum height above centre
+  // and (0.5 - PAD.bottom) below. Horizontal is symmetric.
+  const vFov = THREE.MathUtils.degToRad(fov);
+  const tanV = Math.tan(vFov / 2); // tan of half *full* vertical fov
+  // Convert "fraction of full height from centre" -> tan(angle): a point at
+  // fraction f of full height projects at tan = f * 2 * tanV.
+  const limUp = (0.5 - PAD.top) * 2 * tanV;
+  const limDown = (0.5 - PAD.bottom) * 2 * tanV;
+  const usableH = 1 - PAD.left - PAD.right;
+  const halfH = tanV * aspect * usableH;
+
+  // Orthonormal view basis: forward = -dir (camera looks toward center along
+  // -dir), up world-ish, right = forward × up.
+  const forward = dir.clone().negate().normalize();
+  const worldUp = new THREE.Vector3(0, 1, 0);
+  const right = new THREE.Vector3().crossVectors(forward, worldUp).normalize();
+  const up = new THREE.Vector3().crossVectors(right, forward).normalize();
+
+  const corners = [
+    new THREE.Vector3(box.min.x, box.min.y, box.min.z),
+    new THREE.Vector3(box.min.x, box.min.y, box.max.z),
+    new THREE.Vector3(box.min.x, box.max.y, box.min.z),
+    new THREE.Vector3(box.min.x, box.max.y, box.max.z),
+    new THREE.Vector3(box.max.x, box.min.y, box.min.z),
+    new THREE.Vector3(box.max.x, box.min.y, box.max.z),
+    new THREE.Vector3(box.max.x, box.max.y, box.min.z),
+    new THREE.Vector3(box.max.x, box.max.y, box.max.z),
+  ];
+
+  // Required distance so each corner projects inside the limits. depth from the
+  // camera = dist + off·forward (camera sits at center - forward*dist). For each
+  // corner: |h| <= halfH*depth, v <= limUp*depth, -v <= limDown*depth.
+  let dist = 0;
+  for (const c of corners) {
+    const off = c.clone().sub(center);
+    const along = off.dot(forward); // signed depth offset from center
+    const h = off.dot(right);
+    const v = off.dot(up);
+    const dH = Math.abs(h) / halfH - along;
+    const dUp = v > 0 ? v / limUp - along : 0;
+    const dDown = v < 0 ? -v / limDown - along : 0;
+    dist = Math.max(dist, dH, dUp, dDown);
+  }
+
+  // Auto-rotate: the silhouette's horizontal extent changes per azimuth. Use
+  // the bounding-sphere radius for the horizontal constraint so a full 360°
+  // never clips. Vertical is azimuth-invariant (rotation is about world Y).
+  if (rotates) {
+    const dSphere = radius / halfH;
+    dist = Math.max(dist, dSphere);
+  }
+
+  // Target is the AABB centre (projects at screen centre). The asymmetric
+  // up/down limits above already keep the building clear of the title (top) and
+  // chips/hint (bottom) — no lateral or vertical shift hack needed.
+  const target = center.clone();
+  const camPos = target.clone().add(forward.clone().multiplyScalar(-dist));
+  return { camPos, target, dist };
 }
 
-function lookAt(c: CameraControls, view: View, aspect: number, enableTransition: boolean) {
-  const d = distanceFor(view, aspect);
-  const k = portraitK(aspect);
-  const [dx, dy, dz] = view.dir;
-  const len = Math.hypot(dx, dy, dz);
-  const tx = view.target[0] + SHIFT[0] * k;
-  const ty = view.target[1] + SHIFT[1] * k;
-  const tz = view.target[2] + SHIFT[2] * k;
-  c.setLookAt(
-    tx + (dx / len) * d, ty + (dy / len) * d, tz + (dz / len) * d,
-    tx, ty, tz,
-    enableTransition,
-  );
+interface Props {
+  geo: BuildingGeo;
 }
 
-export function CameraRig() {
+export function CameraRig({ geo }: Props) {
   const ref = useRef<CameraControls>(null!);
   const mode = useVelger((s) => s.mode);
   const setMode = useVelger((s) => s.setMode);
   const size = useThree((s) => s.size);
-  const aspect = size.width / size.height;
+  const camera = useThree((s) => s.camera as THREE.PerspectiveCamera);
 
-  // Keep a ref to the current aspect so the mode-change effect reads the live
-  // value instead of a stale closure capture.
-  const aspectRef = useRef(aspect);
-  aspectRef.current = aspect;
+  // Assembled world AABB, derived analytically from the geometry (race-free).
+  const baseBox = useMemo(() => assembledBox(geo), [geo]);
+  // In exploded mode the roof (highest element) rises by floors*GAP; the base
+  // (ground floor at y=0) is unchanged.
+  const explodeRise = geo.floors.length * EXPLODE_GAP;
+  const started = useRef(false);
 
-  // Slow auto-rotate while on the landing view.
+  const boxForMode = useCallback(
+    (m: Mode): THREE.Box3 => {
+      const b = baseBox.clone();
+      if (m === 'exploded') b.max.y += explodeRise;
+      return b;
+    },
+    [baseBox, explodeRise],
+  );
+
+  const applyFit = useCallback(
+    (m: Mode, transition: boolean) => {
+      if (!ref.current) return;
+      const box = boxForMode(m);
+      const aspect = size.width / size.height;
+      const rotates = m === 'landing';
+      const fit = solveFit(box, DIR[m], camera.fov, aspect, rotates);
+      ref.current.minDistance = fit.dist * 0.4;
+      ref.current.maxDistance = fit.dist * 2.5;
+      ref.current.setLookAt(
+        fit.camPos.x, fit.camPos.y, fit.camPos.z,
+        fit.target.x, fit.target.y, fit.target.z,
+        transition,
+      );
+    },
+    [boxForMode, size.width, size.height, camera],
+  );
+
+  // Initial fit on the first frame (camera/controls ready), then auto-rotate.
   useFrame((_, dt) => {
+    if (!started.current && ref.current) {
+      started.current = true;
+      applyFit(useVelger.getState().mode, false);
+    }
     if (useVelger.getState().mode === 'landing' && ref.current) {
       ref.current.azimuthAngle += dt * 0.12;
     }
   });
 
-  // Re-frame on mode change (smooth transition).
-  // Read aspectRef.current so we always use the live viewport size, not a
-  // stale closure value from when this effect was registered.
+  // Re-frame on mode change (smooth) and on viewport resize (snap).
   useEffect(() => {
-    if (ref.current) lookAt(ref.current, VIEWS[mode], aspectRef.current, true);
-  }, [mode]);
+    if (started.current) applyFit(mode, true);
+  }, [mode, applyFit]);
 
-  // Re-frame on aspect/viewport change (snap, no transition) so portrait fits.
   useEffect(() => {
-    if (ref.current) lookAt(ref.current, VIEWS[useVelger.getState().mode], aspect, false);
-  }, [aspect]);
+    if (started.current) applyFit(useVelger.getState().mode, false);
+  }, [size.width, size.height, applyFit]);
 
   // First user interaction promotes landing -> orbit.
   useEffect(() => {
