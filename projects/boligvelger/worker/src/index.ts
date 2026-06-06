@@ -7,7 +7,9 @@ export interface Env {
 }
 
 const VALID_STATUS = new Set(['ledig', 'reservert', 'solgt']);
-const UNIT_RE = /^H0[1-3]0[1-6]$/;
+// The exact 16 units: floors 1 and 2 have 05 units each (H0x01–H0x05),
+// floor 3 has 06 (H0301–H0306). H0106/H0206 are ghosts and must be rejected.
+const UNIT_RE = /^(H0[12]0[1-5]|H030[1-6])$/;
 
 async function getAll(env: Env): Promise<Record<string, string>> {
   return (await env.STATUS.get('units', 'json')) ?? {};
@@ -24,6 +26,9 @@ export default {
         });
       }
       if (req.method === 'POST') {
+        // Non-constant-time comparison is acceptable here: this is a single low-value
+        // status flag behind a shared secret, not user auth. Timing-attack surface is
+        // negligible against a high-entropy password over the network.
         if (req.headers.get('x-admin-password') !== env.ADMIN_PASSWORD) {
           return new Response('unauthorized', { status: 401 });
         }

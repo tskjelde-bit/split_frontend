@@ -47,6 +47,33 @@ describe('/api/status', () => {
     }), env);
     expect(res.status).toBe(400);
   });
+  it('POST rejects ghost unit numbers (H0106/H0206)', async () => {
+    const env = mockEnv();
+    for (const ghost of ['H0106', 'H0206']) {
+      const res = await worker.fetch(new Request('https://x/api/status', {
+        method: 'POST',
+        headers: { 'x-admin-password': 'hemmelig' },
+        body: JSON.stringify({ unit: ghost, status: 'solgt' }),
+      }), env);
+      expect(res.status).toBe(400);
+    }
+  });
+  it('POST accepts all 16 real units', async () => {
+    const units = [
+      'H0101', 'H0102', 'H0103', 'H0104', 'H0105',
+      'H0201', 'H0202', 'H0203', 'H0204', 'H0205',
+      'H0301', 'H0302', 'H0303', 'H0304', 'H0305', 'H0306',
+    ];
+    const env = mockEnv();
+    for (const unit of units) {
+      const res = await worker.fetch(new Request('https://x/api/status', {
+        method: 'POST',
+        headers: { 'x-admin-password': 'hemmelig' },
+        body: JSON.stringify({ unit, status: 'ledig' }),
+      }), env);
+      expect(res.status).toBe(200);
+    }
+  });
   it('/admin serves html', async () => {
     const res = await worker.fetch(new Request('https://x/admin'), mockEnv());
     expect(res.headers.get('content-type')).toContain('text/html');
