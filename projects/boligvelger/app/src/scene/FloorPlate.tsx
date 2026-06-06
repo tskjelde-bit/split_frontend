@@ -9,6 +9,7 @@ import type { FloorGeo, EnvelopeGeo } from '../lib/types';
 const GIPS_DARK = '#e5e2d6';
 const GIPS_EXT = '#f3f1ea'; // exterior wall shell
 const EXPLODE_GAP = 2.2; // extra meters of air per floor index when exploded
+const PARAPET = 0.35; // exploded view: wall shell shrinks to this height so unit volumes read from outside
 
 export function explodedY(mode: Mode, elevation: number, index: number): number {
   return mode === 'exploded' ? elevation + index * EXPLODE_GAP : elevation;
@@ -24,6 +25,7 @@ interface Props { floor: FloorGeo; index: number; scale: number; slab: number; e
 
 export function FloorPlate({ floor, index, scale, slab, envelope }: Props) {
   const ref = useRef<THREE.Group>(null!);
+  const wallRef = useRef<THREE.Mesh>(null!);
   const mode = useVelger(s => s.mode);
   const focus = useVelger(s => s.focus);
   const explode = useVelger(s => s.explode);
@@ -76,6 +78,10 @@ export function FloorPlate({ floor, index, scale, slab, envelope }: Props) {
   useFrame((_, dt) => {
     const target = explodedY(mode, floor.elevation, index);
     ref.current.position.y = THREE.MathUtils.damp(ref.current.position.y, target, 3.5, dt);
+    // Exploded: shrink the wall shell to a low parapet so the unit volumes
+    // (and their hover/select highlight) are visible from outside the plate.
+    const wallTarget = mode === 'exploded' ? PARAPET / (floor.height - slab) : 1;
+    wallRef.current.scale.y = THREE.MathUtils.damp(wallRef.current.scale.y, wallTarget, 3.5, dt);
   });
 
   return (
@@ -84,7 +90,7 @@ export function FloorPlate({ floor, index, scale, slab, envelope }: Props) {
         <meshStandardMaterial color={GIPS_DARK} roughness={0.9} transparent={dimmed} opacity={dimmed ? 0.25 : 1} />
       </mesh>
       <group position-y={slab}>
-        <mesh geometry={wallGeo} castShadow receiveShadow {...shellHandlers}>
+        <mesh ref={wallRef} geometry={wallGeo} castShadow receiveShadow {...shellHandlers}>
           {/* polygonOffset pulls the wall slightly toward the camera in depth so
               its interior face wins the z-test against common/unit blocks that
               the data authors flush to the inner wall plane (no z-fighting). */}
