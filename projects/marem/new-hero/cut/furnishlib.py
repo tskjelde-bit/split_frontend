@@ -46,3 +46,50 @@ def drift_mask(arrs: list) -> np.ndarray:
     for k in range(1, len(arrs)):
         freq += raw_change(arrs[k - 1], arrs[k]).astype(np.int16)
     return ndimage.binary_dilation(freq > 2, iterations=3)
+
+
+def step_core(a: np.ndarray, b: np.ndarray, noise: np.ndarray) -> np.ndarray:
+    """Kjernemaske for ett kjedesteg: dominant komponent + store medkomponenter."""
+    H, W = a.shape[:2]
+    core = raw_change(a, b) & ~noise
+    core = ndimage.binary_opening(core, iterations=2)
+    core = ndimage.binary_closing(core, iterations=12)
+    labels, n = ndimage.label(core)
+    keep = np.zeros_like(core)
+    if not n:
+        return keep
+    sizes = ndimage.sum(core, labels, range(1, n + 1))
+    min_size = max(H * W * 1.2e-4, sizes.max() * 0.08)
+    for i, sl in enumerate(ndimage.find_objects(labels)):
+        if sizes[i] < min_size or sl is None:
+            continue
+        keep[sl] |= labels[sl] == i + 1
+    return ndimage.binary_fill_holes(keep)
+
+
+def add_shadow_halo(keep: np.ndarray, a: np.ndarray, b: np.ndarray,
+                    noise: np.ndarray) -> np.ndarray:
+    """Ta med myke skygger: lavterskel-endring i sonen rundt kjernen.
+
+    Manglende skyggefangst ga «svevende» møbler — dette er fiksen.
+    """
+    if not keep.any():
+        return keep
+    soft = raw_change(a, b, SHADOW_LO) & ~noise
+    near = ndimage.binary_dilation(keep, iterations=SHADOW_REACH)
+    out = keep | (soft & near)
+    out = ndimage.binary_closing(out, iterations=6)
+    return ndimage.binary_fill_holes(out)
+
+
+def group_mask(arrs_by_step: dict, diff_steps: list, noise: np.ndarray) -> np.ndarray:
+    """Binær maske for én byggegruppe = union av stegmasker + halo + dilation.
+
+    diff_steps: kjedesteg-numre; maske for steg s = diff(arrs[s-1], arrs[s]).
+    """
+    m = None
+    for s in diff_steps:
+        core = step_core(arrs_by_step[s - 1], arrs_by_step[s], noise)
+        core = add_shadow_halo(core, arrs_by_step[s - 1], arrs_by_step[s], noise)
+        m = core if m is None else (m | core)
+    return ndimage.binary_dilation(m, iterations=MASK_DILATE)
