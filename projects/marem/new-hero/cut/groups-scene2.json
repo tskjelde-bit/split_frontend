@@ -1,6 +1,6 @@
 {
   "scene": "scene2",
-  "steps_dir": "scene2-steps",
+  "steps_dir": "scene2-steps-v2",
   "base_empty": "proof/stages-scene2/f0-empty.png",
   "out_dir": "furnish/scene2",
   "groups": [
