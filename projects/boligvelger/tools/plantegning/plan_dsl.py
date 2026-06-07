@@ -231,10 +231,18 @@ def render_plan(spec: dict) -> str:
             )
         elif e["type"] == "label":
             rot = f' transform="rotate({e["rot"]} {e["x"]} {e["y"]})"' if e.get("rot") else ""
-            parts.append(
-                f'<text x="{e["x"]}" y="{e["y"]}" font-family="Helvetica" font-size="11" '
-                f'fill="{INK}" text-anchor="middle"{rot}>{e["text"]}</text>'
-            )
+            if e.get("area"):
+                parts.append(
+                    f'<g font-family="Helvetica" fill="{INK}" text-anchor="middle">'
+                    f'<text x="{e["x"]}" y="{e["y"]}" font-size="11"{rot}>{e["text"]}</text>'
+                    f'<text x="{e["x"]}" y="{e["y"] + 14}" font-size="9" opacity="0.65"{rot}>'
+                    f'{e["area"]} m²</text></g>'
+                )
+            else:
+                parts.append(
+                    f'<text x="{e["x"]}" y="{e["y"]}" font-family="Helvetica" font-size="11" '
+                    f'fill="{INK}" text-anchor="middle"{rot}>{e["text"]}</text>'
+                )
 
     # 7. Rom-labels
     for lb in spec.get("labels", []):

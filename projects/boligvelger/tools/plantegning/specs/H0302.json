@@ -296,6 +296,7 @@
     {
       "type": "label",
       "text": "Kjøkken",
+      "area": "3,7",
       "x": 122,
       "y": 345
     }

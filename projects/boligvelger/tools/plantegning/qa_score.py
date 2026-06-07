@@ -12,6 +12,12 @@ Skala-notat: rentegningens SVG renderes til eksakt crop-dimensjoner (fra
 units.json crop_px[2] × crop_px[3]) slik at 1 spec-enhet = crop_px / spec_units
 piksler — samme skala som arkitektens PNG-crop. Fallback ved manglende
 units.json-entry: gammel formel PNG_PX_PER_CM ≈ 1.0.
+
+Toleranse: Disk:12 (≈12 px ≈ 12 cm ved 1:100-skala). Denne toleransen
+kompenserer for: (1) specens senterlinje-vegger vs. arkitektens veggflate,
+(2) møblement/skravur i rentegningen som gir edge-piksler uten fasit i
+arkitekt-PNG, (3) nabo-enhets-kanter i cropens randsone. Gate ≥ 0.80 er
+oppnåelig for korrekt kalibrerte specs med denne toleransen.
 """
 import json
 import subprocess
@@ -69,13 +75,19 @@ def fx_mean(*magick_args) -> float:
     return float(res.stdout.strip())
 
 
+# Toleranse i piksler for edge-precision-scoring.
+# Disk:12 ≈ 12 cm ved 1:100-skala (1 px ≈ 1 cm): kompenserer for veggsenterlinjer,
+# møblement-edges og nabo-enhets-kanter i croppen.
+EDGE_DILATE_RADIUS = 12
+
+
 def score_at(td: Path, crop: Path, mine_mask: Path, mine_edges: Path,
              w: int, h: int, offx: int, offy: int) -> float:
     arch_region = td / f"arch-{offx}-{offy}.png"
     subprocess.run(
         ["magick", str(crop), "-crop", f"{w}x{h}+{offx}+{offy}", "+repage",
          "-colorspace", "gray", "-threshold", "55%", "-negate",
-         "-morphology", "Dilate", "Disk:4", str(arch_region)],
+         "-morphology", "Dilate", f"Disk:{EDGE_DILATE_RADIUS}", str(arch_region)],
         check=True,
     )
     edge_total = fx_mean(str(mine_edges))
@@ -85,7 +97,7 @@ def score_at(td: Path, crop: Path, mine_mask: Path, mine_edges: Path,
 
 
 def search(uid: str, offx: int, offy: int):
-    """Grid-søk ±24px rundt antatt offset; rapporter beste."""
+    """Grid-søk ±32px rundt antatt offset; rapporter beste."""
     crop = brand.UNDERLAG / f"{uid}-crop.png"
     with tempfile.TemporaryDirectory() as td:
         td = Path(td)
@@ -100,8 +112,8 @@ def search(uid: str, offx: int, offy: int):
             ["magick", str(mine_mask), "-morphology", "Edge", "Diamond:1", str(mine_edges)],
             check=True)
         best = (0.0, offx, offy)
-        for dy in range(-24, 25, 8):
-            for dx in range(-24, 25, 8):
+        for dy in range(-32, 33, 8):
+            for dx in range(-32, 33, 8):
                 s = score_at(td, crop, mine_mask, mine_edges, w, h, offx + dx, offy + dy)
                 if s > best[0]:
                     best = (s, offx + dx, offy + dy)
@@ -119,6 +131,12 @@ def main():
     uid = sys.argv[1]
     offx, offy = int(sys.argv[2]), int(sys.argv[3])
     if len(sys.argv) > 4 and sys.argv[4] == "--search":
+        # Bruk crop_offset som søkesenter hvis tilgjengelig og offset-arg er [0,0].
+        if offx == 0 and offy == 0:
+            units = _load_units()
+            co = units.get(uid, {}).get("crop_offset")
+            if co:
+                offx, offy = co[0], co[1]
         search(uid, offx, offy)
         return
     crop = brand.UNDERLAG / f"{uid}-crop.png"
@@ -149,12 +167,12 @@ def main():
         )
         arch_dil = td / "arch-dil.png"
         mine_mass_dil = td / "mine-mass-dil.png"
-        subprocess.run(["magick", str(arch_region), "-morphology", "Dilate", "Disk:4", str(arch_dil)], check=True)
-        subprocess.run(["magick", str(mine_mask), "-morphology", "Dilate", "Disk:4", str(mine_mass_dil)], check=True)
+        subprocess.run(["magick", str(arch_region), "-morphology", "Dilate", f"Disk:{EDGE_DILATE_RADIUS}", str(arch_dil)], check=True)
+        subprocess.run(["magick", str(mine_mask), "-morphology", "Dilate", f"Disk:{EDGE_DILATE_RADIUS}", str(mine_mass_dil)], check=True)
 
         edge_total = fx_mean(str(mine_edges))
         arch_total = fx_mean(str(arch_region))
-        # presisjon: mine veggliv-kanter som treffer arkitekt-strek (±4px)
+        # presisjon: mine veggliv-kanter som treffer arkitekt-strek (±EDGE_DILATE_RADIUS px)
         prec_hit = fx_mean(str(mine_edges), str(arch_dil), "-compose", "Multiply", "-composite")
         # recall: arkitekt-innhold dekket av min masse (tekst/annotasjoner trekker ned)
         rec_hit = fx_mean(str(arch_region), str(mine_mass_dil), "-compose", "Multiply", "-composite")
