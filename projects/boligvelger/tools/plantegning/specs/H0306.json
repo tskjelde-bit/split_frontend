@@ -116,10 +116,10 @@
       "door": {
         "hinge": [
           537,
-          193
+          181
         ],
         "width": 68,
-        "angle": 90,
+        "angle": 270,
         "sweep": 1
       }
     },
@@ -152,6 +152,16 @@
     }
   ],
   "fixtures": [
+    {
+      "sym": "dusj",
+      "x": 533,
+      "y": 20
+    },
+    {
+      "sym": "sluk",
+      "x": 604,
+      "y": 130
+    },
     {
       "sym": "wc",
       "x": 645,
@@ -228,10 +238,16 @@
       "type": "ladder",
       "rect": [
         535,
-        300,
+        198,
         14,
         62
       ]
+    },
+    {
+      "type": "label",
+      "text": "Stige til hems",
+      "x": 575,
+      "y": 220
     },
     {
       "type": "dashed",
@@ -256,9 +272,22 @@
     },
     {
       "type": "label",
+      "text": "Åpent ned",
+      "x": 125,
+      "y": 100
+    },
+    {
+      "type": "label",
       "text": "Kjøkken",
       "x": 358,
       "y": 110
+    },
+    {
+      "type": "label",
+      "text": "NB! Rømningsvindu",
+      "x": 80,
+      "y": 240,
+      "rot": 270
     }
   ],
   "labels": [
@@ -318,6 +347,14 @@
         5,
         160
       ]
-    ]
+    ],
+    "open": {
+      "edge": [
+        [0, 167],
+        [178, 167]
+      ],
+      "label": "Åpent ned"
+    },
+    "ladder": [5, 110, 40, 12]
   }
 }
