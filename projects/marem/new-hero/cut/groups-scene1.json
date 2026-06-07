@@ -5,8 +5,8 @@
   "out_dir": "furnish/scene1",
   "groups": [
     {"name": "teppe", "diff_steps": [12]},
-    {"name": "sofa", "diff_steps": [11]},
-    {"name": "skap-vase", "diff_steps": [10, 9]},
+    {"name": "sofa", "diff_steps": [11], "debut_override": "proof/stages-scene1/f2-sofa.png"},
+    {"name": "skap-vase", "diff_steps": [10, 9], "debut_override": "proof/stages-scene1/f4-cabinet.png"},
     {"name": "lampe", "diff_steps": [8]},
     {"name": "daybed-pledd", "diff_steps": [7, 6]},
     {"name": "stoler", "diff_steps": [5, 4]},

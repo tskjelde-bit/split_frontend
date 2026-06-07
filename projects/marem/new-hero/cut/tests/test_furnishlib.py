@@ -144,23 +144,25 @@ def test_residual_holes_finds_leaked_fragment():
     assert not (comps[0] & union).any()
 
 
-def test_assign_residual_picks_removal_step_group():
-    H, W = 120, 120
+def test_split_residual_assigns_per_pixel():
+    H, W = 200, 200
     floor = np.full((H, W, 3), 80, np.uint8)
     s0 = floor.copy()
-    s0[40:60, 40:60] = (220, 220, 40)   # pute til stede
-    s0[80:100, 20:40] = (10, 10, 10)    # annet objekt
+    s0[100:130, 60:90] = (220, 220, 40)     # objekt A (fjernes i steg 2)
+    s0[100:130, 95:125] = (10, 200, 200)    # objekt B (fjernes i steg 1)
     s1 = s0.copy()
-    s1[80:100, 20:40] = 80              # steg 1 fjerner annet objekt
-    s1[40:60, 40:60] = (200, 200, 60)   # puta VIBRERER litt
+    s1[100:130, 95:125] = 80                 # steg 1: B bort
     s2 = s1.copy()
-    s2[40:60, 40:60] = 80               # steg 2 fjerner puta
+    s2[100:130, 60:90] = 80                  # steg 2: A bort
     arrs = {0: s0, 1: s1, 2: s2}
     comp = np.zeros((H, W), bool)
-    comp[40:60, 40:60] = True
-    # gruppe 0 eier steg 2 (puta), gruppe 1 eier steg 1 (annet objekt)
-    gi = fl.assign_residual(comp, arrs, [[2], [1]])
-    assert gi == 0   # fjerningssteget (~130/px) slår vibrasjonen (~20/px)
+    comp[100:130, 60:125] = True             # ETT fragment dekker A+B
+    # gruppe 0 eier steg 2 (A), gruppe 1 eier steg 1 (B)
+    parts = fl.split_residual(comp, arrs, [[2], [1]])
+    got = {gi: p for gi, p in parts}
+    assert set(got) == {0, 1}
+    assert got[0][115, 75] and not got[0][115, 110]   # A-piksler -> gruppe 0
+    assert got[1][115, 110] and not got[1][115, 75]   # B-piksler -> gruppe 1
 
 
 def test_residual_metrics_separates_fragment_from_variance():

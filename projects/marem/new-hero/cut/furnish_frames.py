@@ -59,9 +59,17 @@ def main() -> None:
         m = fl.group_mask(arrs, g["diff_steps"], noise)
         assert m.any(), f"{g['name']}: tom maske — sjekk diff_steps"
         debut_step = min(g["diff_steps"]) - 1
+        if "debut_override" in g:
+            dbt = fl.load_rgb(here / g["debut_override"])
+            if dbt.shape != full.shape:
+                dbt = np.asarray(Image.fromarray(dbt).resize((W, H), Image.LANCZOS))
+            debuts.append(dbt)
+            src = f"OVERRIDE {g['debut_override']}"
+        else:
+            debuts.append(arrs[debut_step])
+            src = f"steg {debut_step:02d}"
         masks.append(m)
-        debuts.append(arrs[debut_step])
-        print(f"  {g['name']}: maske {m.mean() * 100:.1f}%, debut=steg {debut_step:02d}")
+        print(f"  {g['name']}: maske {m.mean() * 100:.1f}%, debut={src}")
 
     furniture = np.zeros((H, W), bool)
     for m in masks:
@@ -85,11 +93,14 @@ def main() -> None:
         if not near or removal < fl.RESIDUAL_REMOVAL_MIN:
             print(f"  residual AVVIST {tag}")
             continue
-        gi = fl.assign_residual(comp, arrs, [g["diff_steps"] for g in cfg["groups"]])
-        grown = ndimage.binary_dilation(comp, iterations=fl.MASK_DILATE)
-        masks[gi] |= grown
-        furniture |= grown
-        print(f"  residual {tag} -> {cfg['groups'][gi]['name']}")
+        for gi, part in fl.split_residual(comp, arrs,
+                                          [g["diff_steps"] for g in cfg["groups"]]):
+            grown = ndimage.binary_dilation(part, iterations=fl.MASK_DILATE)
+            masks[gi] |= grown
+            furniture |= grown
+            ys_p, xs_p = np.nonzero(part)
+            print(f"  residual-del {int(part.sum())} px ved {xs_p.min()},{ys_p.min()} "
+                  f"-> {cfg['groups'][gi]['name']}")
 
     base = fl.anchor_base(empty, full, furniture)
 

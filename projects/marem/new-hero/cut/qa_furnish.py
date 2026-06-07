@@ -110,7 +110,12 @@ def main() -> None:
 
     steps = fl.chain_files(here / cfg["steps_dir"], cfg["scene"])
     for i, g in enumerate(cfg["groups"]):
-        debut = fl.load_rgb(steps[min(g["diff_steps"]) - 1])
+        if "debut_override" in g:
+            debut = fl.load_rgb(here / g["debut_override"])
+            if debut.shape != full.shape:
+                debut = np.asarray(Image.fromarray(debut).resize((W, H), Image.LANCZOS))
+        else:
+            debut = fl.load_rgb(steps[min(g["diff_steps"]) - 1])
         U = masks[i] & ~later[i]
         if U.any():
             m = float(np.abs(debut.astype(np.int16)

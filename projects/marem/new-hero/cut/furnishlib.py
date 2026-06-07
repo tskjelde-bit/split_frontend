@@ -168,27 +168,36 @@ def residual_metrics(comp: np.ndarray, arrs_by_step: dict, union: np.ndarray,
     return near, best
 
 
-def assign_residual(comp: np.ndarray, arrs_by_step: dict,
-                    groups_steps: list) -> int:
-    """Hvilken gruppe eier fragmentet? Den hvis kjedesteg endrer det mest.
+def split_residual(comp: np.ndarray, arrs_by_step: dict, groups_steps: list,
+                   min_px: int = 200) -> list:
+    """Per-piksel tilordning av et residual-fragment til byggegruppene.
 
-    Fjerningssteget gir størst |diff| i regionen (objekt → gulv), mens
-    re-rendering-vibrasjon gir mindre. groups_steps = diff_steps per gruppe
-    i byggerekkefølge. Returnerer gruppeindeks.
+    Et fragment kan dekke flere objekter (skap + stolrygg + bok). Hver
+    piksel går til gruppen hvis kjedesteg endrer den mest (fjerningssteget
+    dominerer). Returnerer [(gruppeindeks, delmaske), ...].
     """
     ys, xs = np.nonzero(comp)
     sl = (slice(ys.min(), ys.max() + 1), slice(xs.min(), xs.max() + 1))
     sub = comp[sl]
-    best_mag, best_i = -1.0, 0
-    for gi, steps in enumerate(groups_steps):
-        mag = 0.0
+    mags = []
+    for steps in groups_steps:
+        m = np.zeros(sub.shape, np.float32)
         for s in steps:
             a = arrs_by_step[s - 1][sl].astype(np.int16)
             b = arrs_by_step[s][sl].astype(np.int16)
-            mag += float(np.abs(a - b).max(axis=2)[sub].sum())
-        if mag > best_mag:
-            best_mag, best_i = mag, gi
-    return best_i
+            m += np.abs(a - b).max(axis=2)
+        mags.append(m)
+    owner = np.argmax(np.stack(mags), axis=0)
+    parts = []
+    for gi in range(len(groups_steps)):
+        part_sub = sub & (owner == gi)
+        part_sub = ndimage.binary_opening(part_sub, iterations=2)
+        part_sub = ndimage.binary_closing(part_sub, iterations=4)
+        if part_sub.sum() >= min_px:
+            part = np.zeros(comp.shape, bool)
+            part[sl] = part_sub
+            parts.append((gi, part))
+    return parts
 
 
 def composite(base: np.ndarray, full: np.ndarray, groups: list) -> list:
