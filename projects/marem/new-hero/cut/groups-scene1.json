@@ -7,7 +7,8 @@
     {"name": "teppe", "diff_steps": [12]},
     {"name": "sofa", "diff_steps": [11]},
     {"name": "skap-vase", "diff_steps": [10, 9]},
-    {"name": "daybed-pledd-lampe", "diff_steps": [8, 7, 6]},
+    {"name": "lampe", "diff_steps": [8]},
+    {"name": "daybed-pledd", "diff_steps": [7, 6]},
     {"name": "stoler", "diff_steps": [5, 4]},
     {"name": "bord", "diff_steps": [3, 2]},
     {"name": "dekor", "diff_steps": [1]}
