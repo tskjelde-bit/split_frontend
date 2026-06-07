@@ -54,7 +54,7 @@ Hardkodede gips-konstanter i `FloorPlate.tsx`, `Roof.tsx`, `Windows.tsx`, `UnitM
 | `glassMork` | `#35353E` | glassflater (svak env-refleks) |
 | `hekkGronn` | `#3A5224` | hekk-volumer |
 
-- **Vinduer:** `Windows.tsx` bygges om fra boks-nisje til `buildWindowGeometry()`: hvit ytre omramming (på rosa felt) + sort karm med midtpost + mørk glassplate. Vinduer rendres nå **også i eksplodert visning** på fasadeskallet (dagens `return null` fjernes).
+- **Vinduer:** `Windows.tsx` bygges om fra boks-nisje til detaljert vindu: hvit ytre omramming + sort karm med midtpost + mørk glassplate. I eksplodert visning fades vinduene mykt ut sammen med veggskallet (skallet krymper til parapet — vinduer uten vegg ville svevd); i montert visning er de alltid synlige.
 - **Per-etasje fasadefarge** i `floors[]` i geometri.json, lest av `FloorPlate.tsx` (U + 1. etg hvit, 2.–3. rosa).
 - Valgt/hover/solgt-logikk i `UnitMesh.tsx` uendret (brand-grønn `#1E3D2B` / grå).
 - Lys: dagens rigg i `VelgerCanvas.tsx` beholdes, intensitet rebalanseres mot mørkt tak (skyggesiden må fortsatt lese).
