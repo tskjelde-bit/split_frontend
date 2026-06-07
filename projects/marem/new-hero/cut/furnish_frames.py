@@ -93,7 +93,8 @@ def main() -> None:
         if not near or removal < fl.RESIDUAL_REMOVAL_MIN:
             print(f"  residual AVVIST {tag}")
             continue
-        for gi, part in fl.split_residual(comp, masks):
+        for gi, part in fl.split_residual(comp, arrs,
+                                          [g["diff_steps"] for g in cfg["groups"]]):
             grown = ndimage.binary_dilation(part, iterations=fl.MASK_DILATE)
             masks[gi] |= grown
             furniture |= grown

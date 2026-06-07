@@ -144,20 +144,24 @@ def test_residual_holes_finds_leaked_fragment():
     assert not (comps[0] & union).any()
 
 
-def test_split_residual_assigns_to_nearest_mask_prefer_later():
+def test_split_residual_assigns_per_pixel_by_magnitude():
     H, W = 200, 200
+    floor = np.full((H, W, 3), 80, np.uint8)
+    s0 = floor.copy()
+    s0[100:130, 60:90] = (220, 220, 40)     # objekt A (fjernes i steg 2)
+    s0[100:130, 95:125] = (10, 200, 200)    # objekt B (fjernes i steg 1)
+    s1 = s0.copy()
+    s1[100:130, 95:125] = 80
+    s2 = s1.copy()
+    s2[100:130, 60:90] = 80
+    arrs = {0: s0, 1: s1, 2: s2}
     comp = np.zeros((H, W), bool)
-    comp[100:130, 60:125] = True                # fragment mellom to masker
-    m0 = np.zeros((H, W), bool)
-    m0[100:130, 20:58] = True                   # gruppe 0-maske (vest)
-    m1 = np.zeros((H, W), bool)
-    m1[100:130, 127:170] = True                 # gruppe 1-maske (øst)
-    parts = fl.split_residual(comp, [m0, m1])
+    comp[100:130, 60:125] = True
+    parts = fl.split_residual(comp, arrs, [[2], [1]])
     got = {gi: p for gi, p in parts}
     assert set(got) == {0, 1}
-    assert got[0][115, 65] and not got[1][115, 65]    # nær vest -> gruppe 0
-    assert got[1][115, 120] and not got[0][115, 120]  # nær øst -> gruppe 1
-    assert got[1][115, 92]   # midtsonen (likt nær): SENESTE gruppe vinner
+    assert got[0][115, 75] and not got[0][115, 110]
+    assert got[1][115, 110] and not got[1][115, 75]
 
 
 def test_residual_metrics_separates_fragment_from_variance():

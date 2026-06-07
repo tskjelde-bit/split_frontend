@@ -168,38 +168,25 @@ def residual_metrics(comp: np.ndarray, arrs_by_step: dict, union: np.ndarray,
     return near, best
 
 
-def split_residual(comp: np.ndarray, masks: list, build_margin: int = 30,
+def split_residual(comp: np.ndarray, arrs_by_step: dict, groups_steps: list,
                    min_px: int = 200) -> list:
-    """Per-piksel tilordning av residual til NÆRMESTE gruppemaske.
-
-    Kjede-magnitude er upålitelig i korrupte regioner (psykedelisk drift
-    slår fjerningssignalet). Nærhet er robust: puter ligger inntil sofa-
-    masken, stolrygg inntil stolmasken. Ved (nesten) likt nær flere masker
-    velges SENESTE gruppe i byggerekkefølgen — innhold som dukker opp
-    sammen med/etter støtten sin er trygt, før er det artefakt.
-    Returnerer [(gruppeindeks, delmaske), ...].
-    """
+    """Per-piksel tilordning av residual til gruppen hvis kjedesteg endrer
+    den mest. Krever REN kjede (v3): fjerningssteget dominerer da alltid.
+    Returnerer [(gruppeindeks, delmaske), ...]."""
     ys, xs = np.nonzero(comp)
-    H, W = comp.shape
-    pad = 400
-    y0, y1 = max(ys.min() - pad, 0), min(ys.max() + pad + 1, H)
-    x0, x1 = max(xs.min() - pad, 0), min(xs.max() + pad + 1, W)
-    sl = (slice(y0, y1), slice(x0, x1))
+    sl = (slice(ys.min(), ys.max() + 1), slice(xs.min(), xs.max() + 1))
     sub = comp[sl]
-    dists = []
-    for m in masks:
-        msub = m[sl]
-        if msub.any():
-            dists.append(ndimage.distance_transform_edt(~msub).astype(np.float32))
-        else:
-            dists.append(np.full(sub.shape, np.inf, np.float32))
-    D = np.stack(dists)
-    dmin = D.min(axis=0)
-    owner = np.full(sub.shape, -1, np.int32)
-    for gi in range(len(masks)):  # stigende: senere grupper overskriver i tvilssonen
-        owner[D[gi] <= dmin + build_margin] = gi
+    mags = []
+    for steps in groups_steps:
+        m = np.zeros(sub.shape, np.float32)
+        for s in steps:
+            a = arrs_by_step[s - 1][sl].astype(np.int16)
+            b = arrs_by_step[s][sl].astype(np.int16)
+            m += np.abs(a - b).max(axis=2)
+        mags.append(m)
+    owner = np.argmax(np.stack(mags), axis=0)
     parts = []
-    for gi in range(len(masks)):
+    for gi in range(len(groups_steps)):
         part_sub = sub & (owner == gi)
         part_sub = ndimage.binary_opening(part_sub, iterations=2)
         part_sub = ndimage.binary_closing(part_sub, iterations=4)
