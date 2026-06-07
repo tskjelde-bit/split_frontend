@@ -139,6 +139,25 @@ def main() -> None:
         im.thumbnail((2400, 520))
         im.save(out_dir / f"qa-group-{i:02d}-{names[i]}.jpg", quality=85)
 
+    # gate 6: maskekoherens — løskomponenter langt fra gruppens hovedmasse
+    # tyder på feiltilordnede residualer (informativ WARN, aldri FAIL)
+    for i, m in enumerate(masks):
+        lab, nn = ndimage.label(m)
+        if nn <= 1:
+            continue
+        sizes = ndimage.sum(m, lab, range(1, nn + 1))
+        main = int(np.argmax(sizes)) + 1
+        mys, mxs = np.nonzero(lab == main)
+        for ci in range(1, nn + 1):
+            if ci == main or sizes[ci - 1] < 500:
+                continue
+            cys, cxs = np.nonzero(lab == ci)
+            dy = max(0, mys.min() - cys.max(), cys.min() - mys.max())
+            dx = max(0, mxs.min() - cxs.max(), cxs.min() - mxs.max())
+            if max(dy, dx) > 800:
+                rep.append(f"gate6 {names[i]}: WARN løskomponent {int(sizes[ci - 1])} px "
+                           f"ved {int(cxs.min())},{int(cys.min())} langt fra hovedmasse")
+
     txt = "\n".join(rep) + ("\n\nFAILS: " + ", ".join(fails) if fails
                             else "\n\nALLE GATES OK")
     (out_dir / "qa-report.txt").write_text(txt + "\n")
