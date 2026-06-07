@@ -290,6 +290,12 @@
       "text": "NB! Rømningsvindu! Det må sjekkes at eksist. vindu overholder krav til fri åpning",
       "x": 217,
       "y": 545
+    },
+    {
+      "type": "label",
+      "text": "Hems",
+      "x": 300,
+      "y": 75
     }
   ],
   "labels": [
