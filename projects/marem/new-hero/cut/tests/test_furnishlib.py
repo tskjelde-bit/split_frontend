@@ -161,3 +161,25 @@ def test_assign_residual_picks_removal_step_group():
     # gruppe 0 eier steg 2 (puta), gruppe 1 eier steg 1 (annet objekt)
     gi = fl.assign_residual(comp, arrs, [[2], [1]])
     assert gi == 0   # fjerningssteget (~130/px) slår vibrasjonen (~20/px)
+
+
+def test_residual_metrics_separates_fragment_from_variance():
+    H, W = 200, 200
+    floor = np.full((H, W, 3), 80, np.uint8)
+    s0 = floor.copy()
+    s0[100:130, 60:90] = (220, 220, 40)    # pute (fjernes i steg 1)
+    s0[20:50, 150:180] = (200, 60, 30)     # «kunst» (vibrerer bare)
+    s1 = s0.copy()
+    s1[100:130, 60:90] = 80                 # fjerning: objekt -> gulv
+    s1[20:50, 150:180] = (210, 70, 40)      # svak vibrasjon
+    arrs = {0: s0, 1: s1}
+    union = np.zeros((H, W), bool)
+    union[95:135, 40:65] = True             # maske rett ved puta
+    pute = np.zeros((H, W), bool)
+    pute[100:130, 60:90] = True
+    kunst = np.zeros((H, W), bool)
+    kunst[20:50, 150:180] = True
+    near_p, rem_p = fl.residual_metrics(pute, arrs, union)
+    near_k, rem_k = fl.residual_metrics(kunst, arrs, union)
+    assert near_p and rem_p >= 30      # ekte fragment: nær + fjerningssignatur
+    assert (not near_k) or rem_k < 30  # varians: avvises

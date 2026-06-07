@@ -144,6 +144,29 @@ def residual_holes(full: np.ndarray, empty: np.ndarray, union: np.ndarray,
     return comps
 
 
+def residual_metrics(comp: np.ndarray, arrs_by_step: dict, union: np.ndarray,
+                     prox: int = 50) -> tuple[bool, float]:
+    """Skill ekte drift-spiste fragmenter fra render-varians (kunst/gardiner).
+
+    Ekte fragment: nær eksisterende maske OG har et fjerningssteg i kjeden
+    (stor én-stegs endring, objekt → bakgrunn). Varians: langt unna masker
+    eller bare svak vibrasjon. Returnerer (nær_union, største stegmiddel).
+    """
+    ys, xs = np.nonzero(comp)
+    H, W = comp.shape
+    y0, y1 = max(ys.min() - prox, 0), min(ys.max() + prox + 1, H)
+    x0, x1 = max(xs.min() - prox, 0), min(xs.max() + prox + 1, W)
+    sl = (slice(y0, y1), slice(x0, x1))
+    near = bool((ndimage.binary_dilation(comp[sl], iterations=prox) & union[sl]).any())
+    sub = comp[sl]
+    best = 0.0
+    for s in sorted(arrs_by_step)[1:]:
+        a = arrs_by_step[s - 1][sl].astype(np.int16)
+        b = arrs_by_step[s][sl].astype(np.int16)
+        best = max(best, float(np.abs(a - b).max(axis=2)[sub].mean()))
+    return near, best
+
+
 def assign_residual(comp: np.ndarray, arrs_by_step: dict,
                     groups_steps: list) -> int:
     """Hvilken gruppe eier fragmentet? Den hvis kjedesteg endrer det mest.

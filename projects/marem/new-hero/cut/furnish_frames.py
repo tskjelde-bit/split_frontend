@@ -74,15 +74,22 @@ def main() -> None:
         print(f"  base resamples {empty.shape[1]}x{empty.shape[0]} -> {W}x{H}")
         empty = np.asarray(Image.fromarray(empty).resize((W, H), Image.LANCZOS))
 
-    # gjenopprett drift-spiste fragmenter (puter/pledd/skap som vibrerte i kjeden)
+    # gjenopprett drift-spiste fragmenter (puter/pledd/skap som vibrerte i
+    # kjeden) — men avvis render-varians (kunst/gardiner): krever nærhet til
+    # eksisterende maske + fjerningssignatur i kjeden
     for comp in fl.residual_holes(full, empty, furniture):
+        near, removal = fl.residual_metrics(comp, arrs, furniture)
+        ys, xs = np.nonzero(comp)
+        tag = (f"{int(comp.sum())} px ved {int(xs.min())},{int(ys.min())} "
+               f"(nær={near}, fjerning={removal:.0f})")
+        if not near or removal < 30:
+            print(f"  residual AVVIST {tag}")
+            continue
         gi = fl.assign_residual(comp, arrs, [g["diff_steps"] for g in cfg["groups"]])
         grown = ndimage.binary_dilation(comp, iterations=fl.MASK_DILATE)
         masks[gi] |= grown
         furniture |= grown
-        ys, xs = np.nonzero(comp)
-        print(f"  residual {int(comp.sum())} px -> {cfg['groups'][gi]['name']} "
-              f"(ved {int(xs.min())},{int(ys.min())})")
+        print(f"  residual {tag} -> {cfg['groups'][gi]['name']}")
 
     base = fl.anchor_base(empty, full, furniture)
 
