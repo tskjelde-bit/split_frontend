@@ -75,6 +75,12 @@ DEFS = f"""<defs>
   <g id="stol">
     <rect x="0" y="0" width="45" height="45" rx="8" fill="none" stroke="{INK}" stroke-width="0.9"/>
   </g>
+  <!-- Sluk: 12x12cm -->
+  <g id="sluk">
+    <circle cx="6" cy="6" r="5" fill="none" stroke="{INK}" stroke-width="0.8"/>
+    <line x1="2" y1="6" x2="10" y2="6" stroke="{INK}" stroke-width="0.5"/>
+    <line x1="6" y1="2" x2="6" y2="10" stroke="{INK}" stroke-width="0.5"/>
+  </g>
 </defs>"""
 
 

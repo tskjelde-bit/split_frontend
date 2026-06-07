@@ -75,7 +75,7 @@ SYM_SIZE = {  # (w, h) i cm for validering
     "wc": (40, 65), "servant": (50, 40), "dusj": (90, 90), "seng140": (140, 200),
     "sofa": (160, 85), "bord2": (120, 115), "komfyr": (60, 60), "kvask": (60, 60),
     "skap": (60, 60), "rundbord90": (90, 90), "sofabord60": (60, 60),
-    "lenestol": (70, 70), "stol": (45, 45),
+    "lenestol": (70, 70), "stol": (45, 45), "sluk": (12, 12),
 }
 
 
@@ -272,6 +272,44 @@ def render_hems(spec: dict):
             f'<polygon points="{_pts(hatch)}" fill="none" stroke="{INK}" '
             f'stroke-width="1" stroke-dasharray="4 3"/>'
         )
+    if hems.get("skravur"):
+        sp = [[x - x0 + pad, y - y0 + pad] for x, y in hems["skravur"]]
+        sx0, sy0, sx1, sy1 = _bbox(sp)
+        parts.append(f'<clipPath id="skr"><polygon points="{_pts(sp)}"/></clipPath>')
+        lines = [f'<g clip-path="url(#skr)" stroke="{INK}" stroke-width="0.6" opacity="0.6">']
+        c = sx0 - (sy1 - sy0)
+        while c < sx1:
+            lines.append(f'<line x1="{c:.0f}" y1="{sy1:.0f}" x2="{c + (sy1 - sy0):.0f}" y2="{sy0:.0f}"/>')
+            c += 14
+        lines.append("</g>")
+        parts.append("".join(lines))
+    if hems.get("open"):
+        op = hems["open"]
+        (x1, y1), (x2, y2) = op["edge"]
+        x1, y1, x2, y2 = x1 - x0 + pad, y1 - y0 + pad, x2 - x0 + pad, y2 - y0 + pad
+        parts.append(
+            f'<line x1="{x1:.0f}" y1="{y1:.0f}" x2="{x2:.0f}" y2="{y2:.0f}" '
+            f'stroke="{INK}" stroke-width="1.4" stroke-dasharray="8 5"/>'
+        )
+        lx, ly = (x1 + x2) / 2, (y1 + y2) / 2 - 6
+        parts.append(
+            f'<text x="{lx:.0f}" y="{ly:.0f}" font-family="Helvetica" font-size="10" '
+            f'fill="{INK}" text-anchor="middle">{op.get("label", "Åpent ned")}</text>'
+        )
+    if hems.get("ladder"):
+        lx, ly, lw, lh = hems["ladder"]
+        lx, ly = lx - x0 + pad, ly - y0 + pad
+        lad = [f'<rect x="{lx:.0f}" y="{ly:.0f}" width="{lw:.0f}" height="{lh:.0f}" fill="none" stroke="{INK}" stroke-width="0.9"/>']
+        n = max(3, math.ceil(max(lw, lh) / 15))
+        if lw >= lh:
+            for i in range(1, n):
+                fx = lx + i * lw / n
+                lad.append(f'<line x1="{fx:.0f}" y1="{ly:.0f}" x2="{fx:.0f}" y2="{ly + lh:.0f}" stroke="{INK}" stroke-width="0.9"/>')
+        else:
+            for i in range(1, n):
+                fy = ly + i * lh / n
+                lad.append(f'<line x1="{lx:.0f}" y1="{fy:.0f}" x2="{lx + lw:.0f}" y2="{fy:.0f}" stroke="{INK}" stroke-width="0.9"/>')
+        parts.append("".join(lad))
     parts.append(
         f'<g font-family="Helvetica" fill="{INK}" text-anchor="middle">'
         f'<text x="{cx:.0f}" y="{cy:.0f}" font-size="13">Hems</text>'
