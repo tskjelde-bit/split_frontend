@@ -184,3 +184,17 @@ def test_residual_metrics_separates_fragment_from_variance():
     near_k, rem_k = fl.residual_metrics(kunst, arrs, union)
     assert near_p and rem_p >= fl.RESIDUAL_REMOVAL_MIN  # ekte fragment
     assert (not near_k) or rem_k < fl.RESIDUAL_REMOVAL_MIN  # varians: avvises
+
+
+def test_stage_pair_mask_fills_low_contrast_holes():
+    H, W = 300, 300
+    floor = np.full((H, W, 3), 200, np.uint8)   # lys parkett
+    rug = floor.copy()
+    rug[100:250, 50:250] = 185                   # lyst teppe, lav kontrast
+    rug[100:250, 50:55] = 120                    # kontrastkant venstre
+    rug[100:250, 245:250] = 120                  # kontrastkant høyre
+    rug[100:105, 50:250] = 120                   # topp
+    rug[245:250, 50:250] = 120                   # bunn
+    m = fl.stage_pair_mask(rug, floor, [0, 0, 300, 300])
+    assert m[175, 150]   # MIDTEN er med (hull-fylt) selv om diff < terskel der
+    assert not m[20, 20]

@@ -63,17 +63,18 @@ def main() -> None:
 
     masks, debuts = [], []
     for g in cfg["groups"]:
-        if g.get("mask_from_override"):
-            # maske fra rene one-shot-bilder når kjede-diffen er upålitelig
-            ov = fl.load_rgb(here / g["debut_override"])
-            if ov.shape != full.shape:
-                ov = np.asarray(Image.fromarray(ov).resize((W, H), Image.LANCZOS))
-            ingen = np.zeros((H, W), bool)
-            core = fl.step_core(ov, empty, ingen)
-            core = fl.add_shadow_halo(core, ov, empty, ingen)
-            m = ndimage.binary_dilation(core, iterations=fl.MASK_DILATE)
+        if "mask_from" in g:
+            mf = g["mask_from"]
+            a_img = fl.load_rgb(here / mf["a"])
+            b_img = fl.load_rgb(here / mf["b"])
+            m = fl.stage_pair_mask(a_img, b_img, mf["box"])
         else:
             m = fl.group_mask(arrs, g["diff_steps"], noise)
+        if "extra_mask_from" in g:
+            ef = g["extra_mask_from"]
+            a_img = fl.load_rgb(here / ef["a"])
+            b_img = fl.load_rgb(here / ef["b"])
+            m |= fl.stage_pair_mask(a_img, b_img, ef["box"])
         if "extra_mask" in g:
             m |= np.asarray(Image.open(here / g["extra_mask"]).convert("L")) > 127
         assert m.any(), f"{g['name']}: tom maske — sjekk diff_steps"

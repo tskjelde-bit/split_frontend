@@ -197,6 +197,59 @@ def split_residual(comp: np.ndarray, arrs_by_step: dict, groups_steps: list,
     return parts
 
 
+def hull_fill(mask: np.ndarray, min_comp: int = 2000) -> np.ndarray:
+    """Fyll konveks hull per komponent. Tetter lavkontrast-hull (lyst teppe
+    mot lys parkett gir diff-hull midt i objektet — samme problem --boxfill
+    løste i nb_remove for teppesteg)."""
+    from PIL import ImageDraw
+    from scipy.spatial import ConvexHull
+
+    lab, n = ndimage.label(mask)
+    out = mask.copy()
+    H, W = mask.shape
+    for i in range(1, n + 1):
+        ys, xs = np.nonzero(lab == i)
+        if len(xs) < min_comp:
+            continue
+        pts = np.stack([xs, ys], 1)
+        try:
+            h = ConvexHull(pts)
+        except Exception:
+            continue
+        poly = [(int(pts[v, 0]), int(pts[v, 1])) for v in h.vertices]
+        im = Image.new("L", (W, H), 0)
+        ImageDraw.Draw(im).polygon(poly, fill=255)
+        out |= np.asarray(im) > 0
+    return out
+
+
+def stage_pair_mask(a: np.ndarray, b: np.ndarray, box: list) -> np.ndarray:
+    """Maske fra to RENE one-shot-renders (stage-par): lavterskel-diff i en
+    avgrenset boks, dominante komponenter, hull-fylt. Boksen holder
+    render-varians (kunst/gardiner) ute."""
+    H, W = a.shape[:2]
+    d = raw_change(a, b, SHADOW_LO)
+    keep_box = np.zeros((H, W), bool)
+    y0, x0, y1, x1 = box
+    keep_box[y0:y1, x0:x1] = True
+    d &= keep_box
+    d = ndimage.binary_opening(d, iterations=3)
+    d = ndimage.binary_closing(d, iterations=12)
+    labels, n = ndimage.label(d)
+    keep = np.zeros_like(d)
+    if not n:
+        return keep
+    sizes = ndimage.sum(d, labels, range(1, n + 1))
+    min_size = max(H * W * 1.2e-4, sizes.max() * 0.15)
+    for i, sl in enumerate(ndimage.find_objects(labels)):
+        if sizes[i] < min_size or sl is None:
+            continue
+        keep[sl] |= labels[sl] == i + 1
+    keep = ndimage.binary_fill_holes(keep)
+    keep = hull_fill(keep)
+    return ndimage.binary_dilation(keep, iterations=MASK_DILATE)
+
+
 def composite(base: np.ndarray, full: np.ndarray, groups: list) -> list:
     """Iterativ paste i byggerekkefølge. groups = [(maske, debut_arr), ...].
 
