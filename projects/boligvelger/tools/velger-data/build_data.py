@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Validate authored sources and emit app data for the 3D boligvelger."""
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -20,24 +21,26 @@ SCALE = 0.012696
 AREA_TOL = 0.12  # 12 % — polygonene følger innvendige vegglinjer, BRA inkluderer innervegger
 
 
-def poly_area_m2(poly):
+def poly_area_m2(poly, scale=SCALE):
     a = 0.0
     for i in range(len(poly)):
         x1, y1 = poly[i]
         x2, y2 = poly[(i + 1) % len(poly)]
         a += x1 * y2 - x2 * y1
-    return abs(a) / 2 * SCALE * SCALE
+    return abs(a) / 2 * scale * scale
 
 
-def validate_unit_areas(floors, arch, prisliste, strict=False):
+def validate_unit_areas(floors, arch, prisliste, strict=False, scale=None):
     """Polygon-areal per enhet vs arkitekt-BRA (hoveddel) og braU (duplex-U)."""
+    if scale is None:
+        scale = _load("building.json")["scale"]
     errors, warnings = [], []
     sink = errors if strict else warnings
     main_area, u_area = {}, {}
     for fid, f in floors.items():
         for u in f["units"]:
             tgt = u_area if fid.lower() == "u" else main_area
-            tgt[u["unit"]] = tgt.get(u["unit"], 0.0) + poly_area_m2(u["poly"])
+            tgt[u["unit"]] = tgt.get(u["unit"], 0.0) + poly_area_m2(u["poly"], scale)
     for hnr, a in arch.items():
         if hnr in main_area:
             got, want = main_area[hnr], a["bra"]
@@ -168,7 +171,6 @@ def build_geometry():
 
 
 def main():
-    import os
     prisliste = _load("prisliste.json")
     errors, warnings = validate_prisliste(prisliste)
     errors += validate_coverage()
