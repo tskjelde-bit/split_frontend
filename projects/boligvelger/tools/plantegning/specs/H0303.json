@@ -88,7 +88,7 @@
   "extras": [
     {
       "type": "bench",
-      "rect": [11, 15, 140, 55]
+      "rect": [0, 0, 140, 60]
     },
     {
       "type": "ladder",
