@@ -59,7 +59,7 @@ CHAINS = {
         "steps": [
             ("01-uten-dekor", "all the decor on the tables: the flowers, the vase, the books and trays. Reconstruct the table surfaces cleanly"),
             ("02-uten-hvitt-bord", "the white square coffee table on the rug." + RECON_RUG),
-            ("03-uten-svart-bord", "the small round side table between the armchairs on the right." + RECON_RUG),
+            ("03-uten-svart-bord", "the large black round drum coffee table in front of the armchairs, including everything on top of it. Reconstruct the rug and wooden floor seamlessly where it was standing - no marks, no debris"),
             ("04-uten-lenestol-h", "the cream barrel armchair on the far right." + RECON_RUG),
             ("05-uten-lenestol-v", "the other cream barrel armchair, to the left of the far-right one." + RECON_RUG),
             ("06-uten-lamper", "both tall floor lamps with white shades by the windows"),
@@ -81,6 +81,9 @@ def step_regions(scene: str) -> dict[int, Path]:
     cfg = json.loads((HERE / f"groups-{scene}.json").read_text())
     z = np.load(HERE / "furnish" / scene / "masks.npz")
     F = ndimage.distance_transform_edt(~(z["furniture"] > 0)) <= 60
+    extra = HERE / "furnish" / scene / "extra-region.png"
+    if extra.exists():
+        F |= np.asarray(Image.open(extra).convert("L")) > 127
     masks = [z[f"mask_{i:02d}"] > 0 for i in range(len(cfg["groups"]))]
     owner = {}
     for gi, g in enumerate(cfg["groups"]):

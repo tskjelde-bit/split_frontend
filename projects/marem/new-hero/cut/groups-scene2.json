@@ -4,7 +4,7 @@
   "base_empty": "proof/stages-scene2/f0-empty.png",
   "out_dir": "furnish/scene2",
   "groups": [
-    {"name": "teppe", "diff_steps": [9]},
+    {"name": "teppe", "diff_steps": [9], "debut_override": "proof/stages-scene2/f1-rug.png"},
     {"name": "venstresofa", "diff_steps": [8]},
     {"name": "midtsofa", "diff_steps": [7]},
     {"name": "lamper", "diff_steps": [6]},
