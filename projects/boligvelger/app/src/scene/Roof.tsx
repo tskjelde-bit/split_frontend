@@ -11,12 +11,12 @@ import {
   gableProjection,
   type V3,
 } from '../lib/roofGeometry';
-import type { RoofGeo } from '../lib/types';
+import type { RoofGeo, Materials } from '../lib/types';
 
-const SLOPE = '#e8e4d8';   // roof planes (slightly darker than the gips walls)
-const GABLE = '#f3f1ea';   // gable infill (matches exterior wall shell)
-const CHIMNEY = '#d8cfc2'; // brick-ish, a touch warmer/darker
-const WINDOW = '#9c9788';  // recessed roof-window glass/frame (darker, reads as an opening)
+const SLOPE = '#e8e4d8';   // roof planes (slightly darker than the gips walls) — overridden by materials when provided
+const GABLE = '#f3f1ea';   // gable infill fallback
+const CHIMNEY = '#d8cfc2'; // brick-ish fallback
+const WINDOW = '#9c9788';  // recessed roof-window glass fallback
 const SLAB_T = 0.14;       // roof plane thickness
 
 /**
@@ -27,7 +27,7 @@ const SLAB_T = 0.14;       // roof plane thickness
  * ridge at local y=rise — exactly like the floors extrude from local 0. World XZ
  * follows the shared convention x=px*scale, z=-(py*scale).
  */
-export function Roof({ roof, scale, index }: { roof: RoofGeo; scale: number; index: number }) {
+export function Roof({ roof, scale, index, materials }: { roof: RoofGeo; scale: number; index: number; materials?: Materials }) {
   const ref = useRef<THREE.Group>(null!);
   const mode = useVelger((s) => s.mode);
   const explode = useVelger((s) => s.explode);
@@ -57,22 +57,22 @@ export function Roof({ roof, scale, index }: { roof: RoofGeo; scale: number; ind
     >
       {parts.slopes.map((g, i) => (
         <mesh key={`s${i}`} geometry={g} castShadow receiveShadow>
-          <meshStandardMaterial color={SLOPE} roughness={0.9} />
+          <meshStandardMaterial color={materials?.takSort ?? SLOPE} roughness={0.9} />
         </mesh>
       ))}
       {parts.gables.map((g, i) => (
         <mesh key={`g${i}`} geometry={g} castShadow receiveShadow>
-          <meshStandardMaterial color={GABLE} roughness={0.9} />
+          <meshStandardMaterial color={materials?.pussRosa ?? GABLE} roughness={0.9} />
         </mesh>
       ))}
       {parts.windows.map((g, i) => (
         <mesh key={`w${i}`} geometry={g}>
-          <meshStandardMaterial color={WINDOW} roughness={1} />
+          <meshStandardMaterial color={materials?.glassMork ?? WINDOW} roughness={1} />
         </mesh>
       ))}
       {parts.chimneys.map((g, i) => (
         <mesh key={`c${i}`} geometry={g} castShadow receiveShadow>
-          <meshStandardMaterial color={CHIMNEY} roughness={0.95} />
+          <meshStandardMaterial color={materials?.takSort ?? CHIMNEY} roughness={0.95} />
         </mesh>
       ))}
     </group>

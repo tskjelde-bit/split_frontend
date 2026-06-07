@@ -7,7 +7,7 @@ import { UnitMesh } from './UnitMesh';
 import type { FloorGeo, EnvelopeGeo } from '../lib/types';
 
 const GIPS_DARK = '#e5e2d6';
-const GIPS_EXT = '#f3f1ea'; // exterior wall shell
+const GIPS_EXT = '#f3f1ea'; // exterior wall shell fallback
 const EXPLODE_GAP = 2.2; // extra meters of air per floor index when exploded
 const PARAPET = 0.35; // exploded view: wall shell shrinks to this height so unit volumes read from outside
 
@@ -21,9 +21,9 @@ export function floorIsFocused(focus: FloorFocus, floorId: string): boolean {
   return focus === floorId;
 }
 
-interface Props { floor: FloorGeo; index: number; scale: number; slab: number; envelope: EnvelopeGeo; }
+interface Props { floor: FloorGeo; index: number; scale: number; slab: number; envelope: EnvelopeGeo; slabColor?: string; }
 
-export function FloorPlate({ floor, index, scale, slab, envelope }: Props) {
+export function FloorPlate({ floor, index, scale, slab, envelope, slabColor }: Props) {
   const ref = useRef<THREE.Group>(null!);
   const wallRef = useRef<THREE.Mesh>(null!);
   const mode = useVelger(s => s.mode);
@@ -87,7 +87,7 @@ export function FloorPlate({ floor, index, scale, slab, envelope }: Props) {
   return (
     <group ref={ref} position-y={floor.elevation}>
       <mesh geometry={slabGeo} castShadow receiveShadow {...shellHandlers}>
-        <meshStandardMaterial color={GIPS_DARK} roughness={0.9} transparent={dimmed} opacity={dimmed ? 0.25 : 1} />
+        <meshStandardMaterial color={slabColor ?? GIPS_DARK} roughness={0.9} transparent={dimmed} opacity={dimmed ? 0.25 : 1} />
       </mesh>
       <group position-y={slab}>
         <mesh ref={wallRef} geometry={wallGeo} castShadow receiveShadow {...shellHandlers}>
@@ -95,7 +95,7 @@ export function FloorPlate({ floor, index, scale, slab, envelope }: Props) {
               its interior face wins the z-test against common/unit blocks that
               the data authors flush to the inner wall plane (no z-fighting). */}
           <meshStandardMaterial
-            color={GIPS_EXT}
+            color={floor.facade ?? GIPS_EXT}
             roughness={0.85}
             transparent={dimmed}
             opacity={dimmed ? 0.25 : 1}

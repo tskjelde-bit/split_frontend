@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import type { BuildingGeo, WindowGeo } from '../lib/types';
 import { useVelger } from '../state/store';
 
-const NICHE = '#bdb9ab'; // darker than the gips wall so the recess reads as a window
+const NICHE = '#bdb9ab'; // darker than the gips wall fallback — overridden by materials.glassMork when provided
 // The exterior wall is now a solid ring of wallThickness (0.30 m). A niche whose
 // front face sits BEHIND the outer wall plane is fully occluded by the opaque
 // wall and never shows (the prior "invisible niches" bug). So the front face
@@ -62,7 +62,7 @@ export function Windows({ geo }: { geo: BuildingGeo }) {
       {boxes.map((b, i) => (
         <mesh key={i} position={[b.x, b.y, b.z]} rotation={[0, b.angle, 0]}>
           <boxGeometry args={[b.w, b.h, DEPTH]} />
-          <meshStandardMaterial color={NICHE} roughness={1} />
+          <meshStandardMaterial color={geo.materials?.glassMork ?? NICHE} roughness={1} />
         </mesh>
       ))}
     </group>

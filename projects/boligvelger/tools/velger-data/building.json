@@ -1,5 +1,13 @@
 {
   "scale": 0.012696,
+  "materials": {
+    "pussRosa": "#E4B49C",
+    "pussHvit": "#E9E6E0",
+    "takSort": "#2E3038",
+    "karmSort": "#242424",
+    "glassMork": "#35353E",
+    "hekkGronn": "#3A5224"
+  },
   "envelope": {
     "poly": [
       [748, 375],
@@ -19,22 +27,10 @@
     "3"
   ],
   "floors": {
-    "U": {
-      "label": "Underetasje",
-      "height": 3.0
-    },
-    "1": {
-      "label": "1. etasje",
-      "height": 3.6
-    },
-    "2": {
-      "label": "2. etasje",
-      "height": 3.6
-    },
-    "3": {
-      "label": "3. etasje",
-      "height": 2.7
-    }
+    "U": { "label": "Underetasje", "height": 3.0, "facade": "pussHvit" },
+    "1": { "label": "1. etasje", "height": 3.6, "facade": "pussHvit" },
+    "2": { "label": "2. etasje", "height": 3.6, "facade": "pussRosa" },
+    "3": { "label": "3. etasje", "height": 2.7, "facade": "pussRosa" }
   },
   "slabThickness": 0.2,
   "roof": {

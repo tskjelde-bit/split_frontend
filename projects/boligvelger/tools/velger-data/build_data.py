@@ -144,6 +144,7 @@ def build_units():
 def build_geometry():
     b = _load("building.json")
     envelope = b["envelope"]
+    materials = b["materials"]
     floors_raw = _load_floors()
     floors = []
     elevation = 0.0
@@ -155,6 +156,7 @@ def build_geometry():
             "label": spec["label"],
             "elevation": round(elevation, 3),
             "height": spec["height"],
+            "facade": materials[spec["facade"]],
             "outline": envelope["poly"],   # canonical envelope shared by all floors
             "units": f["units"],
             "common": f.get("common", []),
@@ -162,6 +164,7 @@ def build_geometry():
         elevation += spec["height"]
     return {
         "scale": b["scale"],
+        "materials": materials,
         "slabThickness": b["slabThickness"],
         "envelope": envelope,
         "floors": floors,

@@ -1,9 +1,15 @@
 export type FloorId = 'U' | '1' | '2' | '3';
 export type UnitStatus = 'ledig' | 'reservert' | 'solgt';
 
+export interface Materials {
+  pussRosa: string; pussHvit: string; takSort: string;
+  karmSort: string; glassMork: string; hekkGronn: string;
+}
+
 export interface UnitGeo { id: string; unit: string; poly: [number, number][]; }
 export interface FloorGeo {
   id: FloorId; label: string; elevation: number; height: number;
+  facade?: string;
   outline: [number, number][]; units: UnitGeo[]; common: [number, number][][];
 }
 export interface EnvelopeGeo { poly: [number, number][]; wallThickness: number; envelopeDoc?: string; }
@@ -25,6 +31,7 @@ export interface RoofGeo {
 export interface WindowGeo { floor: FloorId; edge: number; t: number; width: number; sill: number; height: number; }
 export interface BuildingGeo {
   scale: number; slabThickness: number; envelope: EnvelopeGeo; floors: FloorGeo[]; roof: RoofGeo; windows: WindowGeo[];
+  materials: Materials;
 }
 
 export interface Rom { name: string; area: number; }

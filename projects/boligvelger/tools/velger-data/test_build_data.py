@@ -79,3 +79,12 @@ def test_duplex_u_polygons_checked_against_braU():
     prisliste = {"HX": {"braU": 30}}
     errors, _ = build_data.validate_unit_areas(floors, {}, prisliste, strict=True)
     assert any("HX-U" in e or "HX" in e for e in errors)
+
+
+def test_geometry_emits_materials_and_facade():
+    geo = build_data.build_geometry()
+    m = geo["materials"]
+    assert m["pussRosa"] == "#E4B49C"
+    assert m["takSort"] == "#2E3038"
+    facade = {f["id"]: f["facade"] for f in geo["floors"]}
+    assert facade == {"U": "#E9E6E0", "1": "#E9E6E0", "2": "#E4B49C", "3": "#E4B49C"}
