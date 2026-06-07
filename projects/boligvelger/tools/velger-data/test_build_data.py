@@ -51,3 +51,31 @@ def test_geometry_emits_envelope_and_stacked_elevations():
     assert elevations == [0.0, 3.0, 6.6, 10.2]
     assert geo["roof"]["elevation"] == 12.9
     assert geo["roof"]["type"] == "saltak"
+
+
+def test_poly_area_m2():
+    # 100x100 px ved scale 0.012696 = 1.612 m²
+    assert abs(build_data.poly_area_m2([[0, 0], [100, 0], [100, 100], [0, 100]]) - 1.612) < 0.01
+
+
+def test_unit_area_validator_flags_mismatch():
+    floors = {"2": {"units": [{"id": "HX", "unit": "HX", "poly": [[0, 0], [100, 0], [100, 100], [0, 100]]}]}}
+    arch = {"HX": {"bra": 30.0}}          # polygon er 1.6 m² — langt unna
+    errors, warnings = build_data.validate_unit_areas(floors, arch, {}, strict=True)
+    assert any("HX" in e for e in errors)
+    errors2, warnings2 = build_data.validate_unit_areas(floors, arch, {}, strict=False)
+    assert not errors2 and any("HX" in w for w in warnings2)
+
+
+def test_unit_area_validator_passes_within_tolerance():
+    floors = {"2": {"units": [{"id": "HX", "unit": "HX", "poly": [[0, 0], [1364, 0], [1364, 1364], [0, 1364]]}]}}
+    arch = {"HX": {"bra": 300.0}}         # 1364² px ≈ 299.9 m²
+    errors, _ = build_data.validate_unit_areas(floors, arch, {}, strict=True)
+    assert errors == []
+
+
+def test_duplex_u_polygons_checked_against_braU():
+    floors = {"u": {"units": [{"id": "HX-U", "unit": "HX", "poly": [[0, 0], [100, 0], [100, 100], [0, 100]]}]}}
+    prisliste = {"HX": {"braU": 30}}
+    errors, _ = build_data.validate_unit_areas(floors, {}, prisliste, strict=True)
+    assert any("HX-U" in e or "HX" in e for e in errors)

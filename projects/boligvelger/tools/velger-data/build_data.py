@@ -16,6 +16,39 @@ OUT = ROOT / "app" / "public" / "data" / "dybwads-gate-8"
 EXPECTED_PRICE_SUM = 91_270_000
 EXPECTED_BRA_SUM = 445
 
+SCALE = 0.012696
+AREA_TOL = 0.12  # 12 % — polygonene følger innvendige vegglinjer, BRA inkluderer innervegger
+
+
+def poly_area_m2(poly):
+    a = 0.0
+    for i in range(len(poly)):
+        x1, y1 = poly[i]
+        x2, y2 = poly[(i + 1) % len(poly)]
+        a += x1 * y2 - x2 * y1
+    return abs(a) / 2 * SCALE * SCALE
+
+
+def validate_unit_areas(floors, arch, prisliste, strict=False):
+    """Polygon-areal per enhet vs arkitekt-BRA (hoveddel) og braU (duplex-U)."""
+    errors, warnings = [], []
+    sink = errors if strict else warnings
+    main_area, u_area = {}, {}
+    for fid, f in floors.items():
+        for u in f["units"]:
+            tgt = u_area if fid.lower() == "u" else main_area
+            tgt[u["unit"]] = tgt.get(u["unit"], 0.0) + poly_area_m2(u["poly"])
+    for hnr, a in arch.items():
+        if hnr in main_area:
+            got, want = main_area[hnr], a["bra"]
+            if want and abs(got - want) / want > AREA_TOL:
+                sink.append(f"{hnr}: polygon {got:.1f} m² vs arkitekt BRA-i {want} m² (avvik > {AREA_TOL:.0%})")
+    for hnr, got in u_area.items():
+        want = (prisliste.get(hnr) or {}).get("braU")
+        if want and abs(got - want) / want > AREA_TOL:
+            sink.append(f"{hnr}-U: polygon {got:.1f} m² vs braU {want} m² (avvik > {AREA_TOL:.0%})")
+    return errors, warnings
+
 
 def _load(name):
     return json.loads((TOOL / name).read_text())
@@ -135,10 +168,16 @@ def build_geometry():
 
 
 def main():
+    import os
     prisliste = _load("prisliste.json")
     errors, warnings = validate_prisliste(prisliste)
     errors += validate_coverage()
     errors += validate_envelope_containment()
+
+    strict_areas = os.environ.get("VELGER_STRICT_AREAS") == "1"
+    area_errors, area_warnings = validate_unit_areas(_load_floors(), _load_arch(), prisliste, strict=strict_areas)
+    errors += area_errors
+    warnings += area_warnings
 
     r = subprocess.run([sys.executable, str(TOOL / "check_overlaps.py")], capture_output=True, text=True)
     if r.returncode != 0:
