@@ -54,9 +54,28 @@ def main() -> None:
     noise = fl.drift_mask([arrs[k] for k in keys])
     print(f"  drift-maske: {noise.mean() * 100:.1f}%")
 
+    empty = fl.load_rgb(here / cfg["base_empty"])
+    if empty.shape != full.shape:
+        assert abs(empty.shape[1] / empty.shape[0] - W / H) < 0.01, \
+            f"base har feil aspekt: {empty.shape} vs {full.shape}"
+        print(f"  base resamples {empty.shape[1]}x{empty.shape[0]} -> {W}x{H}")
+        empty = np.asarray(Image.fromarray(empty).resize((W, H), Image.LANCZOS))
+
     masks, debuts = [], []
     for g in cfg["groups"]:
-        m = fl.group_mask(arrs, g["diff_steps"], noise)
+        if g.get("mask_from_override"):
+            # maske fra rene one-shot-bilder når kjede-diffen er upålitelig
+            ov = fl.load_rgb(here / g["debut_override"])
+            if ov.shape != full.shape:
+                ov = np.asarray(Image.fromarray(ov).resize((W, H), Image.LANCZOS))
+            ingen = np.zeros((H, W), bool)
+            core = fl.step_core(ov, empty, ingen)
+            core = fl.add_shadow_halo(core, ov, empty, ingen)
+            m = ndimage.binary_dilation(core, iterations=fl.MASK_DILATE)
+        else:
+            m = fl.group_mask(arrs, g["diff_steps"], noise)
+        if "extra_mask" in g:
+            m |= np.asarray(Image.open(here / g["extra_mask"]).convert("L")) > 127
         assert m.any(), f"{g['name']}: tom maske — sjekk diff_steps"
         debut_step = min(g["diff_steps"]) - 1
         if "debut_override" in g:
@@ -74,13 +93,6 @@ def main() -> None:
     furniture = np.zeros((H, W), bool)
     for m in masks:
         furniture |= m
-
-    empty = fl.load_rgb(here / cfg["base_empty"])
-    if empty.shape != full.shape:
-        assert abs(empty.shape[1] / empty.shape[0] - W / H) < 0.01, \
-            f"base har feil aspekt: {empty.shape} vs {full.shape}"
-        print(f"  base resamples {empty.shape[1]}x{empty.shape[0]} -> {W}x{H}")
-        empty = np.asarray(Image.fromarray(empty).resize((W, H), Image.LANCZOS))
 
     # gjenopprett drift-spiste fragmenter (puter/pledd/skap som vibrerte i
     # kjeden) — men avvis render-varians (kunst/gardiner): krever nærhet til
