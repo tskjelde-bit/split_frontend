@@ -1,3 +1,5 @@
 furnish/
 __pycache__/
 .pytest_cache/
+scene1-steps-v2/
+scene2-steps-v2/

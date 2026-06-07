@@ -2,7 +2,7 @@
 """Fjern ett objekt fra et bilde med Nano Banana Pro (gemini-3-pro-image).
 
 Bruk:
-    nb_remove.py <input.png> <output.png> "<objektbeskrivelse, engelsk>" [--boxfill] [--accept-region=maske.png]
+    nb_remove.py <input.png> <output.png> "<objektbeskrivelse, engelsk>" [--boxfill] [--accept-region=maske.png] [--dominant]
 
 - Laster opp input via Files API (4K PNG er for stor for inline)
 - Prompt med låst disclaimer (ikke rør noe annet)
@@ -109,7 +109,7 @@ def generate(file_uri: str, prompt: str, key: str) -> bytes:
 
 
 def contain(inp: Path, outp: Path, boxfill: bool = False,
-            region_path: str | None = None) -> None:
+            region_path: str | None = None, dominant: bool = False) -> None:
     """Behold output kun i ekte endringsklynger; input-piksler ellers.
 
     Dreper subpiksel-drift (lysekronekrystall, hyllekanter) slik at drift
@@ -119,6 +119,10 @@ def contain(inp: Path, outp: Path, boxfill: bool = False,
     fjerning (teppe ~ gulvfarge) der masken ellers får åpne ghost-hull.
     Brukes ikke ellers — bbox-fylling lekker modellens vindus-/detaljstøy
     inn i bildet og gir debris i lagene.
+
+    dominant=True: hev min_size til 8 % av dominante klynge slik at
+    re-rendering-vibrasjon (småklynger) reverteres til input og aldri
+    akkumulerer i kjeden.
     """
     from scipy import ndimage
 
@@ -134,6 +138,10 @@ def contain(inp: Path, outp: Path, boxfill: bool = False,
     if n:
         sizes = ndimage.sum(core, labels, range(1, n + 1))
         min_size = a.shape[0] * a.shape[1] * 5e-5
+        if dominant:
+            # objektfjerning = én sammenhengende region; re-rendering-
+            # vibrasjon andre steder er småklynger som ikke skal bakes inn
+            min_size = max(min_size, sizes.max() * 0.08)
         slices = ndimage.find_objects(labels)
         for i, sl in enumerate(slices):
             if sizes[i] < min_size or sl is None:
@@ -194,6 +202,7 @@ def main() -> None:
             region = arg.split("=", 1)[1]
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     boxfill = "--boxfill" in sys.argv
+    dominant = "--dominant" in sys.argv
     inp, outp, obj = Path(args[0]), Path(args[1]), args[2]
     key = api_key()
     print(f"laster opp {inp.name} ...")
@@ -209,7 +218,7 @@ def main() -> None:
         print("DIMENSJONSAVVIK — stopper før contain")
         sys.exit(1)
     Path(str(outp) + ".raw.png").write_bytes(png)  # før contain, for feilsøk
-    contain(inp, outp, boxfill=boxfill, region_path=region)
+    contain(inp, outp, boxfill=boxfill, region_path=region, dominant=dominant)
     qa(inp, outp)
 
 
