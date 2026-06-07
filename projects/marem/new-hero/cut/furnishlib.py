@@ -116,6 +116,57 @@ def anchor_base(empty: np.ndarray, full: np.ndarray,
     return np.clip(out + 0.5, 0, 255).astype(np.uint8)
 
 
+def residual_holes(full: np.ndarray, empty: np.ndarray, union: np.ndarray,
+                   min_frac: float = 2e-5) -> list:
+    """Møbelpiksler i full som gruppemaskene ikke dekker.
+
+    Kjede-drift kan ha «spist» objektdeler ut av maskene (puter/skap som
+    vibrerte i mange steg havner i drift-masken). Da lekker fulls piksler
+    inn i basen som frittsvevende fragmenter. Denne finner dem: klynger i
+    diff(full, tomt rom) utenfor maske-unionen.
+    """
+    H, W = full.shape[:2]
+    holes = raw_change(full, empty) & ~union
+    holes = ndimage.binary_opening(holes, iterations=2)
+    holes = ndimage.binary_closing(holes, iterations=8)
+    holes = ndimage.binary_fill_holes(holes)
+    labels, n = ndimage.label(holes)
+    comps = []
+    if not n:
+        return comps
+    for i, sl in enumerate(ndimage.find_objects(labels)):
+        if sl is None:
+            continue
+        comp = np.zeros((H, W), bool)
+        comp[sl] = labels[sl] == i + 1
+        if comp.sum() >= H * W * min_frac:
+            comps.append(comp)
+    return comps
+
+
+def assign_residual(comp: np.ndarray, arrs_by_step: dict,
+                    groups_steps: list) -> int:
+    """Hvilken gruppe eier fragmentet? Den hvis kjedesteg endrer det mest.
+
+    Fjerningssteget gir størst |diff| i regionen (objekt → gulv), mens
+    re-rendering-vibrasjon gir mindre. groups_steps = diff_steps per gruppe
+    i byggerekkefølge. Returnerer gruppeindeks.
+    """
+    ys, xs = np.nonzero(comp)
+    sl = (slice(ys.min(), ys.max() + 1), slice(xs.min(), xs.max() + 1))
+    sub = comp[sl]
+    best_mag, best_i = -1.0, 0
+    for gi, steps in enumerate(groups_steps):
+        mag = 0.0
+        for s in steps:
+            a = arrs_by_step[s - 1][sl].astype(np.int16)
+            b = arrs_by_step[s][sl].astype(np.int16)
+            mag += float(np.abs(a - b).max(axis=2)[sub].sum())
+        if mag > best_mag:
+            best_mag, best_i = mag, gi
+    return best_i
+
+
 def composite(base: np.ndarray, full: np.ndarray, groups: list) -> list:
     """Iterativ paste i byggerekkefølge. groups = [(maske, debut_arr), ...].
 

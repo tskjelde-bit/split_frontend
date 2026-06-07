@@ -128,3 +128,36 @@ def test_composite_untouched_pixels_are_bit_identical():
     far = np.ones((H, W), bool)
     far[100 - fl.QA_PAD:140 + fl.QA_PAD, 100 - fl.QA_PAD:140 + fl.QA_PAD] = False
     assert d[far].max() == 0
+
+
+def test_residual_holes_finds_leaked_fragment():
+    H, W = 200, 200
+    empty = np.full((H, W, 3), 80, np.uint8)
+    full = empty.copy()
+    full[100:140, 60:120] = (200, 60, 30)    # objekt
+    full[105:115, 130:150] = (220, 220, 40)  # «pute» som drift åt av masken
+    union = np.zeros((H, W), bool)
+    union[95:145, 55:125] = True             # maske dekker objektet, ikke puten
+    comps = fl.residual_holes(full, empty, union)
+    assert len(comps) == 1
+    assert comps[0][110, 140]
+    assert not (comps[0] & union).any()
+
+
+def test_assign_residual_picks_removal_step_group():
+    H, W = 120, 120
+    floor = np.full((H, W, 3), 80, np.uint8)
+    s0 = floor.copy()
+    s0[40:60, 40:60] = (220, 220, 40)   # pute til stede
+    s0[80:100, 20:40] = (10, 10, 10)    # annet objekt
+    s1 = s0.copy()
+    s1[80:100, 20:40] = 80              # steg 1 fjerner annet objekt
+    s1[40:60, 40:60] = (200, 200, 60)   # puta VIBRERER litt
+    s2 = s1.copy()
+    s2[40:60, 40:60] = 80               # steg 2 fjerner puta
+    arrs = {0: s0, 1: s1, 2: s2}
+    comp = np.zeros((H, W), bool)
+    comp[40:60, 40:60] = True
+    # gruppe 0 eier steg 2 (puta), gruppe 1 eier steg 1 (annet objekt)
+    gi = fl.assign_residual(comp, arrs, [[2], [1]])
+    assert gi == 0   # fjerningssteget (~130/px) slår vibrasjonen (~20/px)

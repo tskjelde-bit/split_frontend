@@ -12,6 +12,7 @@ from pathlib import Path
 
 import numpy as np
 from PIL import Image
+from scipy import ndimage
 
 import furnishlib as fl
 
@@ -72,6 +73,17 @@ def main() -> None:
             f"base har feil aspekt: {empty.shape} vs {full.shape}"
         print(f"  base resamples {empty.shape[1]}x{empty.shape[0]} -> {W}x{H}")
         empty = np.asarray(Image.fromarray(empty).resize((W, H), Image.LANCZOS))
+
+    # gjenopprett drift-spiste fragmenter (puter/pledd/skap som vibrerte i kjeden)
+    for comp in fl.residual_holes(full, empty, furniture):
+        gi = fl.assign_residual(comp, arrs, [g["diff_steps"] for g in cfg["groups"]])
+        grown = ndimage.binary_dilation(comp, iterations=fl.MASK_DILATE)
+        masks[gi] |= grown
+        furniture |= grown
+        ys, xs = np.nonzero(comp)
+        print(f"  residual {int(comp.sum())} px -> {cfg['groups'][gi]['name']} "
+              f"(ved {int(xs.min())},{int(ys.min())})")
+
     base = fl.anchor_base(empty, full, furniture)
 
     frames = fl.composite(base, full, list(zip(masks, debuts)))
