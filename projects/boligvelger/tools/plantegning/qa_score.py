@@ -1,14 +1,19 @@
 """Objektiv geometri-score: hvor godt dekker rentegningens vegger arkitektens?
 
-Renderer rentegning-SVG i crop-skala (0.7874 px/cm), terskler begge til
-vegg-masker, dilaterer 4 px og måler:
+Renderer rentegning-SVG i crop-skala og måler:
   recall    = andel av arkitektens mørke piksler dekket av rentegningen
   precision = andel av rentegningens mørke piksler som treffer arkitekten
 
 Arkitekt-croppen inneholder tekst/annotasjoner/nabo-enheter som rentegningen
 bevisst utelater, så recall < 1 er ventet; presisjonen er hovedsignalet for
 "vegger på feil sted". Bruk: qa_score.py H0101 OFFX OFFY
+
+Skala-notat: rentegningens SVG renderes til eksakt crop-dimensjoner (fra
+units.json crop_px[2] × crop_px[3]) slik at 1 spec-enhet = crop_px / spec_units
+piksler — samme skala som arkitektens PNG-crop. Fallback ved manglende
+units.json-entry: gammel formel PNG_PX_PER_CM ≈ 1.0.
 """
+import json
 import subprocess
 import sys
 import tempfile
@@ -20,13 +25,28 @@ import build_pages
 import fixtures
 from shot import shot
 
-PNG_PX_PER_CM = 200 / 2.54 / 100
+# Fallback-skala (brukes kun hvis uid ikke finnes i units.json).
+PNG_PX_PER_CM = 1.2696 * 200 / 2.54 / 100
+
+_UNITS_CACHE = None
+
+
+def _load_units() -> dict:
+    global _UNITS_CACHE
+    if _UNITS_CACHE is None:
+        _UNITS_CACHE = json.loads((Path(__file__).parent / "units.json").read_text())
+    return _UNITS_CACHE
 
 
 def render_plan_png(uid: str, out: Path) -> tuple[int, int]:
     plan = brand.RENTEGNING / f"{uid}-plan.svg"
     vb, inner = build_pages.load_fragment(plan)
-    w, h = round(vb[2] * PNG_PX_PER_CM), round(vb[3] * PNG_PX_PER_CM)
+    units = _load_units()
+    if uid in units and "crop_px" in units[uid]:
+        # Skaler SVG til eksakt crop-dimensjoner for nøyaktig pixel-sammenligning.
+        w, h = units[uid]["crop_px"][2], units[uid]["crop_px"][3]
+    else:
+        w, h = round(vb[2] * PNG_PX_PER_CM), round(vb[3] * PNG_PX_PER_CM)
     svg = (
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" '
         f'viewBox="0 0 {vb[2]:.0f} {vb[3]:.0f}">'

@@ -11,7 +11,9 @@ import brand
 import build_pages
 import fixtures
 
-PNG_PX_PER_CM = 200 / 2.54 / 100  # 0.7874
+# Spec-koordinater er arkitekt-piksler à 0.012696 m/px (1.2696 cm/enhet).
+# Arkitekt-PNG er rasterisert ved 200 DPI fra 1:100-tegning → 1.0 px/enhet.
+PNG_PX_PER_CM = 1.2696 * 200 / 2.54 / 100
 
 
 def main():
