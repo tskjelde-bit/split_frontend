@@ -82,7 +82,7 @@ def main() -> None:
         ys, xs = np.nonzero(comp)
         tag = (f"{int(comp.sum())} px ved {int(xs.min())},{int(ys.min())} "
                f"(nær={near}, fjerning={removal:.0f})")
-        if not near or removal < 30:
+        if not near or removal < fl.RESIDUAL_REMOVAL_MIN:
             print(f"  residual AVVIST {tag}")
             continue
         gi = fl.assign_residual(comp, arrs, [g["diff_steps"] for g in cfg["groups"]])

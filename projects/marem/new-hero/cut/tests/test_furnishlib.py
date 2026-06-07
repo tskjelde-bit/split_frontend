@@ -181,5 +181,5 @@ def test_residual_metrics_separates_fragment_from_variance():
     kunst[20:50, 150:180] = True
     near_p, rem_p = fl.residual_metrics(pute, arrs, union)
     near_k, rem_k = fl.residual_metrics(kunst, arrs, union)
-    assert near_p and rem_p >= 30      # ekte fragment: nær + fjerningssignatur
-    assert (not near_k) or rem_k < 30  # varians: avvises
+    assert near_p and rem_p >= fl.RESIDUAL_REMOVAL_MIN  # ekte fragment
+    assert (not near_k) or rem_k < fl.RESIDUAL_REMOVAL_MIN  # varians: avvises

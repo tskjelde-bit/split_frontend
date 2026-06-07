@@ -18,6 +18,7 @@ MASK_DILATE = 10   # generøs utvidelse av ferdig gruppemaske
 FEATHER_DILATE = 6
 FEATHER_SIGMA = 4.0
 QA_PAD = 24        # QA-margin for å holde seg klar av feather-soner
+RESIDUAL_REMOVAL_MIN = 45  # ekte fjerning (objekt->bakgrunn) vs render-varians (~37)
 
 Image.MAX_IMAGE_PIXELS = None
 
