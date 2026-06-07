@@ -1,7 +1,7 @@
 {
  "id": "U",
  "pngScale": 1.0,
- "transform": "Interior polys re-authored directly in floor-px envelope space (building.scale 0.012696). Outline set to the canonical envelope from building.json. H0101-U placed under floor-1 H0101 (SE corner), H0103-U under floor-1 H0103 (SW/south), common fills the remaining basement (BOD/VASKEROM/TEKN/FELLESROM) inside the envelope. Previous basement trace (bbox 865-2053 x 391-1507, from etasje-u-plan-1.png at 0.016929 m/px scaled 1.33333 into floor-px) was mis-justified vs the envelope (748-2030 x 375-1700) and is superseded.",
+ "transform": "Interior polys re-authored directly in floor-px envelope space (building.scale 0.012696). Outline set to the canonical envelope from building.json. H0101-U placed under floor-1 H0101 (SE corner), H0103-U under floor-1 H0103 (SW/south), common fills the remaining basement (BOD/VASKEROM/TEKN/FELLESROM) inside the envelope. Previous basement trace (bbox 865-2053 x 391-1507, from etasje-u-plan-1.png at 0.016929 m/px scaled 1.33333 into floor-px) was mis-justified vs the envelope (748-2030 x 375-1700) and is superseded. C3 2026-06-07: reclassified BOD storage into unit polygons. H0103-U west 865->772 (BOD-stripe), east 1262->1280 (gap closure), south 1690->1676 (wall buffer), north 1332->1280 (additional BOD rows) -> 32.4 m2 vs braU=33 (within 12%). H0101-U gains second polygon H0101-U2 (x=1280-1690 y=1400-1676) covering central south BODs -> combined 32.0 m2 vs braU=30 (within 12%). Common[0] south 1320->1280, Common[1] shrunk to north strip only (y=1332-1400).",
  "outline": [
   [748, 375],
   [1660, 375],
@@ -17,18 +17,28 @@
    "poly": [
     [1690, 1400],
     [2000, 1400],
-    [2000, 1690],
-    [1690, 1690]
+    [2000, 1676],
+    [1690, 1676]
+   ]
+  },
+  {
+   "id": "H0101-U2",
+   "unit": "H0101",
+   "poly": [
+    [1280, 1400],
+    [1690, 1400],
+    [1690, 1676],
+    [1280, 1676]
    ]
   },
   {
    "id": "H0103-U",
    "unit": "H0103",
    "poly": [
-    [865, 1332],
-    [1262, 1332],
-    [1262, 1690],
-    [865, 1690]
+    [772, 1280],
+    [1280, 1280],
+    [1280, 1676],
+    [772, 1676]
    ]
   }
  ],
@@ -36,14 +46,14 @@
   [
    [800, 410],
    [1640, 410],
-   [1640, 1320],
-   [800, 1320]
+   [1640, 1280],
+   [800, 1280]
   ],
   [
    [1280, 1332],
    [1660, 1332],
-   [1660, 1690],
-   [1280, 1690]
+   [1660, 1400],
+   [1280, 1400]
   ],
   [
    [1690, 660],
