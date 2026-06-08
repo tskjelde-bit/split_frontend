@@ -12,7 +12,7 @@ function onEdge(geo: BuildingGeo, edge: number, t: number) {
   return {
     x: ax + dx * t, z: az + dz * t,
     nx: -dz / len, nz: dx / len,
-    angle: Math.atan2(dz, dx),
+    angle: Math.atan2(nx, nz),
   };
 }
 
