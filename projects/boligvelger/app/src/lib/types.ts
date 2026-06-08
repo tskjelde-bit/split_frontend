@@ -17,12 +17,14 @@ export interface EnvelopeGeo { poly: [number, number][]; wallThickness: number; 
 export interface RoofWindow { width: number; sill: number; height: number; }
 export interface GableSpec { edge: number; t: number; width: number; projection: number; rise: number; window?: RoofWindow; }
 export interface ChimneySpec { x: number; y: number; w: number; d: number; above: number; }
+export interface SkylightSpec { t: number; up: number; width: number; height: number; }
 export interface RoofGeo {
   elevation: number; type: 'saltak';
   rect: [number, number][]; ridgeAxis: 'x' | 'y'; ridgeOffset: number; rise: number;
   eaveOverhang: number;
   recess?: { poly: [number, number][]; rise: number; recessDoc?: string };
   ark?: GableSpec; dormers?: GableSpec[]; chimneys?: ChimneySpec[];
+  skylights?: SkylightSpec[];
   heis?: unknown;
   // documentation-only fields carried through from the data file
   ridgeOffsetDoc?: string;

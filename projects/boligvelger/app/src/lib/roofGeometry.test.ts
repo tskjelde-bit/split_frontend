@@ -5,6 +5,7 @@ import {
   prismFromTriangle,
   boxGeometry,
   gableProjection,
+  skylightOnSlope,
   type V3,
 } from './roofGeometry';
 import type { GableSpec } from './types';
@@ -61,6 +62,20 @@ describe('boxGeometry', () => {
     expect((bb.minY + bb.maxY) / 2).toBeCloseTo(3);
     expect((bb.minZ + bb.maxZ) / 2).toBeCloseTo(-2);
     expect(bb.maxY - bb.minY).toBeCloseTo(1.2);
+  });
+});
+
+describe('skylightOnSlope', () => {
+  it('sits flush on the west slope between eave and ridge', () => {
+    // west slope: eave x=748px y=0, ridge x=748+0.4*(1660-748) px y=rise
+    const g = skylightOnSlope(
+      { t: 0.28, up: 0.55, width: 0.9, height: 1.2 },
+      [748, 1700], [748, 375], 748 * scale, (748 + 0.4 * 912) * scale, 5.0, scale,
+    );
+    const bb = bbox(g);
+    expect(bb.maxY).toBeGreaterThan(0.55 * 5.0 - 1.2); // liegt rundt up*rise
+    expect(bb.maxY).toBeLessThan(5.0);                  // under mønet
+    expect(bb.maxX - bb.minX).toBeLessThan(1.2);        // tiltet — x-utstrekning < height
   });
 });
 

@@ -9,9 +9,10 @@ import {
   prismFromTriangle,
   boxGeometry,
   gableProjection,
+  skylightOnSlope,
   type V3,
 } from '../lib/roofGeometry';
-import type { RoofGeo, Materials } from '../lib/types';
+import type { RoofGeo, Materials, EnvelopeGeo } from '../lib/types';
 
 const SLOPE = '#e8e4d8';   // roof planes (slightly darker than the gips walls) — overridden by materials when provided
 const GABLE = '#f3f1ea';   // gable infill fallback
@@ -27,12 +28,12 @@ const SLAB_T = 0.14;       // roof plane thickness
  * ridge at local y=rise — exactly like the floors extrude from local 0. World XZ
  * follows the shared convention x=px*scale, z=-(py*scale).
  */
-export function Roof({ roof, scale, index, materials }: { roof: RoofGeo; scale: number; index: number; materials?: Materials }) {
+export function Roof({ roof, envelope, scale, index, materials }: { roof: RoofGeo; envelope: EnvelopeGeo; scale: number; index: number; materials?: Materials }) {
   const ref = useRef<THREE.Group>(null!);
   const mode = useVelger((s) => s.mode);
   const explode = useVelger((s) => s.explode);
 
-  const parts = useMemo(() => buildRoof(roof, scale), [roof, scale]);
+  const parts = useMemo(() => buildRoof(roof, envelope, scale), [roof, envelope, scale]);
 
   useFrame((_, dt) => {
     const target = explodedY(mode, roof.elevation, index);
@@ -86,7 +87,7 @@ interface RoofParts {
   chimneys: THREE.BufferGeometry[];
 }
 
-function buildRoof(roof: RoofGeo, scale: number): RoofParts {
+function buildRoof(roof: RoofGeo, envelope: EnvelopeGeo, scale: number): RoofParts {
   const slopes: THREE.BufferGeometry[] = [];
   const gables: THREE.BufferGeometry[] = [];
   const windows: THREE.BufferGeometry[] = [];
@@ -195,9 +196,10 @@ function buildRoof(roof: RoofGeo, scale: number): RoofParts {
   }
 
   // --- Ark + dormers (edge 5 = SW street edge) --------------------------
-  // envelope poly[5]=[748,1700] -> poly[0]=[748,375].
-  const streetA: [number, number] = [748, 1700];
-  const streetB: [number, number] = [748, 375];
+  // Derive street edge from envelope so this stays in sync with any future
+  // envelope edit instead of duplicating the coordinates here.
+  const streetA = envelope.poly[5] as [number, number];
+  const streetB = envelope.poly[0] as [number, number];
   const projectionWx = (t: number) =>
     pxToWorld(streetA[0] + (streetB[0] - streetA[0]) * t, 0, scale)[0];
 
@@ -224,6 +226,11 @@ function buildRoof(roof: RoofGeo, scale: number): RoofParts {
     const baseLocal = rise - 0.3;
     const h = top - baseLocal;
     chimneys.push(boxGeometry(cx, baseLocal + h / 2, cz, c.w, h, c.d));
+  }
+
+  // --- Skylights (flat boxes lying on the west slope) -------------------
+  for (const sk of roof.skylights ?? []) {
+    windows.push(skylightOnSlope(sk, streetA, streetB, wxWest, wxRidge, rise, scale));
   }
 
   return { slopes, gables, windows, chimneys };

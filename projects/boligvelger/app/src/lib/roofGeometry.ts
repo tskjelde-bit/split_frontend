@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import type { GableSpec } from './types';
+import type { GableSpec, SkylightSpec } from './types';
 
 /** A 3D point in roof-local space (worldX, localY, worldZ). */
 export type V3 = [number, number, number];
@@ -209,6 +209,26 @@ export function gableProjection(
     gableFace,
     window: windowGeom,
   };
+}
+
+/** Flat dark box lying ON the west slope plane. `up` = 0 (eave) .. 1 (ridge).
+ *  edgeA/edgeB = street edge in px; wxEave/wxRidge = world-x of eave and ridge. */
+export function skylightOnSlope(
+  spec: SkylightSpec,
+  edgeA: [number, number], edgeB: [number, number],
+  wxEave: number, wxRidge: number, rise: number, scale: number,
+): THREE.BufferGeometry {
+  const [, az] = pxToWorld(edgeA[0], edgeA[1], scale);
+  const [, bz] = pxToWorld(edgeB[0], edgeB[1], scale);
+  const z = az + (bz - az) * spec.t;
+  const run = wxRidge - wxEave;                  // > 0: slope rises toward +x
+  const theta = Math.atan2(rise, run);           // slope angle from horizontal
+  const wx = wxEave + spec.up * run;
+  const wy = spec.up * rise;
+  const g = new THREE.BoxGeometry(spec.height, 0.06, spec.width); // length up-slope along x
+  g.rotateZ(theta);                              // tilt onto the plane
+  g.translate(wx, wy + 0.10, z);                 // 10 cm proud of the slope slab
+  return g;
 }
 
 /** Merge a list of position-only BufferGeometries into one (no indices). */

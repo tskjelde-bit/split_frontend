@@ -18,7 +18,7 @@ export function Building({ data }: { data: AppData }) {
       {geo.floors.map((f, i) => (
         <FloorPlate key={f.id} floor={f} index={i} scale={geo.scale} slab={geo.slabThickness} envelope={geo.envelope} slabColor={geo.materials?.pussHvit} />
       ))}
-      <Roof roof={geo.roof} scale={geo.scale} index={geo.floors.length} materials={geo.materials} />
+      <Roof roof={geo.roof} envelope={geo.envelope} scale={geo.scale} index={geo.floors.length} materials={geo.materials} />
       <Windows geo={geo} />
       <UnitTooltip data={data} />
     </group>

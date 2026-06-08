@@ -127,8 +127,9 @@ function assembledBox(geo: BuildingGeo): THREE.Box3 {
   }
 
   // Ark + dormers: extend bounding box outward (projection) and upward (rise).
-  const streetA: [number, number] = [748, 1700];
-  const streetB: [number, number] = [748, 375];
+  // Derive from envelope so the AABB stays in sync with any envelope edits.
+  const streetA = geo.envelope.poly[5] as [number, number];
+  const streetB = geo.envelope.poly[0] as [number, number];
   const [axW, azW] = [streetA[0] * s - cx, cz - streetA[1] * s];
   const [bxW, bzW] = [streetB[0] * s - cx, cz - streetB[1] * s];
   const addDormer = (spec: { t: number; projection: number; rise: number }) => {
