@@ -14,10 +14,11 @@ export function VelgerCanvas({ data }: { data: AppData }) {
       camera={{ position: [18, 12, 18], fov: 35 }}
       style={{ background: CREAM_BG }}
     >
-      <ambientLight intensity={0.55} />
-      <directionalLight position={[12, 20, 8]} intensity={1.1} castShadow
+      <ambientLight intensity={0.80} />
+      <directionalLight position={[12, 20, 8]} intensity={1.40} castShadow
         shadow-mapSize={[1024, 1024]} />
-      <Environment preset="city" environmentIntensity={0.25} />
+      <directionalLight position={[-10, 15, -10]} intensity={0.30} />
+      <Environment preset="park" environmentIntensity={0.35} />
       <Building data={data} />
       <ContactShadows position={[0, -0.01, 0]} opacity={0.35} scale={45} blur={2.2} far={12} resolution={512} />
       <CameraRig geo={data.geo} />
