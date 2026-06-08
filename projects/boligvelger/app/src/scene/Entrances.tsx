@@ -1,20 +1,6 @@
 import { useVelger } from '../state/store';
+import { onEdge } from '../lib/facade';
 import type { BuildingGeo, EntranceSpec, BalconySpec } from '../lib/types';
-
-/** Posisjon/utovernormal på en envelope-kant — samme konvensjon som FloorWindows. */
-function onEdge(geo: BuildingGeo, edge: number, t: number) {
-  const o = geo.envelope.poly;
-  const a = o[edge], b = o[(edge + 1) % o.length];
-  const ax = a[0] * geo.scale, az = -(a[1] * geo.scale);
-  const bx = b[0] * geo.scale, bz = -(b[1] * geo.scale);
-  const dx = bx - ax, dz = bz - az;
-  const len = Math.hypot(dx, dz) || 1;
-  return {
-    x: ax + dx * t, z: az + dz * t,
-    nx: -dz / len, nz: dx / len,
-    angle: Math.atan2(nx, nz),
-  };
-}
 
 export function Entrances({ geo }: { geo: BuildingGeo }) {
   const mode = useVelger((s) => s.mode);
@@ -24,7 +10,7 @@ export function Entrances({ geo }: { geo: BuildingGeo }) {
   return (
     <group>
       {geo.entrances.map((e: EntranceSpec, i: number) => {
-        const p = onEdge(geo, e.edge, e.t);
+        const p = onEdge(geo.envelope.poly, geo.scale, e.edge, e.t);
         const lysH = e.overlys ? 0.4 : 0;
         return (
           <group key={i} position={[p.x, ground, p.z]} rotation={[0, p.angle, 0]}>
@@ -52,7 +38,7 @@ export function Entrances({ geo }: { geo: BuildingGeo }) {
         );
       })}
       {geo.balconies.map((b: BalconySpec, i: number) => {
-        const p = onEdge(geo, b.edge, b.t);
+        const p = onEdge(geo.envelope.poly, geo.scale, b.edge, b.t);
         const fl = geo.floors.find((f) => f.id === b.floor)!;
         const bars = Math.floor(b.width / 0.12);
         return (
