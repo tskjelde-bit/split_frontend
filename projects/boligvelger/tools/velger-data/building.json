@@ -84,6 +84,18 @@
       "window": { "width": 1.0, "sill": 0.7, "height": 2.2, "peak": 0.5 }
     }
   },
+  "entrances": [
+    { "edge": 4, "t": 0.14, "width": 1.5, "height": 2.6, "overlys": true, "steps": 3,
+      "doc": "Hovedinngang SØ-fløy mot Ole Fladagers gate, tofløyet m/overlys (Fasade Sørøst)" },
+    { "edge": 3, "t": 0.50, "width": 1.1, "height": 2.2, "overlys": false, "steps": 3,
+      "doc": "Bakdør NØ mot gårdsplass (foto 003090-4)" },
+    { "edge": 0, "t": 0.35, "width": 1.4, "height": 2.5, "overlys": true, "steps": 2,
+      "doc": "Inngang NV gavl mot parkering (render 003090-6)" }
+  ],
+  "balconies": [
+    { "edge": 4, "t": 0.64, "floor": "2", "width": 1.8, "depth": 0.45,
+      "doc": "Fransk smijernsbalkong på SØ-gavlen 2. etg (render 003090-5)" }
+  ],
   "windows": [
     {"floor": "1", "edge": 5, "t": 0.12, "width": 1.1, "sill": 1.0, "height": 1.9},
     {"floor": "1", "edge": 5, "t": 0.31, "width": 1.1, "sill": 1.0, "height": 1.9},

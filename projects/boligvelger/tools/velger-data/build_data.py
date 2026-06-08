@@ -170,6 +170,8 @@ def build_geometry():
         "floors": floors,
         "roof": {"elevation": round(elevation, 3), **b["roof"]},
         "windows": b.get("windows", []),
+        "entrances": b.get("entrances", []),
+        "balconies": b.get("balconies", []),
     }
 
 

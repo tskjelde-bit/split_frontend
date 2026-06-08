@@ -95,3 +95,9 @@ def test_real_data_passes_strict_area_validation():
         build_data._load_floors(), build_data._load_arch(),
         build_data._load("prisliste.json"), strict=True)
     assert errors == []
+
+
+def test_geometry_emits_entrances_and_balconies():
+    geo = build_data.build_geometry()
+    assert len(geo["entrances"]) == 3
+    assert geo["balconies"][0]["floor"] == "2"

@@ -295,7 +295,7 @@
      "unit": "H0103",
      "poly": [
       [
-       865,
+       772,
        1332
       ],
       [
@@ -307,7 +307,7 @@
        1690
       ],
       [
-       865,
+       772,
        1690
       ]
      ]
@@ -797,11 +797,11 @@
        1300
       ],
       [
-       1193,
+       1253,
        1300
       ],
       [
-       1193,
+       1253,
        1690
       ],
       [
@@ -815,7 +815,7 @@
      "unit": "H0302",
      "poly": [
       [
-       1193,
+       1253,
        1300
       ],
       [
@@ -827,7 +827,7 @@
        1690
       ],
       [
-       1193,
+       1253,
        1690
       ]
      ]
@@ -951,7 +951,7 @@
   "ridgeAxis": "y",
   "ridgeOffset": 0.4,
   "ridgeOffsetDoc": "Fraction across the main rect from the SW/west street edge (x=748) toward the east edge (x=1660). 0.4 places the ridge nearer the street, matching the asymmetric ridge in Snitt_C and Fasade Sorost (short steep slope toward Dybwads gate, longer slope toward NE).",
-  "rise": 1.9,
+  "rise": 5.0,
   "eaveOverhang": 0.3,
   "recess": {
    "poly": [
@@ -972,64 +972,50 @@
      1700
     ]
    ],
-   "rise": 0.6,
+   "rise": 0.9,
    "recessDoc": "Lower catslide roof over the NE wing (x>=1660, south of the notch). Steps down from the main mass per Fasade Sorost. The notch [1660,375]-[2030,640] itself has no roof (corner is cut)."
   },
-  "ark": {
-   "edge": 5,
-   "t": 0.5,
-   "width": 3.2,
-   "projection": 0.8,
-   "rise": 1.4,
-   "window": {
-    "width": 1.1,
-    "sill": 0.4,
-    "height": 1.6
-   }
-  },
-  "dormers": [
-   {
-    "edge": 5,
-    "t": 0.25,
-    "width": 1.4,
-    "projection": 0.6,
-    "rise": 0.9,
-    "window": {
-     "width": 0.9,
-     "sill": 0.3,
-     "height": 1.0
-    }
-   },
-   {
-    "edge": 5,
-    "t": 0.75,
-    "width": 1.4,
-    "projection": 0.6,
-    "rise": 0.9,
-    "window": {
-     "width": 0.9,
-     "sill": 0.3,
-     "height": 1.0
-    }
-   }
-  ],
   "chimneys": [
    {
     "x": 1113,
     "y": 430,
-    "w": 0.6,
-    "d": 0.6,
-    "above": 1.2
+    "w": 0.5,
+    "d": 0.5,
+    "above": 1.6
    },
    {
     "x": 1113,
     "y": 1645,
-    "w": 0.6,
-    "d": 0.6,
-    "above": 1.2
+    "w": 0.5,
+    "d": 0.5,
+    "above": 1.6
    }
   ],
-  "heis": null
+  "skylights": [
+   {
+    "t": 0.28,
+    "up": 0.55,
+    "width": 0.9,
+    "height": 1.2
+   }
+  ],
+  "heis": null,
+  "frontispiece": {
+   "edge": 5,
+   "t": 0.5,
+   "width": 3.6,
+   "projection": 0.35,
+   "depth": 1.8,
+   "gableBase": 3.2,
+   "apex": 5.8,
+   "trim": 0.22,
+   "window": {
+    "width": 1.0,
+    "sill": 0.7,
+    "height": 2.2,
+    "peak": 0.5
+   }
+  }
  },
  "windows": [
   {
@@ -1052,9 +1038,10 @@
    "floor": "1",
    "edge": 5,
    "t": 0.5,
-   "width": 1.1,
-   "sill": 1.0,
-   "height": 1.9
+   "width": 1.3,
+   "sill": 0.3,
+   "height": 2.4,
+   "kind": "blind"
   },
   {
    "floor": "1",
@@ -1156,9 +1143,10 @@
    "floor": "2",
    "edge": 5,
    "t": 0.5,
-   "width": 1.1,
-   "sill": 0.9,
-   "height": 1.7
+   "width": 1.3,
+   "sill": 0.3,
+   "height": 2.4,
+   "kind": "blind"
   },
   {
    "floor": "2",
@@ -1243,26 +1231,34 @@
   {
    "floor": "3",
    "edge": 5,
-   "t": 0.18,
-   "width": 1.0,
-   "sill": 0.8,
-   "height": 1.3
+   "t": 0.64,
+   "width": 0.85,
+   "sill": 0.5,
+   "height": 1.1
   },
   {
    "floor": "3",
    "edge": 5,
-   "t": 0.5,
-   "width": 1.0,
-   "sill": 0.8,
-   "height": 1.3
+   "t": 0.72,
+   "width": 0.85,
+   "sill": 0.5,
+   "height": 1.1
   },
   {
    "floor": "3",
    "edge": 5,
-   "t": 0.82,
-   "width": 1.0,
-   "sill": 0.8,
-   "height": 1.3
+   "t": 0.83,
+   "width": 0.85,
+   "sill": 0.5,
+   "height": 1.1
+  },
+  {
+   "floor": "3",
+   "edge": 5,
+   "t": 0.91,
+   "width": 0.85,
+   "sill": 0.5,
+   "height": 1.1
   },
   {
    "floor": "3",
@@ -1343,6 +1339,45 @@
    "width": 0.9,
    "sill": 1.6,
    "height": 0.7
+  }
+ ],
+ "entrances": [
+  {
+   "edge": 4,
+   "t": 0.14,
+   "width": 1.5,
+   "height": 2.6,
+   "overlys": true,
+   "steps": 3,
+   "doc": "Hovedinngang SØ-fløy mot Ole Fladagers gate, tofløyet m/overlys (Fasade Sørøst)"
+  },
+  {
+   "edge": 3,
+   "t": 0.5,
+   "width": 1.1,
+   "height": 2.2,
+   "overlys": false,
+   "steps": 3,
+   "doc": "Bakdør NØ mot gårdsplass (foto 003090-4)"
+  },
+  {
+   "edge": 0,
+   "t": 0.35,
+   "width": 1.4,
+   "height": 2.5,
+   "overlys": true,
+   "steps": 2,
+   "doc": "Inngang NV gavl mot parkering (render 003090-6)"
+  }
+ ],
+ "balconies": [
+  {
+   "edge": 4,
+   "t": 0.64,
+   "floor": "2",
+   "width": 1.8,
+   "depth": 0.45,
+   "doc": "Fransk smijernsbalkong på SØ-gavlen 2. etg (render 003090-5)"
   }
  ]
 }

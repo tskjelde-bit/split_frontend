@@ -153,6 +153,9 @@ function assembledBox(geo: BuildingGeo): THREE.Box3 {
     addDormer({ t: f.t, projection: f.projection + 0.2, rise: f.apex });
   }
 
+  // Entrances/balconies/gesims stikker < 1.0 m utenfor fasadelivet.
+  if (geo.entrances?.length || geo.balconies?.length) box.expandByScalar(0.5);
+
   return box;
 }
 

@@ -3,6 +3,7 @@ import { polyCentroid } from '../lib/shapes';
 import { FloorPlate } from './FloorPlate';
 import { Roof } from './Roof';
 import { Cornices } from './Cornices';
+import { Entrances } from './Entrances';
 import { UnitTooltip } from '../ui/UnitTooltip';
 import type { AppData } from '../lib/types';
 
@@ -30,6 +31,7 @@ export function Building({ data }: { data: AppData }) {
       ))}
       <Roof roof={geo.roof} envelope={geo.envelope} scale={geo.scale} index={geo.floors.length} materials={geo.materials} />
       <Cornices geo={geo} />
+      <Entrances geo={geo} />
       <UnitTooltip data={data} />
     </group>
   );
