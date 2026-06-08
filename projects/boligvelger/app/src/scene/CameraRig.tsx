@@ -156,6 +156,16 @@ function assembledBox(geo: BuildingGeo): THREE.Box3 {
   // Entrances/balconies/gesims stikker < 1.0 m utenfor fasadelivet.
   if (geo.entrances?.length || geo.balconies?.length) box.expandByScalar(0.5);
 
+  if (geo.site) {
+    const mg = geo.site.groundMargin;
+    const env = geo.envelope.poly;
+    const xs = env.map((p) => p[0] * geo.scale);
+    const zs = env.map((p) => -(p[1] * geo.scale));
+    const gy = Math.min(geo.site.groundY.nw, geo.site.groundY.se) - 0.3;
+    box.expandByPoint(v.set(Math.min(...xs) - cx - mg.sw, gy, Math.min(...zs) + cz - mg.se));
+    box.expandByPoint(v.set(Math.max(...xs) - cx + mg.ne, gy, Math.max(...zs) + cz + mg.nw));
+  }
+
   return box;
 }
 

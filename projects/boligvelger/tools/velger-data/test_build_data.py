@@ -101,3 +101,13 @@ def test_geometry_emits_entrances_and_balconies():
     geo = build_data.build_geometry()
     assert len(geo["entrances"]) == 3
     assert geo["balconies"][0]["floor"] == "2"
+
+
+def test_geometry_emits_site():
+    geo = build_data.build_geometry()
+    assert geo["site"] is not None
+    assert geo["site"]["groundMargin"]["sw"] == 4.5
+    assert geo["site"]["groundY"]["nw"] == 2.3
+    assert geo["site"]["groundY"]["se"] == 1.3
+    assert 5 in geo["site"]["hedgeEdges"]
+    assert 4 in geo["site"]["fenceEdges"]

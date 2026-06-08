@@ -39,11 +39,17 @@ export interface RoofGeo {
 export interface WindowGeo { floor: FloorId; edge: number; t: number; width: number; sill: number; height: number; kind?: 'window' | 'blind'; }
 export interface EntranceSpec { edge: number; t: number; width: number; height: number; overlys: boolean; steps: number; doc?: string; }
 export interface BalconySpec { edge: number; t: number; floor: FloorId; width: number; depth: number; doc?: string; }
+export interface SiteGeo {
+  groundMargin: { sw: number; se: number; ne: number; nw: number };
+  groundY: { nw: number; se: number };
+  hedgeEdges: number[]; fenceEdges: number[]; doc?: string;
+}
 export interface BuildingGeo {
   scale: number; slabThickness: number; envelope: EnvelopeGeo; floors: FloorGeo[]; roof: RoofGeo; windows: WindowGeo[];
   materials: Materials;
   entrances: EntranceSpec[];
   balconies: BalconySpec[];
+  site?: SiteGeo;
 }
 
 export interface Rom { name: string; area: number; }

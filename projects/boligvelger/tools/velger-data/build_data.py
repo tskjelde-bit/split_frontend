@@ -172,6 +172,7 @@ def build_geometry():
         "windows": b.get("windows", []),
         "entrances": b.get("entrances", []),
         "balconies": b.get("balconies", []),
+        "site": b.get("site"),
     }
 
 
