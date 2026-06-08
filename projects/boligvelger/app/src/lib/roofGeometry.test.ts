@@ -6,6 +6,7 @@ import {
   boxGeometry,
   gableProjection,
   skylightOnSlope,
+  buildFrontispiece,
   type V3,
 } from './roofGeometry';
 import type { GableSpec } from './types';
@@ -99,5 +100,30 @@ describe('gableProjection', () => {
     void _w;
     const r = gableProjection(noWin as GableSpec, [748, 1700], [748, 375], scale, 1.0);
     expect(r.window).toBeNull();
+  });
+});
+
+describe('buildFrontispiece', () => {
+  const spec = {
+    edge: 5, t: 0.5, width: 3.6, projection: 0.35, depth: 1.8,
+    gableBase: 3.2, apex: 5.8, trim: 0.22,
+    window: { width: 1.0, sill: 0.7, height: 2.2, peak: 0.5 },
+  };
+  it('peaks above the main ridge and stays centred on the street edge', () => {
+    const r = buildFrontispiece(spec, [748, 1700], [748, 375], 0.012696);
+    expect(bbox(r.body).maxY).toBeCloseTo(spec.gableBase, 1);
+    expect(bbox(r.gable).maxY).toBeCloseTo(spec.apex, 1);
+    expect(r.window).not.toBeNull();
+    const wb = bbox(r.window!.glass);
+    expect(wb.minY).toBeCloseTo(spec.window.sill, 1);
+    // sentrert: midt på street-edge i z
+    const mid = -((1700 + 375) / 2) * 0.012696;
+    const gb = bbox(r.body);
+    expect((gb.minZ + gb.maxZ) / 2).toBeCloseTo(mid, 1);
+  });
+  it('builds white trim and a black roof cap', () => {
+    const r = buildFrontispiece(spec, [748, 1700], [748, 375], 0.012696);
+    expect(r.trim.getAttribute('position').count).toBeGreaterThan(0);
+    expect(bbox(r.roofCap).maxY).toBeGreaterThan(spec.apex - 0.1);
   });
 });

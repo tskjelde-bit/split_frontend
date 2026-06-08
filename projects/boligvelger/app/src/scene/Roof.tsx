@@ -8,8 +8,9 @@ import {
   slabFromQuad,
   prismFromTriangle,
   boxGeometry,
-  gableProjection,
   skylightOnSlope,
+  buildFrontispiece,
+  type FrontispieceResult,
   type V3,
 } from '../lib/roofGeometry';
 import type { RoofGeo, Materials, EnvelopeGeo } from '../lib/types';
@@ -76,6 +77,32 @@ export function Roof({ roof, envelope, scale, index, materials }: { roof: RoofGe
           <meshStandardMaterial color={materials?.takSort ?? CHIMNEY} roughness={0.95} />
         </mesh>
       ))}
+      {parts.fronti && (
+        <group>
+          <mesh geometry={parts.fronti.body} castShadow receiveShadow>
+            <meshStandardMaterial color={materials?.pussRosa ?? GABLE} roughness={0.9} />
+          </mesh>
+          <mesh geometry={parts.fronti.gable} castShadow receiveShadow>
+            <meshStandardMaterial color={materials?.pussRosa ?? GABLE} roughness={0.9} />
+          </mesh>
+          <mesh geometry={parts.fronti.trim}>
+            <meshStandardMaterial color={materials?.pussHvit ?? GABLE} roughness={0.85} />
+          </mesh>
+          <mesh geometry={parts.fronti.roofCap} castShadow receiveShadow>
+            <meshStandardMaterial color={materials?.takSort ?? SLOPE} roughness={0.9} />
+          </mesh>
+          {parts.fronti.window && (
+            <>
+              <mesh geometry={parts.fronti.window.frame}>
+                <meshStandardMaterial color={materials?.pussHvit ?? GABLE} roughness={0.85} />
+              </mesh>
+              <mesh geometry={parts.fronti.window.glass}>
+                <meshStandardMaterial color={materials?.glassMork ?? WINDOW} roughness={0.3} metalness={0.1} />
+              </mesh>
+            </>
+          )}
+        </group>
+      )}
     </group>
   );
 }
@@ -85,6 +112,7 @@ interface RoofParts {
   gables: THREE.BufferGeometry[];
   windows: THREE.BufferGeometry[];
   chimneys: THREE.BufferGeometry[];
+  fronti: FrontispieceResult | null;
 }
 
 function buildRoof(roof: RoofGeo, envelope: EnvelopeGeo, scale: number): RoofParts {
@@ -143,13 +171,6 @@ function buildRoof(roof: RoofGeo, envelope: EnvelopeGeo, scale: number): RoofPar
   gableTri(wzLo);
   gableTri(wzHi);
 
-  // Local-y of the west slope at a given world x, used to seat ark/dormers ON
-  // the slope. West slope rises from eave (wxWest, 0) to ridge (wxRidge, rise).
-  const westSlopeYAt = (wx: number) => {
-    const t = (wx - wxWest) / (wxRidge - wxWest);
-    return THREE.MathUtils.clamp(t, 0, 1) * rise;
-  };
-
   // --- Recess catslide over the NE wing ---------------------------------
   if (roof.recess) {
     const rxs = roof.recess.poly.map((p) => p[0]);
@@ -200,23 +221,10 @@ function buildRoof(roof: RoofGeo, envelope: EnvelopeGeo, scale: number): RoofPar
   // envelope edit instead of duplicating the coordinates here.
   const streetA = envelope.poly[5] as [number, number];
   const streetB = envelope.poly[0] as [number, number];
-  const projectionWx = (t: number) =>
-    pxToWorld(streetA[0] + (streetB[0] - streetA[0]) * t, 0, scale)[0];
 
-  if (roof.ark) {
-    const baseY = westSlopeYAt(projectionWx(roof.ark.t)) + 0.25;
-    const a = gableProjection(roof.ark, streetA, streetB, scale, baseY);
-    slopes.push(a.roof);
-    gables.push(a.body, a.gableFace);
-    if (a.window) windows.push(a.window.geom);
-  }
-
-  for (const d of roof.dormers ?? []) {
-    const baseY = westSlopeYAt(projectionWx(d.t)) + 0.2;
-    const g = gableProjection(d, streetA, streetB, scale, baseY);
-    slopes.push(g.roof);
-    gables.push(g.body, g.gableFace);
-    if (g.window) windows.push(g.window.geom);
+  let fronti: FrontispieceResult | null = null;
+  if (roof.frontispiece) {
+    fronti = buildFrontispiece(roof.frontispiece, streetA, streetB, scale);
   }
 
   // --- Chimneys (boxes at the ridge, projecting above) ------------------
@@ -233,5 +241,5 @@ function buildRoof(roof: RoofGeo, envelope: EnvelopeGeo, scale: number): RoofPar
     windows.push(skylightOnSlope(sk, streetA, streetB, wxWest, wxRidge, rise, scale));
   }
 
-  return { slopes, gables, windows, chimneys };
+  return { slopes, gables, windows, chimneys, fronti };
 }

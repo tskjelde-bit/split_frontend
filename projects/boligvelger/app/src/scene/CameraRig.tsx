@@ -148,6 +148,11 @@ function assembledBox(geo: BuildingGeo): THREE.Box3 {
   if (geo.roof.ark) addDormer(geo.roof.ark);
   for (const d of geo.roof.dormers ?? []) addDormer(d);
 
+  if (geo.roof.frontispiece) {
+    const f = geo.roof.frontispiece;
+    addDormer({ t: f.t, projection: f.projection + 0.2, rise: f.apex });
+  }
+
   return box;
 }
 

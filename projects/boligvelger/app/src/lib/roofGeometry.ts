@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import type { GableSpec, SkylightSpec } from './types';
+import type { FrontispieceSpec, GableSpec, SkylightSpec } from './types';
 
 /** A 3D point in roof-local space (worldX, localY, worldZ). */
 export type V3 = [number, number, number];
@@ -229,6 +229,103 @@ export function skylightOnSlope(
   g.rotateZ(theta);                              // tilt onto the plane
   g.translate(wx, wy + 0.10, z);                 // 10 cm proud of the slope slab
   return g;
+}
+
+export interface FrontispieceResult {
+  body: THREE.BufferGeometry;      // rosa veggfelt (rektangulær del + sider)
+  gable: THREE.BufferGeometry;     // rosa gavltrekant
+  trim: THREE.BufferGeometry;      // hvite lister: raked kanter + basebånd + vindusomramming
+  roofCap: THREE.BufferGeometry;   // sort sadel over gavlen
+  window: { frame: THREE.BufferGeometry; glass: THREE.BufferGeometry } | null;
+}
+
+export function buildFrontispiece(
+  spec: FrontispieceSpec,
+  edgeA: [number, number], edgeB: [number, number],
+  scale: number,
+): FrontispieceResult {
+  const [ax, az] = pxToWorld(edgeA[0], edgeA[1], scale);
+  const [bx, bz] = pxToWorld(edgeB[0], edgeB[1], scale);
+  const px = ax + (bx - ax) * spec.t;
+  const pz = az + (bz - az) * spec.t;
+  const dx = bx - ax, dz = bz - az;
+  const dlen = Math.hypot(dx, dz) || 1;
+  const tx = dx / dlen, tz = dz / dlen;     // langs fasaden
+  const nx = -dz / dlen, nz = dx / dlen;    // utover
+  const at = (along: number, out: number, y: number): V3 => [
+    px + tx * along + nx * out, y, pz + tz * along + nz * out,
+  ];
+  const hw = spec.width / 2;
+  const proj = spec.projection;
+
+  // Body: front-plate (full bredde, 0..gableBase) + to sidevegger inn mot taket.
+  const bodyGeos: THREE.BufferGeometry[] = [];
+  bodyGeos.push(slabFromQuad(at(-hw, proj, 0), at(hw, proj, 0), at(hw, proj, spec.gableBase), at(-hw, proj, spec.gableBase), 0.1));
+  bodyGeos.push(polygonGeometry([at(-hw, proj, 0), at(-hw, -spec.depth, 0), at(-hw, -spec.depth, spec.gableBase), at(-hw, proj, spec.gableBase)]));
+  bodyGeos.push(polygonGeometry([at(hw, -spec.depth, 0), at(hw, proj, 0), at(hw, proj, spec.gableBase), at(hw, -spec.depth, spec.gableBase)]));
+
+  // Gavltrekant (front) + sidetrekanter bakover.
+  const apexF: V3 = at(0, proj, spec.apex);
+  const gableGeos: THREE.BufferGeometry[] = [
+    prismFromTriangle(at(-hw, proj, spec.gableBase), at(hw, proj, spec.gableBase), apexF, 0.1),
+    polygonGeometry([at(-hw, proj, spec.gableBase), at(-hw, -spec.depth, spec.gableBase), at(0, -spec.depth, spec.apex), at(0, proj, spec.apex)]),
+    polygonGeometry([at(hw, -spec.depth, spec.gableBase), at(hw, proj, spec.gableBase), at(0, proj, spec.apex), at(0, -spec.depth, spec.apex)]),
+  ];
+
+  // Hvit trim: to raked lister langs gavlkantene + basebånd + pilastre.
+  const trimGeos: THREE.BufferGeometry[] = [];
+  const rakeL = (sgn: 1 | -1) => {
+    // Beam from the gable base corner `a` up to the apex `b`. Build it along
+    // local +y (length), tilt it in the facade's (tangent, vertical) plane so
+    // +y points from a->b, then yaw it onto the facade and seat it at `a`.
+    const a = at(sgn * hw, proj + 0.02, spec.gableBase);
+    const b = at(0, proj + 0.02, spec.apex);
+    const len = Math.hypot(b[0] - a[0], b[1] - a[1], b[2] - a[2]);
+    const tang = (b[0] - a[0]) * tx + (b[2] - a[2]) * tz; // along-facade run
+    const vert = b[1] - a[1];                              // vertical rise
+    const g = new THREE.BoxGeometry(spec.trim, len, 0.08);
+    g.translate(0, len / 2, 0);
+    g.rotateZ(-Math.atan2(tang, vert)); // tilt so +y aims at the apex
+    const yaw = Math.atan2(tz, tx);
+    g.rotateY(-yaw);
+    g.translate(a[0], a[1], a[2]);
+    return g;
+  };
+  trimGeos.push(rakeL(-1), rakeL(1));
+  trimGeos.push(slabFromQuad(at(-hw, proj + 0.02, spec.gableBase - 0.22), at(hw, proj + 0.02, spec.gableBase - 0.22), at(hw, proj + 0.02, spec.gableBase), at(-hw, proj + 0.02, spec.gableBase), 0.08));
+  trimGeos.push(boxGeometry(...at(-hw + 0.12, proj + 0.02, spec.gableBase / 2), 0.24, spec.gableBase, 0.08));
+  trimGeos.push(boxGeometry(...at(hw - 0.12, proj + 0.02, spec.gableBase / 2), 0.24, spec.gableBase, 0.08));
+
+  // Sort sadel: møne fra apexF bakover, to flater ned til gavlbase-hjørnene.
+  const ohf = 0.15;
+  const apexB: V3 = at(0, -spec.depth, spec.apex);
+  const roofGeos = [
+    slabFromQuad(apexB, [apexF[0] + nx * ohf, apexF[1], apexF[2] + nz * ohf], at(-hw - ohf, proj + ohf, spec.gableBase - 0.05), at(-hw - ohf, -spec.depth, spec.gableBase - 0.05), 0.08),
+    slabFromQuad([apexF[0] + nx * ohf, apexF[1], apexF[2] + nz * ohf], apexB, at(hw + ohf, -spec.depth, spec.gableBase - 0.05), at(hw + ohf, proj + ohf, spec.gableBase - 0.05), 0.08),
+  ];
+
+  // Spissbuet vindu: flat femkant (rekt + topp-trekant) + hvit ramme bak.
+  let win: FrontispieceResult['window'] = null;
+  if (spec.window) {
+    const w = spec.window;
+    const hww = w.width / 2;
+    const pent = (m: number, out: number) => polygonGeometry([
+      at(-hww - m, out, w.sill - m),
+      at(hww + m, out, w.sill - m),
+      at(hww + m, out, w.sill + w.height),
+      at(0, out, w.sill + w.height + w.peak + m),
+      at(-hww - m, out, w.sill + w.height),
+    ]);
+    win = { frame: pent(0.12, proj + 0.03), glass: pent(0, proj + 0.05) };
+  }
+
+  return {
+    body: mergeGeometries(bodyGeos),
+    gable: mergeGeometries(gableGeos),
+    trim: mergeGeometries(trimGeos),
+    roofCap: mergeGeometries(roofGeos),
+    window: win,
+  };
 }
 
 /** Merge a list of position-only BufferGeometries into one (no indices). */

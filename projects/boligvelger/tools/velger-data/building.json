@@ -75,7 +75,14 @@
     "skylights": [
       { "t": 0.28, "up": 0.55, "width": 0.9, "height": 1.2 }
     ],
-    "heis": null
+    "heis": null,
+    "frontispiece": {
+      "edge": 5, "t": 0.5,
+      "width": 3.6, "projection": 0.35, "depth": 1.8,
+      "gableBase": 3.2, "apex": 5.8,
+      "trim": 0.22,
+      "window": { "width": 1.0, "sill": 0.7, "height": 2.2, "peak": 0.5 }
+    }
   },
   "windows": [
     {"floor": "1", "edge": 5, "t": 0.12, "width": 1.1, "sill": 1.0, "height": 1.9},
