@@ -4,7 +4,7 @@
   "base_empty": "proof/stages-scene2/f0-empty.png",
   "out_dir": "furnish/scene2",
   "groups": [
-    {"name": "teppe", "diff_steps": [9], "debut_override": "proof/stages-scene2/f1-rug.png", "mask_from": {"a": "proof/stages-scene2/f1-rug.png", "b": "proof/stages-scene2/f0-empty.png", "box": [1600, 0, 3072, 5504]}},
+    {"name": "teppe", "diff_steps": [9], "debut_override": "proof/stages-scene2/f1-rug.png", "mask_from": {"a": "proof/stages-scene2/f1-rug.png", "b": "proof/stages-scene2/f0-empty.png", "box": [1600, 0, 3072, 5504]}, "occlude_furniture": true},
     {"name": "venstresofa", "diff_steps": [8]},
     {"name": "midtsofa", "diff_steps": [7]},
     {"name": "lamper", "diff_steps": [6]},

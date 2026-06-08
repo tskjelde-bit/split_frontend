@@ -117,7 +117,14 @@ def main() -> None:
 
     base = fl.anchor_base(empty, full, furniture)
 
-    frames = fl.composite(base, full, list(zip(masks, debuts)))
+    triples = []
+    for gi, g in enumerate(cfg["groups"]):
+        extra = None
+        if g.get("occlude_furniture"):
+            extra = masks[gi] & fl.raw_change(full, debuts[gi])
+            print(f"  {g['name']}: diff-okklusjon {extra.mean() * 100:.1f}% (mobler-pa-teppe)")
+        triples.append((masks[gi], debuts[gi], extra))
+    frames = fl.composite(base, full, triples)
     comp_final = frames[-1]
     frames[-1] = full  # siste frame = full verbatim; gate 4 måler comp_final vs full
 

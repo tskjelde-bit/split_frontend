@@ -4,7 +4,7 @@
   "base_empty": "proof/stages-scene1/f0-empty.png",
   "out_dir": "furnish/scene1",
   "groups": [
-    {"name": "teppe", "diff_steps": [12]},
+    {"name": "teppe", "diff_steps": [12], "occlude_furniture": true},
     {"name": "sofa", "diff_steps": [11]},
     {"name": "skap-vase", "diff_steps": [10, 9], "debut_override": "proof/stages-scene1/f4-cabinet.png"},
     {"name": "lampe", "diff_steps": [8]},

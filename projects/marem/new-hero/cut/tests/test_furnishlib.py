@@ -198,3 +198,22 @@ def test_stage_pair_mask_fills_low_contrast_holes():
     m = fl.stage_pair_mask(rug, floor, [0, 0, 300, 300])
     assert m[175, 150]   # MIDTEN er med (hull-fylt) selv om diff < terskel der
     assert not m[20, 20]
+
+
+def test_composite_extra_occlusion_hides_unmasked_furniture_on_base():
+    """Med extra_occ: et objekt som star pa basisflaten i full, men som ingen
+    senere gruppe dekker, skal vise REN debut-flate i basisframen."""
+    H, W = 200, 200
+    base = np.full((H, W, 3), 50, np.uint8)
+    full = base.copy()
+    full[80:160, 40:160] = (200, 200, 200)
+    full[100:140, 80:120] = (30, 30, 30)
+    debut = base.copy()
+    debut[80:160, 40:160] = (190, 190, 190)
+    mask = np.zeros((H, W), bool)
+    mask[80:160, 40:160] = True
+    extra = mask & fl.raw_change(full, debut)
+    frames = fl.composite(base, full, [(mask, debut, extra)])
+    f1 = frames[1].astype(int)
+    assert (np.abs(f1[120, 100] - 190) <= 3).all()
+    assert (np.abs(f1[90, 50] - 200) <= 3).all()

@@ -251,23 +251,30 @@ def stage_pair_mask(a: np.ndarray, b: np.ndarray, box: list) -> np.ndarray:
 
 
 def composite(base: np.ndarray, full: np.ndarray, groups: list) -> list:
-    """Iterativ paste i byggerekkefølge. groups = [(maske, debut_arr), ...].
+    """Iterativ paste i byggerekkefolge. groups = [(maske, debut[, extra_occ]), ...].
 
-    Kilderegel: full der gruppen er øverst i stabelen; debut-bildet der
-    senere grupper okkluderer i full (f.eks. teppe-under-sofa). Returnerer
-    frames [base, etter gruppe 1, ..., etter gruppe n] som uint8.
+    Kilderegel: full der gruppen er overst i stabelen; debut der senere grupper
+    okkluderer i full (teppe-under-sofa). Et valgfritt tredje element extra_occ
+    tvinger debut-kilde ogsa der (uavhengig av senere masker) — for basisflater
+    (teppe) der full har mobler som enna ikke er bygget, sa de ikke skinner
+    gjennom. Returnerer frames [base, etter gruppe 1, ..., etter n].
     """
     n = len(groups)
+    masks = [g[0] for g in groups]
     later = [None] * n
     acc = np.zeros(base.shape[:2], dtype=bool)
     for i in range(n - 1, -1, -1):
         later[i] = acc.copy()
-        acc |= groups[i][0]
+        acc |= masks[i]
     frames = [base.copy()]
     comp = base.astype(np.float32)
     full_f = full.astype(np.float32)
-    for i, (mask, debut) in enumerate(groups):
-        occ = feather(mask & later[i], dilate=2, sigma=3.0)[..., None]
+    for i, g in enumerate(groups):
+        mask, debut = g[0], g[1]
+        occ_mask = mask & later[i]
+        if len(g) > 2 and g[2] is not None:
+            occ_mask = occ_mask | (mask & g[2])
+        occ = feather(occ_mask, dilate=2, sigma=3.0)[..., None]
         src = full_f * (1 - occ) + debut.astype(np.float32) * occ
         a = feather(mask)[..., None]
         comp = src * a + comp * (1 - a)
