@@ -1379,5 +1379,26 @@
    "depth": 0.45,
    "doc": "Fransk smijernsbalkong på SØ-gavlen 2. etg (render 003090-5)"
   }
- ]
+ ],
+ "site": {
+  "groundMargin": {
+   "sw": 4.5,
+   "se": 2.5,
+   "ne": 2.5,
+   "nw": 2.5
+  },
+  "groundY": {
+   "nw": 2.3,
+   "se": 1.3
+  },
+  "hedgeEdges": [
+   5,
+   4
+  ],
+  "fenceEdges": [
+   5,
+   4
+  ],
+  "doc": "Bakkeplan med fall NV->SE langs gata (fasade-PDF terrenglinje). groundY = world-y for bakkeplanet i NV- og SE-enden; hekk+smijernsgjerde langs sørvest (gate) og sørøst."
+ }
 }
