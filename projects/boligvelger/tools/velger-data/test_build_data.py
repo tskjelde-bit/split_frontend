@@ -88,3 +88,10 @@ def test_geometry_emits_materials_and_facade():
     assert m["takSort"] == "#2E3038"
     facade = {f["id"]: f["facade"] for f in geo["floors"]}
     assert facade == {"U": "#E9E6E0", "1": "#E9E6E0", "2": "#E4B49C", "3": "#E4B49C"}
+
+
+def test_real_data_passes_strict_area_validation():
+    errors, _ = build_data.validate_unit_areas(
+        build_data._load_floors(), build_data._load_arch(),
+        build_data._load("prisliste.json"), strict=True)
+    assert errors == []

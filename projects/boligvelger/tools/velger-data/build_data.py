@@ -179,7 +179,7 @@ def main():
     errors += validate_coverage()
     errors += validate_envelope_containment()
 
-    strict_areas = os.environ.get("VELGER_STRICT_AREAS") == "1"
+    strict_areas = os.environ.get("VELGER_STRICT_AREAS", "1") == "1"
     area_errors, area_warnings = validate_unit_areas(_load_floors(), _load_arch(), prisliste, strict=strict_areas)
     errors += area_errors
     warnings += area_warnings
