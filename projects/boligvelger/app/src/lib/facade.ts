@@ -6,7 +6,7 @@ export interface EdgePoint {
   nx: number;
   /** outward-facing normal z-component */
   nz: number;
-  /** edge direction angle for rotateY */
+  /** rotateY angle that points local +Z along the outward normal (for doors/balconies that face out) */
   angle: number;
 }
 
@@ -33,7 +33,9 @@ export function onEdge(
     z: az + dz * t,
     nx,
     nz,
-    angle: Math.atan2(dz, dx),
+    // rotateY so a mesh's local +Z (door face, steps, balcony projection) points
+    // along the outward normal: R_y(angle)·(0,0,1) = (sin,cos) = (nx,nz).
+    angle: Math.atan2(nx, nz),
   };
 }
 

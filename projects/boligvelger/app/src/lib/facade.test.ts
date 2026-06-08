@@ -22,9 +22,17 @@ describe('onEdge', () => {
     expect(Math.hypot(p.nx, p.nz)).toBeCloseTo(1, 5);
   });
 
-  it('angle for edge 0 matches Math.atan2(dz, dx) = atan2(0, 1) = 0', () => {
-    const p = onEdge(rect, scale, 0, 0.5);
-    expect(p.angle).toBeCloseTo(0, 5);
+  it('angle points local +Z along the outward normal', () => {
+    // edge 0 (bottom, dz=0): outward normal (0,1) → R_y(angle)·(0,0,1)=(sin,cos) must equal (nx,nz).
+    const p0 = onEdge(rect, scale, 0, 0.5);
+    expect(Math.sin(p0.angle)).toBeCloseTo(p0.nx, 5);
+    expect(Math.cos(p0.angle)).toBeCloseTo(p0.nz, 5);
+    // edge 3 (left side, dx=0): the door faced INWARD with the old edge-direction angle.
+    // outward normal is world -x → angle must send local +Z to (-1, 0).
+    const p3 = onEdge(rect, scale, 3, 0.5);
+    expect(Math.sin(p3.angle)).toBeCloseTo(p3.nx, 5);
+    expect(Math.cos(p3.angle)).toBeCloseTo(p3.nz, 5);
+    expect(p3.nx).toBeCloseTo(-1, 5);
   });
 
   it('t=0 gives start vertex of edge, t=1 gives end vertex', () => {
