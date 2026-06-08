@@ -13,9 +13,7 @@ const DENTIL = { w: 0.18, h: 0.14, d: 0.10, spacing: 0.42 };
  *  Statisk i montert visning; skjules i exploded (etasjeplatene er helten). */
 export function Cornices({ geo }: { geo: BuildingGeo }) {
   const mode = useVelger((s) => s.mode);
-  if (mode === 'exploded') return null;
 
-  const mats = geo.materials;
   const bands = useMemo(() => {
     const outline = geo.envelope.poly;
     const outer = insetPolygon(outline, -BAND_OUT / geo.scale);
@@ -39,6 +37,10 @@ export function Cornices({ geo }: { geo: BuildingGeo }) {
     () => edgeDentils(geo.envelope.poly, geo.scale, DENTIL.spacing),
     [geo],
   );
+
+  if (mode === 'exploded') return null;
+
+  const mats = geo.materials;
   const dentilY = geo.roof.elevation - BAND_H - DENTIL.h / 2;
 
   return (
