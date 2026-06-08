@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import { polyCentroid } from '../lib/shapes';
 import { FloorPlate } from './FloorPlate';
 import { Roof } from './Roof';
-import { Windows } from './Windows';
 import { UnitTooltip } from '../ui/UnitTooltip';
 import type { AppData } from '../lib/types';
 
@@ -16,10 +15,19 @@ export function Building({ data }: { data: AppData }) {
   return (
     <group position={[-cx, 0, cz]}>
       {geo.floors.map((f, i) => (
-        <FloorPlate key={f.id} floor={f} index={i} scale={geo.scale} slab={geo.slabThickness} envelope={geo.envelope} slabColor={geo.materials?.pussHvit} />
+        <FloorPlate
+          key={f.id}
+          floor={f}
+          index={i}
+          scale={geo.scale}
+          slab={geo.slabThickness}
+          envelope={geo.envelope}
+          slabColor={geo.materials?.pussHvit}
+          windows={geo.windows.filter((w) => w.floor === f.id)}
+          materials={geo.materials}
+        />
       ))}
       <Roof roof={geo.roof} envelope={geo.envelope} scale={geo.scale} index={geo.floors.length} materials={geo.materials} />
-      <Windows geo={geo} />
       <UnitTooltip data={data} />
     </group>
   );

@@ -36,7 +36,7 @@ export interface RoofGeo {
   ridgeOffsetDoc?: string;
   [key: string]: unknown;
 }
-export interface WindowGeo { floor: FloorId; edge: number; t: number; width: number; sill: number; height: number; }
+export interface WindowGeo { floor: FloorId; edge: number; t: number; width: number; sill: number; height: number; kind?: 'window' | 'blind'; }
 export interface BuildingGeo {
   scale: number; slabThickness: number; envelope: EnvelopeGeo; floors: FloorGeo[]; roof: RoofGeo; windows: WindowGeo[];
   materials: Materials;

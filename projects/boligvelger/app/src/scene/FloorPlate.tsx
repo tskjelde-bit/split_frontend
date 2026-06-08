@@ -4,7 +4,8 @@ import { useFrame } from '@react-three/fiber';
 import { useVelger, focusForFloor, type FloorFocus, type Mode } from '../state/store';
 import { polyToShape, polyToRingShape, insetPolygon } from '../lib/shapes';
 import { UnitMesh } from './UnitMesh';
-import type { FloorGeo, EnvelopeGeo } from '../lib/types';
+import { FloorWindows } from './Windows';
+import type { FloorGeo, EnvelopeGeo, Materials, WindowGeo } from '../lib/types';
 
 const GIPS_DARK = '#e5e2d6';
 const GIPS_EXT = '#f3f1ea'; // exterior wall shell fallback
@@ -21,9 +22,9 @@ export function floorIsFocused(focus: FloorFocus, floorId: string): boolean {
   return focus === floorId;
 }
 
-interface Props { floor: FloorGeo; index: number; scale: number; slab: number; envelope: EnvelopeGeo; slabColor?: string; }
+interface Props { floor: FloorGeo; index: number; scale: number; slab: number; envelope: EnvelopeGeo; slabColor?: string; windows?: WindowGeo[]; materials?: Materials; }
 
-export function FloorPlate({ floor, index, scale, slab, envelope, slabColor }: Props) {
+export function FloorPlate({ floor, index, scale, slab, envelope, slabColor, windows, materials }: Props) {
   const ref = useRef<THREE.Group>(null!);
   const wallRef = useRef<THREE.Mesh>(null!);
   const mode = useVelger(s => s.mode);
@@ -89,6 +90,9 @@ export function FloorPlate({ floor, index, scale, slab, envelope, slabColor }: P
       <mesh geometry={slabGeo} castShadow receiveShadow {...shellHandlers}>
         <meshStandardMaterial color={slabColor ?? GIPS_DARK} roughness={0.9} transparent={dimmed} opacity={dimmed ? 0.25 : 1} />
       </mesh>
+      {windows && windows.length > 0 && materials && (
+        <FloorWindows floor={floor} windows={windows} scale={scale} materials={materials} />
+      )}
       <group position-y={slab}>
         <mesh ref={wallRef} geometry={wallGeo} castShadow receiveShadow {...shellHandlers}>
           {/* polygonOffset pulls the wall slightly toward the camera in depth so

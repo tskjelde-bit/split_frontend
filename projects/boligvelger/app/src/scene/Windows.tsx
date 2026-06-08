@@ -1,69 +1,83 @@
-import { useMemo } from 'react';
-import type { BuildingGeo, WindowGeo } from '../lib/types';
+import { useMemo, useRef } from 'react';
+import * as THREE from 'three';
+import { useFrame } from '@react-three/fiber';
+import type { FloorGeo, Materials, WindowGeo } from '../lib/types';
 import { useVelger } from '../state/store';
 
-const NICHE = '#bdb9ab'; // darker than the gips wall fallback — overridden by materials.glassMork when provided
-// The exterior wall is now a solid ring of wallThickness (0.30 m). A niche whose
-// front face sits BEHIND the outer wall plane is fully occluded by the opaque
-// wall and never shows (the prior "invisible niches" bug). So the front face
-// must sit a hair PROUD of the outer plane and recede into the wall:
-//   front face at INSET = -0.04 m (4 cm proud of the outer plane),
-//   back face  at INSET + DEPTH = 0.12 m inward — short of the 0.30 inner
-//   plane, so it never z-fights the wall ring's interior face.
-// The box centre sits at offset = INSET + DEPTH/2 inward (see below) and its
-// half-depth is DEPTH/2, so the front face's inward distance equals INSET.
-const DEPTH = 0.16;
-const INSET = -0.04;
+const SURROUND_M = 0.14; // hvit omramming utenfor karmen
+const FRAME_M = 0.07;    // sort karm synlig rundt glasset
+const PROUD = 0.03;      // omramming står 3 cm proud av fasadelivet
 
-/** Window niches: thin boxes along outline edges, inset into the facade so
- *  they read as openings on the gips model. Hidden in exploded mode.
- *  Mounted INSIDE Building's centering group; world z = -(py*scale) to match
- *  the extruded geometry (which went through rotateX(-PI/2)). */
-export function Windows({ geo }: { geo: BuildingGeo }) {
+interface Placement {
+  x: number; z: number; angle: number; y: number; w: number; h: number; kind: string;
+}
+
+/** Vinduer for ÉN etasje, montert inne i FloorPlate-gruppen slik at de følger
+ *  eksplosjons-animasjonen. Fades ut i eksplodert visning (veggen krymper til
+ *  parapet). Hvert vindu = hvit omramming + sort karm m/midtpost + mørkt glass;
+ *  kind=blind = kun hvitt panel. */
+export function FloorWindows({ floor, windows, scale, materials }: {
+  floor: FloorGeo; windows: WindowGeo[]; scale: number; materials: Materials;
+}) {
   const mode = useVelger((s) => s.mode);
-  const boxes = useMemo(
-    () =>
-      geo.windows.map((w: WindowGeo) => {
-        const floor = geo.floors.find((f) => f.id === w.floor)!;
-        const o = floor.outline;
-        const a = o[w.edge];
-        const b = o[(w.edge + 1) % o.length];
-        const ax = a[0] * geo.scale;
-        const az = -(a[1] * geo.scale);
-        const bx = b[0] * geo.scale;
-        const bz = -(b[1] * geo.scale);
-        const x = ax + (bx - ax) * w.t;
-        const z = az + (bz - az) * w.t;
-        const angle = Math.atan2(bz - az, bx - ax);
-        // Outward facade normal (outline winds clockwise in this z-flipped
-        // frame, so the outward normal is to the left of the edge direction).
-        const dx = bx - ax;
-        const dz = bz - az;
-        const len = Math.hypot(dx, dz) || 1;
-        const nx = -dz / len;
-        const nz = dx / len;
-        // Center the box so its outward face sits INSET behind the outer wall
-        // plane; the box then reveals DEPTH into the thick wall.
-        const offset = INSET + DEPTH / 2;
-        return {
-          x: x - nx * offset,
-          z: z - nz * offset,
-          angle,
-          y: floor.elevation + w.sill + w.height / 2,
-          w: w.width,
-          h: w.height,
-        };
-      }),
-    [geo],
-  );
-  if (mode === 'exploded') return null;
+  const group = useRef<THREE.Group>(null!);
+  const placements: Placement[] = useMemo(() => windows.map((w) => {
+    const o = floor.outline;
+    const a = o[w.edge], b = o[(w.edge + 1) % o.length];
+    const ax = a[0] * scale, az = -(a[1] * scale);
+    const bx = b[0] * scale, bz = -(b[1] * scale);
+    const x = ax + (bx - ax) * w.t, z = az + (bz - az) * w.t;
+    const dx = bx - ax, dz = bz - az;
+    const len = Math.hypot(dx, dz) || 1;
+    const nx = -dz / len, nz = dx / len; // utover
+    return {
+      x: x + nx * PROUD, z: z + nz * PROUD,
+      angle: Math.atan2(bz - az, bx - ax),
+      y: w.sill + w.height / 2, // lokal y — gruppen ligger på slab-nivå i FloorPlate
+      w: w.width, h: w.height, kind: w.kind ?? 'window',
+    };
+  }), [floor, windows, scale]);
+
+  useFrame((_, dt) => {
+    const target = mode === 'exploded' ? 0 : 1;
+    group.current.children.forEach((c) => {
+      c.traverse((m) => {
+        const mat = (m as THREE.Mesh).material as THREE.MeshStandardMaterial | undefined;
+        if (mat) {
+          mat.opacity = THREE.MathUtils.damp(mat.opacity, target, 6, dt);
+          mat.transparent = true;
+          m.visible = mat.opacity > 0.02;
+        }
+      });
+    });
+  });
+
   return (
-    <group>
-      {boxes.map((b, i) => (
-        <mesh key={i} position={[b.x, b.y, b.z]} rotation={[0, b.angle, 0]}>
-          <boxGeometry args={[b.w, b.h, DEPTH]} />
-          <meshStandardMaterial color={geo.materials?.glassMork ?? NICHE} roughness={1} />
-        </mesh>
+    <group ref={group}>
+      {placements.map((p, i) => (
+        <group key={i} position={[p.x, p.y, p.z]} rotation={[0, p.angle, 0]}>
+          {/* hvit omramming (bakerst, størst) */}
+          <mesh>
+            <boxGeometry args={[p.w + 2 * SURROUND_M, p.h + 2 * SURROUND_M, 0.06]} />
+            <meshStandardMaterial color={materials.pussHvit} roughness={0.85} />
+          </mesh>
+          {p.kind === 'window' && (
+            <>
+              <mesh position={[0, 0, 0.02]}>
+                <boxGeometry args={[p.w, p.h, 0.05]} />
+                <meshStandardMaterial color={materials.karmSort} roughness={0.7} />
+              </mesh>
+              <mesh position={[-p.w / 4 + FRAME_M / 4, 0, 0.045]}>
+                <boxGeometry args={[p.w / 2 - 1.5 * FRAME_M, p.h - 2 * FRAME_M, 0.02]} />
+                <meshStandardMaterial color={materials.glassMork} roughness={0.25} metalness={0.1} />
+              </mesh>
+              <mesh position={[p.w / 4 - FRAME_M / 4, 0, 0.045]}>
+                <boxGeometry args={[p.w / 2 - 1.5 * FRAME_M, p.h - 2 * FRAME_M, 0.02]} />
+                <meshStandardMaterial color={materials.glassMork} roughness={0.25} metalness={0.1} />
+              </mesh>
+            </>
+          )}
+        </group>
       ))}
     </group>
   );
