@@ -4,13 +4,80 @@
   "base_empty": "proof/stages-scene1/f0-empty.png",
   "out_dir": "furnish/scene1",
   "groups": [
-    {"name": "teppe", "diff_steps": [12], "occlude_furniture": true},
-    {"name": "sofa", "diff_steps": [11]},
-    {"name": "skap-vase", "diff_steps": [10, 9], "debut_override": "proof/stages-scene1/f4-cabinet.png"},
-    {"name": "lampe", "diff_steps": [8]},
-    {"name": "daybed-pledd", "diff_steps": [7, 6]},
-    {"name": "stoler", "diff_steps": [5, 4], "extra_mask_from": {"a": "scene1-steps/scene1-00-full.png", "b": "proof/stages-scene1/f4-cabinet.png", "box": [900, 3300, 3072, 5504]}},
-    {"name": "bord", "diff_steps": [3, 2], "extra_mask_from": {"a": "scene1-steps/scene1-00-full.png", "b": "proof/stages-scene1/f2-sofa.png", "box": [2100, 1600, 2900, 3600]}},
-    {"name": "dekor", "diff_steps": [1]}
+    {
+      "name": "teppe",
+      "diff_steps": [
+        12
+      ],
+      "occlude_furniture": true
+    },
+    {
+      "name": "sofa",
+      "diff_steps": [
+        11
+      ]
+    },
+    {
+      "name": "skap-vase",
+      "diff_steps": [
+        10,
+        9
+      ],
+      "debut_override": "proof/stages-scene1/f4-cabinet.png"
+    },
+    {
+      "name": "lampe",
+      "diff_steps": [
+        8
+      ]
+    },
+    {
+      "name": "daybed-pledd",
+      "diff_steps": [
+        7,
+        6
+      ]
+    },
+    {
+      "name": "stoler",
+      "diff_steps": [
+        5,
+        4
+      ],
+      "extra_mask_from": {
+        "a": "scene1-steps/scene1-00-full.png",
+        "b": "proof/stages-scene1/f4-cabinet.png",
+        "box": [
+          900,
+          3300,
+          3072,
+          5504
+        ]
+      }
+    },
+    {
+      "name": "bord",
+      "diff_steps": [
+        3,
+        2
+      ],
+      "extra_mask_from": {
+        "a": "scene1-steps/scene1-00-full.png",
+        "b": "proof/stages-scene1/f2-sofa.png",
+        "box": [
+          2100,
+          1600,
+          2900,
+          3600
+        ]
+      }
+    },
+    {
+      "name": "dekor",
+      "diff_steps": [
+        1
+      ],
+      "converge": true
+    }
   ]
 }

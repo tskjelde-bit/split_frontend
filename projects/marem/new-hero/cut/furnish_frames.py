@@ -63,7 +63,9 @@ def main() -> None:
 
     masks, debuts = [], []
     for g in cfg["groups"]:
-        if "mask_from" in g:
+        if "mask_file" in g:
+            m = np.asarray(Image.open(here / g["mask_file"]).convert("L")) > 127
+        elif "mask_from" in g:
             mf = g["mask_from"]
             a_img = fl.load_rgb(here / mf["a"])
             b_img = fl.load_rgb(here / mf["b"])
@@ -114,6 +116,14 @@ def main() -> None:
             ys_p, xs_p = np.nonzero(part)
             print(f"  residual-del {int(part.sum())} px ved {xs_p.min()},{ys_p.min()} "
                   f"-> {cfg['groups'][gi]['name']}")
+
+    # konvergens: en gruppe (typisk siste = dekor) kan finalisere hele
+    # møbleringen ved at masken settes til unionen av alle masker, så det
+    # siste beatet matcher full eksakt der enkeltmasker underdekket
+    # (lavkontrast hvitt bord/teppe, manglende skygger) — eliminerer pop.
+    for gi, g in enumerate(cfg["groups"]):
+        if g.get("converge"):
+            masks[gi] = furniture.copy()
 
     base = fl.anchor_base(empty, full, furniture)
 
