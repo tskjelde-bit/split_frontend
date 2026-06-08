@@ -76,6 +76,16 @@ describe('insetPolygon', () => {
       expect(y).toBeLessThan(maxY);
     }
   });
+
+  it('offsets outward with negative inset distance', () => {
+    const rect: [number, number][] = [[0, 0], [100, 0], [100, 50], [0, 50]];
+    const out = insetPolygon(rect, -10);
+    const xs = out.map((p) => p[0]);
+    const ys = out.map((p) => p[1]);
+    expect(Math.min(...xs)).toBeCloseTo(-10, 5);
+    expect(Math.max(...xs)).toBeCloseTo(110, 5);
+    expect(Math.min(...ys)).toBeCloseTo(-10, 5);
+  });
 });
 
 describe('polyToRingShape', () => {
